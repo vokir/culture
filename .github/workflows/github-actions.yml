@@ -23,7 +23,8 @@ jobs:
         run: |
             git config --global user.email "${GITHUB_ACTOR}@https://users.noreply.github.com/"
             git config --global user.name "${GITHUB_ACTOR}"
-            git add --all
+            git remote add origin "https://${{ secrets.ACCESS_TOKEN }}@github.com/${GITHUB_ACTOR}/culture.git"
+            git add .
         working-directory: ./dist
 
       - name: Push and send notification
@@ -32,5 +33,5 @@ jobs:
             git diff-index --quiet --cached HEAD -- && echo "No changes!" && exit 0 || echo $COMMIT_MESSAGE
             # Only if repo have changes
             git commit -m "${COMMIT_MESSAGE}"
-            git push https://${{ secrets.ACCESS_TOKEN }}@github.com/${GITHUB_ACTOR}/culture.git master
+            git push origin master
         working-directory: ./dist
