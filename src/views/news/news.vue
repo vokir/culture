@@ -46,7 +46,6 @@ export default {
   },
 
   components: {
-    VSelect,
     VCheckbox,
     VModal,
     VCropImage,
