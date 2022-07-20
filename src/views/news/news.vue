@@ -14,7 +14,7 @@
 
 <script>
 import { ref } from 'vue'
-import { useState } from '../../store/'
+import { useState } from '../../store'
 
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
 import VModal from "../../components/ui/v-modal/v-modal.vue";
@@ -46,6 +46,7 @@ export default {
   },
 
   components: {
+    VSelect,
     VCheckbox,
     VModal,
     VCropImage,
