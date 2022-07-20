@@ -1,0 +1,26 @@
+.cropper {
+  &--small {
+    width: 250px;
+    height: 190px;
+  }
+
+  &--big {
+    width: 250px;
+    height: 490px;
+  }
+
+  :deep(.vue-advanced-cropper__image-wrapper) {
+    border-radius: 3px;
+  }
+
+  :deep(.cropper-foreground) {
+    background: var(--variable-9);
+    opacity: 0.8;
+    border-radius: 3px;
+  }
+
+  :deep(.cropper-background) {
+    background: transparent;
+    border-radius: 3px;
+  }
+}

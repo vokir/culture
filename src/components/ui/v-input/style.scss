@@ -1,0 +1,35 @@
+.input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px 0;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+
+  &__label {
+    color: var(--gray-light);
+  }
+
+  &__input {
+    padding: 10px;
+    color: var(--variable-13);
+    border: 1px solid var(--variable-5);
+    border-radius: 2px;
+    resize: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__count {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 14px;
+    line-height: 150%;
+    color: var(--variable-7);
+  }
+}

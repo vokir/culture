@@ -1,0 +1,127 @@
+.modal-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  &--centered {
+    .modal {
+      width: calc(100% - 160px);
+      height: auto;
+      top: 50%;
+      left: 50%;
+      right: initial;
+      transform: translate(-50%, -50%);
+      padding: 30px 50px 50px;
+      display: flex;
+
+      &__close {
+        position: initial;
+        background: none;
+        width: 18px;
+        height: 18px;
+        order: 1;
+
+        &:hover {
+          background: initial;
+
+          svg {
+            stroke: var(--danger);
+          }
+        }
+
+        svg {
+          transition: stroke 0.25s ease-in-out;
+          width: inherit;
+          height: inherit;
+          stroke: var(--variable-5);
+        }
+      }
+    }
+  }
+}
+
+.modal-background {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal {
+  width: calc(100% - 280px);
+  height: 100%;
+  background: var(--variable-17);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px 40px;
+
+  &__close {
+    position: absolute;
+    top: 28px;
+    left: -40px;
+    background: var(--variable-12);
+    width: 40px;
+    height: 37px;
+    border-radius: 19px 0 0 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.25s ease-in-out;
+
+    &:hover {
+      background: var(--danger);
+    }
+  }
+
+  &__content {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.slide-leave-active {
+  transition-delay: 0.25s;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active .modal,
+.slide-leave-active .modal {
+  transition: all 0.3s ease-in-out;
+}
+
+.slide-enter-from .modal,
+.slide-leave-to .modal {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.slide-enter-to .modal,
+.slide-leave-from .modal {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+
+.fade-in-enter-active,
+.fade-in-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-in-enter-from,
+.fade-in-leave-to {
+  opacity: 0;
+}
+
+

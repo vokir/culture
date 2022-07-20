@@ -1,0 +1,29 @@
+.checkbox {
+  width: 15px;
+  height: 15px;
+  display: block;
+  position: relative;
+  cursor: pointer;
+
+  &__input {
+    display: none;
+
+    &:checked ~ .checkbox__check {
+      background: var(--variable-14);
+      border: 1px solid var(--variable-14);
+    }
+  }
+
+  &__check {
+    background: transparent;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--variable-7);
+    border-radius: 1px;
+    transition: all 0.2s ease-in-out;
+  }
+}
