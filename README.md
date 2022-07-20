@@ -6,6 +6,8 @@
 
 * Node js 16.14.0 версии или выше
 * Пакетный менеджер yarn. Установка: https://yarnpkg.com/getting-started/install
+
+Установка зависимостей:
 ```
 yarn install
 ```
