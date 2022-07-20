@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 
-const Complex = () => import('../views/complex/complex.vue')
+const Complex = () => import('../views/news/news.vue')
 
 const routes = [
   {
