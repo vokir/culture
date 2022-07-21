@@ -5,7 +5,7 @@ const News = () => import('../views/news/news.vue')
 const routes = [
   {
     name: 'Новости',
-    path: "/news",
+    path: "/",
     component: News,
   },
 ]
