@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router"
 
-const Complex = () => import('../views/news/news.vue')
+const News = () => import('../views/news/news.vue')
 
 const routes = [
   {
-    path: "/",
-    component: Complex
+    name: 'Новости',
+    path: "/news",
+    component: News,
   },
 ]
 const router = createRouter({

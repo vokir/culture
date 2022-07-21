@@ -44,13 +44,13 @@ export default {
       }
     })
 
-    onMounted(() => {
-      document.body.style.overflow = 'hidden'
-    })
-
-    onUnmounted(() => {
-      document.body.style.overflow = ''
-    })
+    // onMounted(() => {
+    //   document.body.style.overflow = 'hidden'
+    // })
+    //
+    // onUnmounted(() => {
+    //   document.body.style.overflow = ''
+    // })
 
     return {
       closeModal
