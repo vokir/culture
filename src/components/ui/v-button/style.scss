@@ -2,6 +2,7 @@
   display: flex;
   border: none;
   align-items: center;
+  justify-content: center;
   padding: 10px 30px;
   border-radius: 2px;
   font-weight: 600;
@@ -9,7 +10,7 @@
   line-height: 150%;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
-  font-family: 'OpenSans';
+  font-family: 'OpenSans', sans-serif;
   color: var(--variable-15);
   text-transform: uppercase;
 
@@ -54,6 +55,10 @@
     border: 1px solid var(--variable-5);
     color: var(--main-black);
     font-weight: 700;
+  }
+
+  &--w100 {
+    width: 100%;
   }
 
   &--disabled {

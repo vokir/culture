@@ -11,6 +11,10 @@
     &:checked ~ .checkbox__check {
       background: var(--variable-14);
       border: 1px solid var(--variable-14);
+
+      svg {
+        fill: white;
+      }
     }
   }
 
@@ -25,5 +29,9 @@
     border: 1px solid var(--variable-7);
     border-radius: 1px;
     transition: all 0.2s ease-in-out;
+
+    svg {
+      fill: none;
+    }
   }
 }

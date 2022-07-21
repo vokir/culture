@@ -1,0 +1,22 @@
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.table {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-width: 100%;
+  height: fit-content;
+  background: var(--variable-17);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--variable-13);
+  table-layout: fixed;
+
+  &__thead {
+    padding: 20px 30px;
+  }
+}

@@ -1,9 +1,8 @@
 <template>
-  <multiselect v-bind="selectOptions" :options="options"/>
+  <div class="">select</div>
 </template>
 
 <script>
-import Multiselect from 'vue-multiselect'
 
 export default {
   name: "v-select",
@@ -22,11 +21,7 @@ export default {
     }
 
   },
-  components: {
-    Multiselect
-  },
 }
 </script>
 
 <style lang="scss" src="./style.scss" scoped/>
-<style src="vue-multiselect/dist/dist/vue-multiselect.css"/>
