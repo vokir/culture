@@ -54,7 +54,7 @@
 
         <v-table-column prop="icon" title="Icon">
           <template v-slot="{ row }">
-            <img :src="row" :alt="row">
+            <img :src="row.icon" :alt="row.icon">
           </template>
         </v-table-column>
         <v-table-column prop="name" title="Заголовок"/>
@@ -120,8 +120,26 @@ import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VSelect from "../../components/ui/v-select/v-select.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
+import gql from 'graphql-tag'
 
 export default {
+  apollo: {
+    getNews: {
+      query: gql`query test {
+        getNews(currentPage: 1, perPage: 5){
+          data {
+            ID,
+            UF_NAME
+          }
+        }
+      }`,
+      variables: {
+        currentPage: 1,
+        perPage: 5
+      },
+      fetchPolicy: 'cache-and-network',
+    }
+  },
   setup() {
     const route = useRoute()
 
