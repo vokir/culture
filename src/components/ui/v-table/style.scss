@@ -14,9 +14,51 @@
   font-size: 14px;
   line-height: 150%;
   color: var(--variable-13);
-  table-layout: fixed;
+  table-layout: auto;
+  border-spacing: 0;
 
-  &__thead {
-    padding: 20px 30px;
+  &__thead-th {
+    font-weight: 400;
+    color: var(--variable-13);
+    padding: 20px 10px;
   }
+
+  &__thead-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: inherit;
+    flex-wrap: wrap;
+  }
+
+  &__thead-th,
+  &__tbody-td {
+
+    &:first-child {
+      padding-left: 30px;
+    }
+
+    &:last-child {
+      padding-right: 30px;
+    }
+  }
+
+  &__tbody-td {
+    padding: 15px 10px;
+    border-top: 1px solid var(--variable-5);
+
+    .table__thead-cell {
+      min-height: 42px;
+    }
+  }
+
+  &__thead-th-check {
+    width: 15px;
+  }
+
+  &__thead-th-settings {
+    width: 16px;
+  }
+
 }
+

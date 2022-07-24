@@ -1,14 +1,18 @@
-import { createApp } from 'vue'
 import App from './App.vue'
-import { apolloProvider } from "./apollo/apolloClient";
+import FloatingVue from 'floating-vue'
 import router from "./router"
+import { apolloClientConfig } from "./config/apolloClient.config";
+import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { provideApolloClient } from "@vue/apollo-composable";
 
-const store = createPinia()
 const app = createApp(App)
+const store = createPinia()
 
-app.use(apolloProvider)
 app.use(router)
 app.use(store)
+app.use(FloatingVue)
+
+provideApolloClient(apolloClientConfig)
 
 app.mount('#app')

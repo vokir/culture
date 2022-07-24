@@ -11,7 +11,10 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
+    "@vue/apollo-composable": "^4.0.0-alpha.19",
     "apollo-boost": "^0.4.9",
+    "dayjs": "^1.11.4",
+    "floating-vue": "^2.0.0-beta.17",
     "normalize.css": "^8.0.1",
     "pinia": "^2.0.14",
     "storybook": "^6.5.9",
