@@ -1,6 +1,13 @@
 <template>
   <label :for="uid" class="checkbox">
-    <input class="checkbox__input" :id="uid" type="checkbox" @change="updateValue" v-bind="$attrs">
+    <input
+        class="checkbox__input"
+        type="checkbox"
+        :id="uid"
+        :value="value"
+        v-model="modelValue"
+        v-bind="$attrs"
+    >
     <span class="checkbox__check">
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="white">
         <path
@@ -13,21 +20,25 @@
 </template>
 
 <script>
+import { getCurrentInstance, computed } from "vue";
+
 export default {
   name: "v-checkbox",
-  emits: ['update:modelValue'],
   inheritAttrs: false,
-  computed: {
-    uid() {
-      return this.$.uid
-    }
+  props: {
+    value: { default: '' },
+    modelValue: {
+      type: [Array, Boolean],
+      default: false
+    },
   },
-  setup(_, { emit }) {
-    const updateValue = (event) => {
-      emit('update:modelValue', event.target.checked)
-    }
+  setup() {
+    const uid = computed(() => {
+      let instance = getCurrentInstance()
+      return instance.uid
+    })
     return {
-      updateValue,
+      uid
     }
   }
 }

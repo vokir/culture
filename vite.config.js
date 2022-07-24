@@ -5,13 +5,10 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   base: './',
   server: {
-    cors: false,
     proxy: {
-      "/api": {
+      '/api/management/graphql': {
         target: 'https://bitrix-stage.culture-home.ru/',
         changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
       }
     }
   },

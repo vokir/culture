@@ -1,0 +1,29 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Helvetica', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  padding: 0 7px;
+  color: var(--white);
+  border-radius: 3px;
+
+  &--blue {
+    background: var(--material-6);
+  }
+
+  &--purple {
+    background: var(--material-4);
+
+  }
+
+  &--orange {
+    background: var(--variable-4);
+  }
+
+  &--teal {
+    background: var(--material-8);
+  }
+}

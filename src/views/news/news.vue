@@ -20,25 +20,27 @@
       </div>
     </div>
     <div class="container-content">
-      <v-table :rows="rows">
 
-        <v-table-column prop="choice" title="choice">
-          <template v-slot:header="{ prop, title }">
-            <v-checkbox v-model="modalState.form.name"/>
+      <div class="loading" v-if="loading">Загрузка...</div>
+      <v-table v-else :rows="result.getNews.data">
+
+        <v-table-column id="choice" title="check" class="table__thead-th-check">
+          <template v-slot:header="{ id, title }">
+            <v-checkbox v-model='selectAll'/>
           </template>
 
-          <template v-slot="{ row }">
-            <v-checkbox v-model="modalState.form.name"/>
+          <template v-slot="{ row, items }">
+            <v-checkbox v-model="selected" :value="row"/>
           </template>
 
         </v-table-column>
 
-        <v-table-column prop="settings" title="settings">
-          <template v-slot:header="{ prop, title }">
+        <v-table-column id="settings" title="settings" class="table__thead-th-settings">
+          <template v-slot:header="{ id, title }">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M13.91 7.5H16V9.5H13.91C13.7621 10.3683 13.4203 11.1921 12.91 11.91L15.01 13.73L13.57 15.51L11.26 13.5C10.5765 13.9521 9.80717 14.2584 9 14.4V16.5H7V14.41C6.19233 14.2702 5.42264 13.9637 4.74 13.51L2.43 15.51L0.99 13.73L3.09 11.9C2.58701 11.1828 2.24893 10.3632 2.1 9.5H0V7.5H2.09C2.23791 6.6317 2.57972 5.80793 3.09 5.09L0.99 3.27L2.43 1.48999L4.74 3.5C5.42437 3.04958 6.19335 2.74334 7 2.59999V0.5H9V2.59999C9.80717 2.74154 10.5765 3.04792 11.26 3.5L13.57 1.48999L15.01 3.27L12.91 5.09C13.42 5.807 13.762 6.63 13.91 7.5ZM8 11.5C9.65685 11.5 11 10.1569 11 8.5C11 6.84315 9.65685 5.5 8 5.5C6.34315 5.5 5 6.84315 5 8.5C5 10.1569 6.34315 11.5 8 11.5Z"
-                    fill="#9E9E9E"/>
+              <path
+                  d="M10.9549 9.15814C10.7132 10.2946 9.81951 11.1883 8.68312 11.43C6.51653 11.8907 4.63443 10.008 5.09529 7.84184C5.31324 6.81752 6.34252 5.78814 7.3668 5.57014C9.53297 5.10907 11.4158 6.99137 10.9549 9.15814ZM15.4145 7.33497L13.8296 7.07054C13.717 6.61019 13.554 6.16969 13.3424 5.75791C13.3335 5.74059 13.3356 5.71975 13.3478 5.70459L14.3423 4.47143C14.5581 4.20554 14.5483 3.82299 14.3208 3.56639L13.6905 2.85694C13.462 2.60059 13.0831 2.54639 12.794 2.72899L11.4386 3.58106C10.851 3.17052 10.1865 2.86579 9.47001 2.68624C9.45101 2.68146 9.4366 2.66596 9.43336 2.64661L9.17351 1.08497C9.11785 0.747567 8.82588 0.5 8.48315 0.5H7.53321C7.19117 0.5 6.8982 0.747567 6.84379 1.08497L6.58249 2.64719C6.57925 2.66649 6.56487 2.68195 6.54589 2.6867C5.96604 2.83203 5.4214 3.06138 4.92248 3.36125C4.90567 3.37135 4.88455 3.37061 4.86857 3.3592L3.60581 2.458C3.32801 2.25951 2.94643 2.29055 2.70399 2.53249L2.03289 3.20407C1.79096 3.44652 1.75992 3.82811 1.95893 4.10593L2.86225 5.37122C2.87364 5.38717 2.87443 5.40829 2.86435 5.4251C2.5674 5.92016 2.34043 6.46157 2.19525 7.03615C2.19045 7.05513 2.175 7.06947 2.15572 7.07268L0.584933 7.33499C0.248053 7.39062 0 7.68263 0 8.02539V8.97461C0 9.31734 0.248053 9.60938 0.584933 9.66501L2.15567 9.92729C2.17497 9.93053 2.19045 9.9449 2.19523 9.9639C2.31332 10.433 2.48153 10.8817 2.70267 11.2994C2.71188 11.3169 2.70993 11.338 2.69755 11.3534L1.70793 12.579C1.49288 12.8447 1.50191 13.2275 1.72943 13.4839L2.35929 14.1933C2.5878 14.4501 2.96692 14.5034 3.25597 14.3212L4.60375 13.4746C4.62027 13.4642 4.64132 13.4646 4.65748 13.4755C5.23272 13.8643 5.88164 14.1506 6.57719 14.3212L6.84381 15.915C6.89823 16.2524 7.19117 16.5 7.53321 16.5H8.48315C8.82589 16.5 9.11785 16.2524 9.17351 15.915L9.4338 14.3531C9.43704 14.3337 9.45145 14.3183 9.47045 14.3135C10.0428 14.1702 10.5804 13.9449 11.0746 13.6503C11.0914 13.6403 11.1124 13.6411 11.1283 13.6524L12.4449 14.5928C12.7222 14.792 13.1041 14.7607 13.3463 14.518L14.0177 13.8466C14.2593 13.6049 14.292 13.2236 14.0914 12.9452L13.1541 11.6311C13.1427 11.6152 13.142 11.5941 13.152 11.5773C13.4499 11.0806 13.6781 10.5381 13.8224 9.96094C13.8272 9.94194 13.8427 9.92753 13.862 9.92429L15.4151 9.66497C15.7529 9.60931 16 9.3173 16 8.97456V8.02534C15.9995 7.68263 15.7524 7.39062 15.4145 7.33497Z"
+                  fill="#9E9E9E"/>
             </svg>
           </template>
 
@@ -52,18 +54,34 @@
 
         </v-table-column>
 
-        <v-table-column prop="icon" title="Icon">
+        <v-table-column id="icon" title="icon" width="30px">
           <template v-slot="{ row }">
             <img :src="row.icon" :alt="row.icon">
           </template>
         </v-table-column>
-        <v-table-column prop="name" title="Заголовок"/>
-        <v-table-column prop="type" title="Тип новости"/>
-        <v-table-column prop="date" title="Дата"/>
-        <v-table-column prop="complex" title="ЖК"/>
-        <v-table-column prop="visibility" title="Отображается для">
+        <v-table-column id="UF_NAME" title="Заголовок" width="190px">
           <template v-slot="{row}">
-            {{ row.visibility }}
+            <router-link class="link" :to="'complexes/' +row.ID">{{ row.UF_NAME }}</router-link>
+          </template>
+        </v-table-column>
+        <v-table-column id="types" title="Тип новости" width="120px">
+          <template v-slot="{row}">
+            {{ row.types }}
+          </template>
+        </v-table-column>
+        <v-table-column id="UF_CREATED_AT" title="Дата" width="80px">
+          <template v-slot="{row}">
+            {{ dayjs(row.UF_CREATED_AT).format('DD.MM.YYYY hh:mm') }}
+          </template>
+        </v-table-column>
+        <v-table-column id="complexes" title="ЖК" width="200px">
+          <template v-slot="{row}">
+            <div v-for="complex in row.complexes">{{ complex.UF_NAME }}</div>
+          </template>
+        </v-table-column>
+        <v-table-column id="visibility" title="Отображается для" width="400px">
+          <template v-slot="{row}">
+            <v-badge v-for="floor in row.floors" variant="orange" :text="floor.UF_NAME"/>
           </template>
         </v-table-column>
 
@@ -110,8 +128,9 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import VBadge from "../../components/ui/v-badge/v-badge.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import VCard from "../../components/ui/v-card/v-card.vue";
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
@@ -120,28 +139,20 @@ import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VSelect from "../../components/ui/v-select/v-select.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
-import gql from 'graphql-tag'
+import { useQuery } from '@vue/apollo-composable'
+import { GET_NEWS } from "../../api/queries/getNews";
+import dayjs from 'dayjs'
 
 export default {
-  apollo: {
-    getNews: {
-      query: gql`query test {
-        getNews(currentPage: 1, perPage: 5){
-          data {
-            ID,
-            UF_NAME
-          }
-        }
-      }`,
-      variables: {
-        currentPage: 1,
-        perPage: 5
-      },
-      fetchPolicy: 'cache-and-network',
-    }
-  },
   setup() {
+    const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+      currentPage: 1,
+      perPage: 20
+    })
     const route = useRoute()
+
+    const selected = ref([])
+
 
     const modalState = ref({
       isModalShow: false,
@@ -156,7 +167,6 @@ export default {
         buttons: ''
       }
     })
-    const check = ref(false)
     const openModal = () => {
       modalState.value.isModalShow = true
     }
@@ -165,43 +175,36 @@ export default {
       modalState.value.isModalShow = false
     }
 
-    const rows = [
-      {
-        icon: 'url-ico',
-        name: 'Кратковременное отключение горячей воды',
-        type: 'Объявления',
-        date: '12.06.2022 13:44',
-        complex: 'ЖК Железные острова',
-        visibility: [12, 13, 15]
+    const selectAll = computed({
+      get() {
+        return selected.value.length === result.value.getNews.data.length
       },
-      {
-        icon: 'url-ico',
-        name: 'Проведение сантехнических работ',
-        type: 'Объявления',
-        date: '12.06.2022 13:44',
-        complex: 'ЖК Береговой',
-        visibility: [1, 2]
-      },
-      {
-        icon: 'url-ico',
-        name: 'Специальные условия при покупке паркинга',
-        type: 'Акция',
-        date: '12.06.2022 13:44',
-        complex: 'ЖК Железные острова',
-        visibility: 'Весь ЖК'
+      set(value) {
+        selected.value = []
+
+        if (value) {
+          result.value.getNews.data.forEach((select) => {
+            selected.value.push(select)
+          })
+        }
       }
-    ]
+    })
 
     return {
       route,
       modalState,
       openModal,
       closeModal,
-      rows,
-      check
+      result,
+      loading,
+      variables,
+      refetch,
+      dayjs,
+      selectAll,
+      selected
     }
   },
 
-  components: { VTable, VCheckbox, VTableColumn, VSelect, VInput, VCard, VModal, VButton }
+  components: { VBadge, VTable, VCheckbox, VTableColumn, VSelect, VInput, VCard, VModal, VButton }
 }
 </script>

@@ -18,6 +18,11 @@ body {
   margin-right: auto;
 }
 
+.link {
+  color: var(--variable-14);
+  text-decoration: none;
+}
+
 .container-header {
   display: flex;
   justify-content: space-between;
