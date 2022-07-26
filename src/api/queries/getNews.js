@@ -18,15 +18,36 @@ export const GET_NEWS = gql`
         },
         houses {
           UF_NAME,
-          UF_COMPLEX_ID
         },
         approaches {
           UF_NAME,
-          UF_HOUSE_ID
+          house {
+            UF_NAME
+          }
         },
         floors {
           UF_NAME,
-          UF_NUMBER
+          UF_NUMBER,
+          approache {
+            UF_NAME,
+            house {
+              UF_NAME
+            }
+          }
+        },
+        premises {
+          UF_NUMBER,
+          UF_NAME,
+          floor {
+            UF_NAME,
+            UF_NUMBER,
+            approache {
+              UF_NAME,
+              house {
+                UF_NAME,
+              }
+            }
+          }
         }
         icon {
           file {

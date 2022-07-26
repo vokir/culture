@@ -1,10 +1,18 @@
 <template>
-  <div :class="['badge', 'badge--' + variant  ]" :title="tooltipText">
+  <div :class="['badge', 'badge--' + variant  ]" @mouseenter.passive="showTooltip" @mouseleave.passive="hideTooltip">
     {{ text }}
   </div>
+  <teleport to="body">
+    <div :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltip" :style="{...mouseCoords}">
+      {{tooltipText}}
+    </div>
+  </teleport>
 </template>
 
 <script>
+import { ref } from "vue";
+import debounce from "../../../hooks/useDebounce";
+import { useEventListener } from "../../../hooks/useEventListeners";
 export default {
   name: "v-badge",
   props: {
@@ -27,6 +35,46 @@ export default {
       validator(value) {
         return ['blue', 'purple', 'orange', 'teal'].includes(value)
       }
+    }
+  },
+  setup() {
+    const tooltip = ref(null)
+    const mouseCoords = ref({
+      top: '0px',
+      left: '0px'
+    })
+    const hovering = ref(false)
+
+    const showTooltip = () => {
+      let timeout = setTimeout(()=> {
+        hovering.value = true
+        clearTimeout(timeout)
+      }, 400)
+
+    }
+    const hideTooltip = () => {
+      let timeout = setTimeout(()=> {
+        hovering.value = true
+        clearTimeout(timeout)
+      }, 400)
+    }
+
+    const getMouseCoords = (event) => {
+      if (hovering.value) return
+      mouseCoords.value.top = event.clientY + 10 + 'px'
+      mouseCoords.value.left = event.clientX + 10 + 'px'
+    }
+
+
+    useEventListener(window, 'mousemove',  debounce((e)=>getMouseCoords(e), 150))
+
+
+    return {
+      tooltip,
+      hovering,
+      hideTooltip,
+      showTooltip,
+      mouseCoords,
     }
   }
 }
