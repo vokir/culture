@@ -81,7 +81,20 @@
         </v-table-column>
         <v-table-column id="visibility" title="Отображается для" width="400px">
           <template v-slot="{row}">
-            <v-badge v-for="floor in row.floors" variant="orange" :text="floor.UF_NAME"/>
+            <div class="badges-list">
+              <div class="badges-list__row" v-if="row.houses.length">
+                <v-badge  v-for="house in row.houses" variant="blue" :text="house.UF_NAME" tooltip/>
+              </div>
+              <div class="badges-list__row" v-if="row.approaches.length">
+                <v-badge  v-for="approache in row.approaches" variant="purple" :text="approache.UF_NAME" tooltip/>
+              </div>
+              <div class="badges-list__row" v-if="row.floors.length">
+                <v-badge  v-for="floor in row.floors" variant="orange" :text="floor.UF_NAME" tooltip/>
+              </div>
+              <div class="badges-list__row" v-if="row.premises.length">
+                <v-badge  v-for="premise in row.premises" variant="teal" :text="premise.UF_NAME" tooltip/>
+              </div>
+            </div>
           </template>
         </v-table-column>
 
@@ -208,3 +221,5 @@ export default {
   components: { VBadge, VTable, VCheckbox, VTableColumn, VSelect, VInput, VCard, VModal, VButton }
 }
 </script>
+
+<style lang="scss" src="./style.scss" scoped/>
