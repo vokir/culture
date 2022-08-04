@@ -4,7 +4,7 @@
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: var(--z-index-modal);
 
   &--centered {
     .modal {
@@ -16,6 +16,7 @@
       transform: translate(-50%, -50%);
       padding: 30px 50px 50px;
       display: flex;
+      overflow: hidden auto;
 
       &__close {
         position: initial;

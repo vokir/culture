@@ -66,7 +66,7 @@
         </v-table-column>
         <v-table-column id="types" title="Тип новости" width="120px">
           <template v-slot="{row}">
-            {{ row.types }}
+            <span v-for="(type, index) of row.types" :key="index">{{type.UF_TITLE}}</span>
           </template>
         </v-table-column>
         <v-table-column id="UF_CREATED_AT" title="Дата" width="80px">
@@ -76,85 +76,49 @@
         </v-table-column>
         <v-table-column id="complexes" title="ЖК" width="200px">
           <template v-slot="{row}">
-            <div v-for="complex in row.complexes">{{ complex.UF_NAME }}</div>
+            <div v-for="(complex, index) in row.complexes" :key="index">{{ complex.UF_NAME }}</div>
           </template>
         </v-table-column>
         <v-table-column id="visibility" title="Отображается для" width="400px">
           <template v-slot="{row}">
             <div class="badges-list">
               <div class="badges-list__row" v-if="row.houses.length">
-                <v-badge  v-for="house in row.houses" variant="blue" :text="house.UF_NAME" tooltip/>
+                <v-badge v-for="(house, index) in row.houses" variant="blue" :key="'house-'+index" :text="house.UF_NAME" tooltip :tooltip-text="house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.approaches.length">
-                <v-badge  v-for="approache in row.approaches" variant="purple" :text="approache.UF_NAME" tooltip/>
+                <v-badge v-for="(approache, index) in row.approaches" variant="purple" :key="'approache-'+index" :text="approache.UF_NAME" tooltip :tooltip-text="approache.UF_NAME + ', ' + approache.house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.floors.length">
-                <v-badge  v-for="floor in row.floors" variant="orange" :text="floor.UF_NAME" tooltip/>
+                <v-badge v-for="(floor, index) in row.floors" variant="orange" :key="'floor-'+index" :text="floor.UF_NAME" tooltip :tooltip-text="floor.UF_NAME + ', ' + floor.approache.UF_NAME + ', ' + floor.approache.house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.premises.length">
-                <v-badge  v-for="premise in row.premises" variant="teal" :text="premise.UF_NAME" tooltip/>
+                <v-badge v-for="(premise, index) in row.premises" variant="teal" :key="'premise-'+index" :text="premise.UF_NAME" tooltip :tooltip-text="premise.UF_NAME + ', ' + premise.floor.UF_NAME + ', ' + premise.floor.approache.UF_NAME + ', ' + premise.floor.approache.house.UF_NAME"/>
               </div>
             </div>
           </template>
         </v-table-column>
-
       </v-table>
     </div>
   </section>
-  <v-modal :show-modal="modalState.isModalShow" @closeModal="closeModal">
-    <section class="news-add">
-      <div class="news-add__title">Добавить новость</div>
-      <div class="news-add-form">
-        <form action="">
-          <v-card>
-            <v-input v-model="modalState.form.date" name="date" label="Дата*"/>
-            <v-select options="[1,2]" placeholder="Тип новости"></v-select>
-            <v-select options="[1,2]" placeholder="ЖК"></v-select>
-            <div class="show-for">
-              Отображать для
-            </div>
-            <v-select options="[1,2]" placeholder="Контакты"></v-select>
-          </v-card>
-          <v-card>
-            <v-input v-model="modalState.form.name" name="name" label="Заголовок*" max-length="130"/>
-            <v-input v-model="modalState.form.previewText" name="previewText" label="Текст анонса*" textarea rows="4"
-                     max-length="280"/>
-            <v-input v-model="modalState.form.newsText" name="previewText" label="Текст новости*" textarea rows="4"
-                     max-length="280"/>
-          </v-card>
-          <v-card>
-            <v-input v-model="modalState.form.phone" name="phone" label="Телефон"/>
-            <v-input v-model="modalState.form.docs" type="file" name="previewText" label="Документы"/>
-            <v-input v-model="modalState.form.links" name="links" label="Ссылки"/>
-            <v-input v-model="modalState.form.buttons" name="buttons" label="Кнопка"/>
-          </v-card>
-        </form>
-      </div>
-      <div class="news-add__prewiew">
-
-      </div>
-    </section>
-    <div class="news-add__actions">
-
-    </div>
+  <v-modal :show-modal="isOpen" @closeModal="closeModal">
+    <news-add/>
   </v-modal>
 </template>
 
 <script>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import NewsAdd from "../../components/news-add/news-add.vue";
 import VBadge from "../../components/ui/v-badge/v-badge.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
-import VCard from "../../components/ui/v-card/v-card.vue";
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
-import VInput from "../../components/ui/v-input/v-input.vue";
 import VModal from "../../components/ui/v-modal/v-modal.vue";
-import VSelect from "../../components/ui/v-select/v-select.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import { useQuery } from '@vue/apollo-composable'
 import { GET_NEWS } from "../../api/queries/getNews";
 import dayjs from 'dayjs'
+import useModal from "../../hooks/useModal";
 
 export default {
   setup() {
@@ -165,28 +129,7 @@ export default {
     const route = useRoute()
 
     const selected = ref([])
-
-
-    const modalState = ref({
-      isModalShow: false,
-      form: {
-        date: '',
-        name: '',
-        previewText: '',
-        newsText: '',
-        phone: '',
-        docs: '',
-        links: '',
-        buttons: ''
-      }
-    })
-    const openModal = () => {
-      modalState.value.isModalShow = true
-    }
-
-    const closeModal = () => {
-      modalState.value.isModalShow = false
-    }
+    const [isOpen, openModal, closeModal] = useModal()
 
     const selectAll = computed({
       get() {
@@ -205,7 +148,7 @@ export default {
 
     return {
       route,
-      modalState,
+      isOpen,
       openModal,
       closeModal,
       result,
@@ -218,7 +161,7 @@ export default {
     }
   },
 
-  components: { VBadge, VTable, VCheckbox, VTableColumn, VSelect, VInput, VCard, VModal, VButton }
+  components: { NewsAdd, VBadge, VTable, VCheckbox, VTableColumn, VButton, VModal }
 }
 </script>
 

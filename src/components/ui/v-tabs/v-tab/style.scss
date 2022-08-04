@@ -1,0 +1,8 @@
+.tabs-list {
+  &__content{
+    display: none;
+    &--active {
+      display: inherit;
+    }
+  }
+}

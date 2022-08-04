@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, onUpdated } from 'vue'
 import { useEventListener } from '../../../hooks/useEventListeners'
 
 export default {
@@ -33,7 +33,7 @@ export default {
     showModal: Boolean,
     centered: Boolean
   },
-  setup(_, { emit }) {
+  setup({ showModal }, { emit }) {
     const closeModal = () => {
       emit('closeModal')
     }

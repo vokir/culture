@@ -10,6 +10,36 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
 }
+.pick-image {
+  position: absolute;
+  top: 29px;
+  left: 18px;
+  font-family: 'Helvetica', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--variable-17);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  svg path {
+    transition: all 0.25s ease-in-out;
+
+  }
+  &:hover {
+    color: var(--variable-12);
+    svg path {
+      stroke: var(--variable-12);
+    }
+  }
+}
+img {
+  width: 100%;
+  max-height: 100%;
+}
 
 .container {
   width: 100%;

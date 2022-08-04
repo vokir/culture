@@ -1,9 +1,9 @@
 <template>
-  <div :class="['badge', 'badge--' + variant  ]" @mouseenter.passive="showTooltip" @mouseleave.passive="hideTooltip">
+  <div :class="['badge', 'badge--' + variant  ]" @mouseenter="showTooltip" @mouseleave="hideTooltip">
     {{ text }}
   </div>
   <teleport to="body">
-    <div :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltip" :style="{...mouseCoords}">
+    <div v-if="hovering" :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltip" :style="{...mouseCoords}">
       {{tooltipText}}
     </div>
   </teleport>
@@ -46,27 +46,20 @@ export default {
     const hovering = ref(false)
 
     const showTooltip = () => {
-      let timeout = setTimeout(()=> {
-        hovering.value = true
-        clearTimeout(timeout)
-      }, 400)
-
+      hovering.value = true
     }
     const hideTooltip = () => {
-      let timeout = setTimeout(()=> {
-        hovering.value = true
-        clearTimeout(timeout)
-      }, 400)
+      hovering.value = false
     }
 
     const getMouseCoords = (event) => {
-      if (hovering.value) return
+      if (!hovering.value) return
       mouseCoords.value.top = event.clientY + 10 + 'px'
       mouseCoords.value.left = event.clientX + 10 + 'px'
     }
 
 
-    useEventListener(window, 'mousemove',  debounce((e)=>getMouseCoords(e), 150))
+    useEventListener(window, 'mousemove',  debounce((e)=>getMouseCoords(e), 0))
 
 
     return {

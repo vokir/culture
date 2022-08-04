@@ -5,7 +5,7 @@
         v-if="label"
         :for="name"
     >{{ label }}</label>
-    <input
+    <textarea
         :id="name"
         :name="name"
         class="input-wrapper__input"
@@ -19,30 +19,19 @@
 </template>
 
 <script>
+import VInput from '../v-input/v-input.vue'
 
 export default {
-  name: 'v-input',
+  extends: VInput,
   inheritAttrs: false,
   emits: ['update:modelValue'],
-  props: {
-    name: {
-      type: String,
-      required: true
-    },
-    label: String,
-    modelValue: String,
-    maxLength: String,
-  },
+  name: 'v-textarea',
   setup({ maxLength }, { emit }) {
     const updateValue = (event) => {
-      if (maxLength) {
-        if (event.target.value.length <= maxLength) {
-          emit('update:modelValue', event.target.value)
-        } else {
-          event.target.value = event.target.value.substring(0, maxLength);
-        }
-      } else {
+      if (event.target.value.length <= maxLength) {
         emit('update:modelValue', event.target.value)
+      } else {
+        event.target.value = event.target.value.substring(0, maxLength);
       }
     }
     return {
@@ -52,4 +41,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="../v-input/style.scss" scoped/>

@@ -1,0 +1,46 @@
+.stories {
+  min-height: 812px;
+  background-size: cover;
+  padding: 26px 20px 40px;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+  background-position: center;
+  background-repeat: no-repeat;
+  &__content {
+    background: var(--white);
+    box-shadow: var(--shadow-1);
+    border-radius: 30px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    &-name {
+      font-family: 'Proxima Nova', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 22px;
+      letter-spacing: 0.01em;
+      color: var(--variable-13);
+    }
+    &-desc {
+      font-family: 'Proxima Nova', sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 22px;
+      letter-spacing: 0.01em;
+      color: var(--variable-13);
+    }
+    &-date {
+      font-family: 'Proxima Nova', sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 12px;
+      line-height: 13px;
+      color: var(--variable-13);
+    }
+  }
+}
