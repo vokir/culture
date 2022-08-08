@@ -41,7 +41,7 @@
     <div class="preview-footer">
       <div class="preview-footer__date">
         <template v-if="date.length">
-          {{ date }}
+          {{ computeDate(date) }}
         </template>
         <template v-else>
           Сегодня  14:30
@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import computeDate from "@/helpers/dateFormat";
+
 export default {
   name: "amio-preview",
   props: {
@@ -87,6 +89,11 @@ export default {
       type: String,
       required: false,
       default: ''
+    }
+  },
+  setup() {
+    return {
+      computeDate
     }
   }
 }

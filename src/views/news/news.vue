@@ -2,7 +2,7 @@
   <section class="container">
     <div class="container-header">
       <div class="container-header__title">
-        {{ route.name }}
+        {{ route.meta.pageTitle }}
         <div class="container-header__title-add-favorite">
           <svg xmlns="http://www.w3.org/2000/svg" width="23" height="22" viewBox="0 0 23 22" fill="none">
             <path
@@ -22,7 +22,7 @@
     <div class="container-content">
 
       <div class="loading" v-if="loading">Загрузка...</div>
-      <v-table v-else :rows="result.getNews.data">
+      <v-table v-else :rows="news">
 
         <v-table-column id="choice" title="check" class="table__thead-th-check">
           <template v-slot:header="{ id, title }">
@@ -61,7 +61,7 @@
         </v-table-column>
         <v-table-column id="UF_NAME" title="Заголовок" width="190px">
           <template v-slot="{row}">
-            <router-link class="link" :to="'complexes/' +row.ID">{{ row.UF_NAME }}</router-link>
+            <router-link class="link" :to="{ name: 'news-detail', params: { id: row.ID } }">{{ row.UF_NAME }}</router-link>
           </template>
         </v-table-column>
         <v-table-column id="types" title="Тип новости" width="120px">
@@ -122,14 +122,18 @@ import useModal from "../../hooks/useModal";
 
 export default {
   setup() {
+    const route = useRoute()
+    const selected = ref([])
+    const [isOpen, openModal, closeModal] = useModal()
+
     const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
       currentPage: 1,
       perPage: 20
     })
-    const route = useRoute()
 
-    const selected = ref([])
-    const [isOpen, openModal, closeModal] = useModal()
+    const news = computed(()=>{
+      return result.value.getNews.data
+    })
 
     const selectAll = computed({
       get() {
@@ -151,7 +155,7 @@ export default {
       isOpen,
       openModal,
       closeModal,
-      result,
+      news,
       loading,
       variables,
       refetch,

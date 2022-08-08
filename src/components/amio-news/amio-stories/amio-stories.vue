@@ -17,8 +17,8 @@
         </template>
       </div>
       <div class="stories__content-desc">
-        <template v-if="desc.length">
-          {{ desc }}
+        <template v-if="fullDesc.length">
+          {{ fullDesc }}
         </template>
         <template v-else>
           В связи с отключением электроэнергии филиалом ОАО «НЭСК-электросеть» «Москва электросеть» на ВНС будет снижено давление водоснабжения до 1,3 атм. абонентам по адресам: ул.1-я Заречная,13/1, 15/1,15/2,17, ул.2-я Заречная, 104а, 104б, 104в.
@@ -26,7 +26,7 @@
       </div>
       <div class="stories__content-date">
         <template v-if="date.length">
-          {{ date }}
+          {{ computeDate(date) }}
         </template>
         <template v-else>
           Сегодня  14:30
@@ -38,6 +38,7 @@
 
 <script>
 import { computed } from "vue";
+import computeDate from "@/helpers/dateFormat";
 
 export default {
   name: "amio-stories",
@@ -52,7 +53,7 @@ export default {
       required: false,
       default: ''
     },
-    desc: {
+    fullDesc: {
       type: String,
       required: false,
       default: ''
@@ -64,6 +65,7 @@ export default {
     },
   },
   setup({ icon }) {
+
     const computedStyle = computed(()=>{
       return {
         backgroundImage: `url('${ icon ? icon : '/src/assets/images/storyPreview.png' }')`
@@ -71,7 +73,8 @@ export default {
     })
 
     return {
-      computedStyle
+      computedStyle,
+      computeDate
     }
   }
 }

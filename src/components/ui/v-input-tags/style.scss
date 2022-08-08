@@ -1,3 +1,9 @@
+:global(.modal-tags.modal-wrapper--centered .modal__close) {
+  position: absolute;
+  right: 25px;
+  top: 72px;
+  left: initial;
+}
 .tags-wrapper {
   position: relative;
   display: grid;
@@ -67,6 +73,9 @@
       justify-content: center;
       top: 31px;
       cursor: pointer;
+    }
+    :deep(.input-link) {
+      color: var(--variable-14);
     }
   }
 }

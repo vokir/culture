@@ -4,8 +4,8 @@
       {{ labelSelect }}
     </div>
     <div class="select-wrapper__select">
-      <div class="select-wrapper__placeholder" >
-        {{ modelValue ? modelValue : placeholder }}
+      <div class="select-wrapper__placeholder">
+        {{ modelValue.length ? modelValue : placeholder }}
       </div>
       <input ref="input" type="text" class="select-wrapper__select-input" readonly v-bind="$attrs" @focus="activate" @blur="deactivate">
       <div class="select-wrapper__toggle" @mousedown.prevent="toggleOptions">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { ref } from "vue";
 
 export default {
   name: "v-select",
@@ -51,7 +51,7 @@ export default {
     multiple: Boolean,
   },
   setup({ label, multiple, modelValue }, { emit }) {
-    const selectedValue = ref('');
+    const selectedValue = ref([]);
     const isOpen = ref(false);
     const input = ref(null)
 
@@ -77,9 +77,17 @@ export default {
         selected = option
       }
       if (multiple) {
-        emit('update:modelValue', )
+        const idx = selectedValue.value.indexOf(selected)
+        if (idx === -1) {
+          selectedValue.value.push(selected)
+        } else {
+          selectedValue.value.splice(idx, 1)
+        }
+        emit('update:modelValue', selectedValue.value)
+
       } else {
-        emit('update:modelValue', selected)
+        selectedValue.value = selected
+        emit('update:modelValue', selectedValue.value)
       }
     }
 

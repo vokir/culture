@@ -13,8 +13,8 @@
     <div class="detail__content">
       <div class="detail__content-info">
         <div class="detail__content-desc">
-          <template v-if="desc.length">
-            {{ desc }}
+          <template v-if="fullDesc.length">
+            {{ fullDesc }}
           </template>
           <template v-else>
             В связи с отключением электроэнергии филиалом ОАО «НЭСК-электросеть» «Москва электросеть» на ВНС будет снижено давление водоснабжения до 1,3 атм. абонентам по адресам: ул.1-я Заречная,13/1, 15/1,15/2,17, ул.2-я Заречная, 104а, 104б, 104в.
@@ -30,30 +30,33 @@
         </div>
         <div class="detail__content-date">
           <template v-if="date.length">
-            {{ date }}
+            {{ computeDate(date) }}
           </template>
           <template v-else>
             Сегодня  14:30
           </template>
         </div>
       </div>
-      <div class="detail__content-links">
+      <div class="detail__content-links" v-if="links.length">
+        <a class="detail__content-links-link" v-for="(item, index) of links" :href="item.link" :key="item.name + index">{{ item.name }}</a>
+      </div>
+      <div class="detail__content-docs" v-if="docs.length">
 
       </div>
-      <div class="detail__content-docs">
-
+      <div class="detail__content-phone" v-if="phone">
+        Подробная информация по телефону
+        <a class="detail__content-phone-link" :href="'tel:' + phone">{{ phone }}</a>
       </div>
-      <div class="detail__content-phones">
-
-      </div>
-      <div class="detail__content-buttons">
-
+      <div class="detail__content-button" v-if="button.length">
+        <a class="detail__content-button-btn" :href="button[0].link" >{{ button[0].name }}</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import computeDate from "@/helpers/dateFormat";
+
 export default {
   name: "amio-detail",
   props: {
@@ -67,7 +70,7 @@ export default {
       required: false,
       default: ''
     },
-    desc: {
+    fullDesc: {
       type: String,
       required: false,
       default: ''
@@ -77,6 +80,31 @@ export default {
       required: false,
       default: ''
     },
+    links: {
+      type: Array,
+      required: false,
+      default: () => ([])
+    },
+    button: {
+      type: Array,
+      required: false,
+      default: () => ([])
+    },
+    docs: {
+      type: Array,
+      required: false,
+      default: () => ([])
+    },
+    phone: {
+      type: String,
+      required: false,
+      default: ''
+    }
+  },
+  setup() {
+    return {
+      computeDate
+    }
   }
 }
 </script>
