@@ -1,0 +1,14 @@
+.docs-wrapper {
+  &__actions {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 25px;
+    :deep(.btn--link) {
+      color: var(--danger);
+      text-decoration: underline;
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+}

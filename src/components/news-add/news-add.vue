@@ -23,13 +23,11 @@
       <v-card class="news-add-form__card-third">
         <div class="card-row">
           <v-input v-model="form.phone" name="phone" label="Телефон" v-mask="'+7 (###) ###-##-##'"/>
-<!--          <v-input-tags-->
-<!--              label="Кнопка"-->
-<!--              input-label="Текст кнопки"-->
-<!--              inputLabelLink="Ссылка"-->
-<!--              :max-tags="1"-->
-<!--              v-model="form.docs"-->
-<!--          />-->
+          <v-add-docs
+              label="Документы"
+              :max-tags="3"
+              v-model="form.docs"
+          />
         </div>
         <v-input-tags
             label="Ссылки"
@@ -90,7 +88,6 @@
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
-import { GET_DOCUMENTS } from "../../api/queries/getDocuments";
 import useModal from "../../hooks/useModal";
 import AmioDetail from "../amio-news/amio-detail/amio-detail.vue";
 import AmioPreview from "../amio-news/amio-preview/amio-preview.vue";
@@ -105,24 +102,21 @@ import VTab from "../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../ui/v-tabs/v-tabs.vue";
 import {mask} from 'vue-the-mask'
 import VTextarea from "../ui/v-textarea/v-input.vue";
+import VAddDocs from "../ui/v-add-docs/v-add-docs.vue";
 
 export default {
   name: "news-add",
   directives: {mask},
-  components: { VButton, VModal, VInputTags, VTextarea, AmioDetail, AmioStories, AmioPreview, VTab, VTabs, VSelect, VInput, VCard },
+  components: {VAddDocs, VButton, VModal, VInputTags, VTextarea, AmioDetail, AmioStories, AmioPreview, VTab, VTabs, VSelect, VInput, VCard },
 
   setup() {
     const { isOpen, openModal, closeModal } = useModal()
     const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
-    const { result: docsData, loading: docsLoading } = useQuery(GET_DOCUMENTS)
 
     const complexes = computed(()=>{
       return complexesData.value.getComplexes
     })
 
-    const docs = computed(()=>{
-      return docsData.value.getDocuments.data
-    })
 
     const types = [
         'Новость',
@@ -148,8 +142,6 @@ export default {
       types,
       complexes,
       complexesLoading,
-      docs,
-      docsLoading,
     }
   }
 }

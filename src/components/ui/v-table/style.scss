@@ -43,6 +43,10 @@
     }
   }
 
+  &__tbody-tr:hover {
+    background: var(--yellow);
+  }
+
   &__tbody-td {
     padding: 15px 10px;
     border-top: 1px solid var(--variable-5);

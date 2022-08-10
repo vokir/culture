@@ -15,7 +15,7 @@ export default {
     return () => h('div', { class: 'table-wrapper' }, [
       h('table', { class: 'table' }, [
         h('thead', { class: 'table__thead' }, [
-          h('tr', { class: 'table__tbody-tr' }, [
+          h('tr', { class: 'table__thead-tr' }, [
             Array.from(columns).map((column, index) => {
               return h('th', {
                 class: ['table__thead-th', column.props.class],

@@ -5,6 +5,12 @@ export const GET_DOCUMENTS = gql`
     getDocuments(currentPage: 1, perPage:10){
       data {
         UF_TITLE,
+        category {
+          UF_TITLE
+        }
+        type {
+          UF_TITLE
+        },
         file{
           SRC,
           ORIGINAL_NAME,

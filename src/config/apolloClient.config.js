@@ -4,8 +4,8 @@ const sessid = 'b3755b7c7a87d99cb8f3e368ed29b5c2' //BX.bitrix_sessid();
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
-  uri:(process.env.NODE_ENV === 'development' ? '/api/management/graphql?sessid='
-      : 'https://bitrix-stage.culture-home.ru/api/management/graphql?sessid=') + sessid,
+  uri: (process.env.NODE_ENV === 'development' ? '/api/management/graphql?sessid='
+    : 'https://bitrix-stage.culture-home.ru/api/management/graphql?sessid=') + sessid,
 })
 
 const authMiddleware = new ApolloLink((operation, forward) => {

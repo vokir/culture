@@ -5,6 +5,10 @@ const NewsDetail = () => import('../views/news-detail/news-detail.vue')
 
 const routes = [
   {
+    path: "/",
+    redirect: '/news/'
+  },
+  {
     name: 'news',
     path: '/news/',
     component: News,
