@@ -51,7 +51,9 @@ export const GET_NEWS = gql`
         }
         icon {
           file {
-            ORIGINAL_NAME
+            ORIGINAL_NAME,
+            SRC,
+            ID
           }
         }
       }

@@ -1,6 +1,6 @@
 <template>
   <v-tags-list :label="label" :max-tags="maxTags" :tags="tags" @removeTag="removeTag" @openModal="openModal">
-    <v-modal :show-modal="isOpen" @closeModal="closeModal" centered class="modal-tags">
+    <v-modal v-if="isOpen" @closeModal="closeModal" centered class="modal-tags">
       <div class="tags-wrapper__actions">
         <v-input v-model="currentTag.name" name="text" :label="inputLabel" />
         <v-input class="input-link" v-model="currentTag.link" name="link" :label="inputLabelLink"/>
@@ -34,7 +34,7 @@ export default {
     maxTags: Number,
   },
   setup({ modelValue }, { emit }) {
-    const [isOpen, openModal, closeModal] = useModal()
+    const { isOpen, openModal, closeModal } = useModal()
 
     const tags = ref(modelValue)
 

@@ -13,6 +13,8 @@
         :value="modelValue"
         :maxlength="maxLength"
         @input="updateValue"
+        @focus="$emit('focus')"
+        @blur="$emit('blur')"
     />
     <span class="input-wrapper__count" v-if="maxLength">{{ modelValue.length }} / {{ maxLength }}</span>
   </div>
@@ -23,7 +25,7 @@
 export default {
   name: 'v-input',
   inheritAttrs: false,
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'focus', 'blur'],
   props: {
     name: {
       type: String,

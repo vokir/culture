@@ -1,6 +1,6 @@
 <template>
 	<v-tags-list :label="label" @openModal="openModal">
-		<v-modal :show-modal="isOpen" @closeModal="closeModal" centered class="modal-tags">
+		<v-modal v-if="isOpen" @closeModal="closeModal" centered class="modal-tags">
 			<div class="docs-wrapper">
 				<div class="docs-wrapper__title">Выберите один или несколько документов</div>
 				<div class="input">search</div>
@@ -56,7 +56,7 @@ export default {
 		maxTags: Number
 	},
 	setup () {
-		const [isOpen, openModal, closeModal] = useModal()
+		const { isOpen, openModal, closeModal } = useModal()
 		const { result: docsData, loading: docsLoading } = useQuery(GET_DOCUMENTS)
 		const docs = computed(()=>{
 			return docsData.value.getDocuments.data

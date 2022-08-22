@@ -56,7 +56,7 @@
 
         <v-table-column id="icon" title="icon" width="30px">
           <template v-slot="{ row }">
-            <img :src="row.icon" :alt="row.icon">
+            <img v-if="row.icon" :src="row.icon.file.SRC" :alt="row.icon">
           </template>
         </v-table-column>
         <v-table-column id="UF_NAME" title="Заголовок" width="190px">
@@ -100,7 +100,7 @@
       </v-table>
     </div>
   </section>
-  <v-modal :show-modal="isOpen" @closeModal="closeModal">
+  <v-modal v-if="isOpen" @closeModal="closeModal">
     <news-add/>
   </v-modal>
 </template>
@@ -112,6 +112,7 @@ import NewsAdd from "../../components/news-add/news-add.vue";
 import VBadge from "../../components/ui/v-badge/v-badge.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
+import VCropImage from "../../components/ui/v-crop-image/v-crop-image.vue";
 import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
@@ -124,7 +125,7 @@ export default {
   setup() {
     const route = useRoute()
     const selected = ref([])
-    const [isOpen, openModal, closeModal] = useModal()
+    const { isOpen, openModal, closeModal } = useModal()
 
     const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
       currentPage: 1,
@@ -165,7 +166,7 @@ export default {
     }
   },
 
-  components: { NewsAdd, VBadge, VTable, VCheckbox, VTableColumn, VButton, VModal }
+  components: { VCropImage, NewsAdd, VBadge, VTable, VCheckbox, VTableColumn, VButton, VModal }
 }
 </script>
 

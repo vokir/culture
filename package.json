@@ -13,6 +13,7 @@
   "dependencies": {
     "@vue/apollo-composable": "^4.0.0-alpha.19",
     "apollo-boost": "^0.4.9",
+    "axios": "^0.27.2",
     "dayjs": "^1.11.4",
     "floating-vue": "^2.0.0-beta.17",
     "normalize.css": "^8.0.1",
@@ -20,7 +21,8 @@
     "storybook": "^6.5.9",
     "vue": "^3.2.25",
     "vue-router": "^4.0.16",
-    "vue-the-mask": "^0.11.1"
+    "vue-the-mask": "^0.11.1",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@apollo/client": "^3.6.9",

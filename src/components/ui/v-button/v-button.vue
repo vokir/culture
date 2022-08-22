@@ -1,5 +1,11 @@
 <template>
-  <component :is="computeComponent" :class="computeClass" :disabled="disabled">
+  <component
+    :is="computeComponent"
+    :class="['btn', `btn--${variant}`, {
+      'btn--disabled': disabled,
+    }]"
+    :disabled="disabled"
+  >
     <slot></slot>
   </component>
 </template>
@@ -26,24 +32,14 @@ export default {
       }
     },
   },
-  setup({ href, disabled, variant }) {
+  setup({ href }) {
 
     const computeComponent = computed(() => {
       return href ? 'router-link' : 'button'
     })
-    const computeClass = computed(() => {
-      return [
-        'btn',
-        `btn--${variant}`,
-        {
-          'btn--disabled': disabled,
-        }
-      ]
-    })
 
     return {
       computeComponent,
-      computeClass,
     }
   }
 }

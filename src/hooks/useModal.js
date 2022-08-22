@@ -11,7 +11,7 @@ const useModal = () => {
     isOpen.value = false
   }
 
-  return [isOpen, openModal, closeModal]
+  return { isOpen, openModal, closeModal }
 }
 
 export default useModal

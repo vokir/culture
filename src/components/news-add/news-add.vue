@@ -5,9 +5,15 @@
       <v-card class="news-add-form__card-first">
         <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
         <v-select v-model="form.type" name="type" :options="types" labelSelect="Тип новости"/>
-        <v-select v-if="!complexesLoading" v-model="form.complex" name="home" :options="complexes"  labelSelect="ЖК" label="UF_NAME"/>
-        <div class="show-for" v-if="form.complex">
-          Отображать для
+        <v-select v-if="!complexesLoading" v-model="form.complex" name="home" :options="complexes" labelSelect="ЖК" label="UF_NAME"/>
+        <div class="show-for" v-if="form.complex" @click="openBindModal">
+          <div class="show-for__title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M6 4V0H4V4H0V6H4V10H6V6H10V4H6Z" fill="#333333"/>
+            </svg>
+            Отображать для
+          </div>
+          <span class="show-for__desc">Дома / Подъезда / Этажа / Помещения</span>
         </div>
         <div class="select-contacts">
           <v-select name="contacts" :options="[1,2]" labelSelect="Контакты"></v-select>
@@ -52,16 +58,16 @@
     <div class="news-add__preview">
       <v-card class="news-add__preview-card">
         <v-tabs>
-          <v-tab title="AMIO">
+          <v-tab title="AMIO" v-model="currentTab">
             <v-tabs link-title class="news-add__preview-inner-tabs">
               <v-tab title="Превью">
                 <amio-preview v-bind="{...form}"/>
               </v-tab>
               <v-tab title="Подробная">
-                <amio-detail v-bind="{...form}"/>
+                <amio-detail v-bind="{...form}" @openModal="openModal"/>
               </v-tab>
               <v-tab title="Сторис">
-                <amio-stories v-bind="{...form}"/>
+                <amio-stories v-bind="{...form}" @openModal="openModal"/>
               </v-tab>
             </v-tabs>
           </v-tab>
@@ -80,8 +86,13 @@
           </v-tab>
         </v-tabs>
       </v-card>
+      <v-card class="news-add__preview-icon">
+        <select-icon/>
+      </v-card>
     </div>
   </section>
+  <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
+  <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID"/>
 </template>
 
 <script>
@@ -92,6 +103,9 @@ import useModal from "../../hooks/useModal";
 import AmioDetail from "../amio-news/amio-detail/amio-detail.vue";
 import AmioPreview from "../amio-news/amio-preview/amio-preview.vue";
 import AmioStories from "../amio-news/amio-stories/amio-stories.vue";
+import SelectBind from "../select-bind/select-bind.vue";
+import SelectIcon from "../select-icon/select-icon.vue";
+import SelectImage from "../select-image/select-image.vue";
 import VButton from "../ui/v-button/v-button.vue";
 import VCard from "../ui/v-card/v-card.vue";
 import VInputTags from "../ui/v-input-tags/v-input-tags.vue";
@@ -107,16 +121,33 @@ import VAddDocs from "../ui/v-add-docs/v-add-docs.vue";
 export default {
   name: "news-add",
   directives: {mask},
-  components: {VAddDocs, VButton, VModal, VInputTags, VTextarea, AmioDetail, AmioStories, AmioPreview, VTab, VTabs, VSelect, VInput, VCard },
+  components: {
+    SelectIcon,
+    SelectBind,
+    SelectImage,
+    VAddDocs,
+    VButton,
+    VModal,
+    VInputTags,
+    VTextarea,
+    AmioDetail,
+    AmioStories,
+    AmioPreview,
+    VTab,
+    VTabs,
+    VSelect,
+    VInput,
+    VCard
+  },
 
   setup() {
     const { isOpen, openModal, closeModal } = useModal()
+    const { isOpen: bindIsOpen, openModal: openBindModal, closeModal: closeBindModal } = useModal()
+    const currentTab = ref('Превью')
     const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
-
     const complexes = computed(()=>{
       return complexesData.value.getComplexes
     })
-
 
     const types = [
         'Новость',
@@ -134,14 +165,34 @@ export default {
       phone: '',
       docs: [],
       links: [],
-      button: []
+      button: [],
+      imgLandscape: null,
+      imgLibrary: null,
     })
 
+    const onLoadFiles = (value) => {
+      form.value.imgLandscape = {
+        id: value.id[0],
+        file: value.files.imgLandscape
+      }
+      form.value.imgLibrary = {
+        id: value.id[1],
+        file: value.files.imgLibrary
+      }
+    }
     return {
       form,
       types,
       complexes,
       complexesLoading,
+      isOpen,
+      bindIsOpen,
+      currentTab,
+      openModal,
+      closeModal,
+      openBindModal,
+      closeBindModal,
+      onLoadFiles
     }
   }
 }

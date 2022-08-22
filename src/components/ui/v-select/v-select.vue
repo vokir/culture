@@ -5,7 +5,7 @@
     </div>
     <div class="select-wrapper__select">
       <div class="select-wrapper__placeholder">
-        {{ modelValue.length ? modelValue : placeholder }}
+        {{ selectedValue.length ? selectedValue : placeholder }}
       </div>
       <input ref="input" type="text" class="select-wrapper__select-input" readonly v-bind="$attrs" @focus="activate" @blur="deactivate">
       <div class="select-wrapper__toggle" @mousedown.prevent="toggleOptions">
@@ -66,9 +66,7 @@ export default {
     const toggleOptions = () => {
       isOpen.value ? deactivate() : activate()
     }
-    const remove = () => {
 
-    }
     const select = (option) => {
       let selected
       if (label) {
@@ -87,7 +85,7 @@ export default {
 
       } else {
         selectedValue.value = selected
-        emit('update:modelValue', selectedValue.value)
+        emit('update:modelValue', option)
       }
     }
 

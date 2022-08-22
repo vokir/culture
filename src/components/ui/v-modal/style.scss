@@ -17,6 +17,7 @@
       padding: 30px 50px 50px;
       display: flex;
       overflow: hidden auto;
+      background: var(--white);
 
       &__close {
         position: initial;
@@ -126,5 +127,3 @@
 .fade-in-leave-to {
   opacity: 0;
 }
-
-

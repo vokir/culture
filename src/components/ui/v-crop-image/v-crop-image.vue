@@ -4,12 +4,13 @@
       :src="img"
       @change="onChange"
       v-bind="options"
+      ref="cropRef"
   />
 </template>
 
 <script>
 // Библиотека для обрезки изображений
-// https://norserium.github.io/vue-advanced-cropper/introduction/getting-started.html#package-installation
+// https://github.com/advanced-cropper/vue-advanced-cropper/
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 import { ref } from 'vue'
@@ -57,11 +58,18 @@ export default {
       }
     }
   },
-  setup(_, ctx) {
+  setup(_, { emit }) {
     const cropResult = ref({
       coordinates: null,
       image: null
     })
+
+    const cropRef = ref(null)
+
+    const getResult = () => {
+      return cropRef.value.getResult()
+    }
+
     const onChange = ({ canvas, coordinates, image }) => {
       cropResult.value = {
         coordinates,
@@ -69,10 +77,12 @@ export default {
         canvas
       };
 
-      ctx.emit('update:modelValue', cropResult)
+      emit('update:modelValue', cropResult)
     }
     return {
       cropResult,
+      cropRef,
+      getResult,
       onChange
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
-    <transition :name="centered ? 'fade-in' : 'slide' " appear>
-      <div class="modal-wrapper" v-if="showModal" :class="{'modal-wrapper--centered': centered}" v-bind="$attrs">
+    <transition :name="centered ? 'fade-in' : 'slide' " appear @after-leave="$emit('closeModal')">
+      <div class="modal-wrapper" v-if="isOpen" :class="{'modal-wrapper--centered': centered}" v-bind="$attrs">
         <div class="modal-background" @click="closeModal"></div>
         <div class="modal">
           <div class="modal__close" @click="closeModal">
@@ -23,8 +23,9 @@
 </template>
 
 <script>
-import { getCurrentInstance, watch } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
 import { useEventListener } from '../../../hooks/useEventListeners'
+import useModal from "../../../hooks/useModal";
 import { useModalStore } from "../../../store/modalStore";
 
 export default {
@@ -32,37 +33,32 @@ export default {
   emits: ['closeModal'],
   inheritAttrs: false,
   props: {
-    showModal: Boolean,
     centered: Boolean
   },
-  setup(props, { emit }) {
-    const closeModal = () => {
-      emit('closeModal')
-    }
+  setup(_, { emit }) {
     const store = useModalStore()
     const { addModalState, removeModalState } = store
     const id = getCurrentInstance().uid
+    const { isOpen, openModal, closeModal } = useModal()
+    onMounted(()=> {
+      openModal()
+      addModalState(id)
+    })
+    onUnmounted(()=> removeModalState(id))
 
     useEventListener(document.body, 'keydown', e => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && id === store.getActiveModal.value) {
         closeModal()
       }
     })
-    watch(
-      () => props.showModal,
-      value => {
-        if (value) {
-          addModalState(id)
-        } else {
-          removeModalState(id)
-        }
-      }
-    )
 
     return {
+      isOpen,
+      openModal,
       closeModal
     }
-  }
+
+  },
 }
 </script>
 

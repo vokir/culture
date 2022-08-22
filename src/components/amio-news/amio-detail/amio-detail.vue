@@ -1,14 +1,15 @@
 <template>
   <div class="detail">
     <div class="detail__image">
-      <div class="pick-image" >
+      <div class="pick-image" @click="$emit('openModal')">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M20 16.5556C20 16.9386 19.8468 17.306 19.574 17.5769C19.3012 17.8478 18.9312 18 18.5455 18H5.45455C5.06878 18 4.69881 17.8478 4.42603 17.5769C4.15325 17.306 4 16.9386 4 16.5556V8.61111C4 8.22802 4.15325 7.86062 4.42603 7.58973C4.69881 7.31885 5.06878 7.16667 5.45455 7.16667H8.36364L9.81818 5H14.1818L15.6364 7.16667H18.5455C18.9312 7.16667 19.3012 7.31885 19.574 7.58973C19.8468 7.86062 20 8.22802 20 8.61111V16.5556Z" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Выбрать изображение
       </div>
-      <img src="/src/assets/images/storyPreview.png" :alt="title">
+      <img v-if="imgLandscape && imgLandscape.file" :src="imgLandscape.file" :alt="title">
+      <img v-else src="/src/assets/images/storyPreview.png" :alt="title">
     </div>
     <div class="detail__content">
       <div class="detail__content-info">
@@ -55,16 +56,11 @@
 </template>
 
 <script>
-import computeDate from "@/helpers/dateFormat";
+import computeDate from "../../../helpers/dateFormat";
 
 export default {
   name: "amio-detail",
   props: {
-    icon: {
-      type: String,
-      required: false,
-      default: ''
-    },
     title: {
       type: String,
       required: false,
@@ -99,6 +95,14 @@ export default {
       type: String,
       required: false,
       default: ''
+    },
+    imgLandscape: {
+      type: Object,
+      required: false,
+      default: () => ({
+        file: null,
+        id: null
+      })
     }
   },
   setup() {

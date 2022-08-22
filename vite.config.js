@@ -8,10 +8,14 @@ export default defineConfig(env => {
    base: './',
    server: {
      proxy: {
-       '/api/management/graphql': {
+       '/api/management/': {
          target: 'https://bitrix-stage.culture-home.ru/',
          changeOrigin: true,
-       }
+       },
+       '/upload': {
+         target: 'https://bitrix-stage.culture-home.ru/',
+         changeOrigin: true,
+       },
      }
    },
    resolve: {

@@ -9,6 +9,12 @@
     height: 490px;
   }
 
+  :deep(.vue-preview__image),
+  :deep(.vue-advanced-cropper__image){
+    width: initial;
+    max-height: initial;
+  }
+
   :deep(.vue-advanced-cropper__image-wrapper) {
     border-radius: 3px;
   }

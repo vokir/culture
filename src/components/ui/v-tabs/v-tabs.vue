@@ -9,7 +9,7 @@
           { 'tabs-header__item--button': !linkTitle },
         ]"
         v-for="title of tabTitles"
-        @click="selectedTitle = title"
+        @click="selectTab(title)"
       >
         <component
           :is="linkTitle ? 'a' : 'button'"
@@ -30,6 +30,7 @@ import { provide, ref } from "vue";
 
 export default {
   name: "v-tabs",
+  emits: ['modelValue:update'],
   props: {
     linkTitle: {
       type: Boolean,
@@ -37,15 +38,21 @@ export default {
       default: false,
     }
   },
-  setup(_, { slots }) {
+  setup(_, { slots, emit }) {
     const tabTitles = ref(slots.default().map(tab => tab.props.title))
     const selectedTitle = ref(tabTitles.value[0])
+
+    const selectTab = (tab) => {
+      selectedTitle.value = tab
+      emit('modelValue:update', selectedTitle.value)
+    }
 
     provide("selectedTitle", selectedTitle)
 
     return {
       selectedTitle,
-      tabTitles
+      tabTitles,
+      selectTab
     }
   }
 }
