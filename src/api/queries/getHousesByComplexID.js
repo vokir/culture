@@ -6,7 +6,8 @@ export const GET_HOUSES_BY_COMPLEX_ID = gql`
       column: "UF_COMPLEX_ID",
       value: $complexID
     }){
-      UF_NAME
+      UF_NAME,
+      ID
     }
   }
   `

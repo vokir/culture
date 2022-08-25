@@ -30,7 +30,7 @@ import { provide, ref } from "vue";
 
 export default {
   name: "v-tabs",
-  emits: ['modelValue:update'],
+  emits: ['update:modelValue'],
   props: {
     linkTitle: {
       type: Boolean,
@@ -44,7 +44,7 @@ export default {
 
     const selectTab = (tab) => {
       selectedTitle.value = tab
-      emit('modelValue:update', selectedTitle.value)
+      emit('update:modelValue', tab)
     }
 
     provide("selectedTitle", selectedTitle)

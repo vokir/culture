@@ -28,7 +28,7 @@
       </v-card>
       <v-card class="news-add-form__card-third">
         <div class="card-row">
-          <v-input v-model="form.phone" name="phone" label="Телефон" v-mask="'+7 (###) ###-##-##'"/>
+          <v-input v-model="form.phone" placeholder="+7" name="phone" label="Телефон" v-mask="'+7 (###) ###-##-##'"/>
           <v-add-docs
               label="Документы"
               :max-tags="3"
@@ -58,8 +58,8 @@
     <div class="news-add__preview">
       <v-card class="news-add__preview-card">
         <v-tabs>
-          <v-tab title="AMIO" v-model="currentTab">
-            <v-tabs link-title class="news-add__preview-inner-tabs">
+          <v-tab title="AMIO">
+            <v-tabs link-title class="news-add__preview-inner-tabs" v-model="currentTab">
               <v-tab title="Превью">
                 <amio-preview v-bind="{...form}"/>
               </v-tab>
@@ -86,13 +86,13 @@
           </v-tab>
         </v-tabs>
       </v-card>
-      <v-card class="news-add__preview-icon">
+      <v-card class="news-add__preview-icon" v-if="currentTab === 'Превью'">
         <select-icon/>
       </v-card>
     </div>
   </section>
   <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
-  <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID"/>
+  <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID" :complexName="form.complex.UF_NAME"/>
 </template>
 
 <script>
