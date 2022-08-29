@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted } from 'vue'
 import { useEventListener } from '../../../hooks/useEventListeners'
 import useModal from "../../../hooks/useModal";
 import { useModalStore } from "../../../store/modalStore";
@@ -40,11 +40,11 @@ export default {
     const { addModalState, removeModalState } = store
     const id = getCurrentInstance().uid
     const { isOpen, openModal, closeModal } = useModal()
-    onMounted(()=> {
+    onMounted(() => {
       openModal()
       addModalState(id)
     })
-    onUnmounted(()=> removeModalState(id))
+    onUnmounted(() => removeModalState(id))
 
     useEventListener(document.body, 'keydown', e => {
       if (e.key === 'Escape' && id === store.getActiveModal.value) {

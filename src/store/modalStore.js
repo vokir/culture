@@ -16,7 +16,7 @@ export const useModalStore = defineStore('modal', () => {
   const removeModalState = (state) => {
     const idx = modalsState.value.indexOf(state)
     modalsState.value.splice(idx, 1)
-    activeModal.value = modalsState.value.length ? modalsState.value[modalsState.value.length -1] : 0
+    activeModal.value = modalsState.value.length ? modalsState.value[modalsState.value.length - 1] : 0
     checkModalsState()
   }
 
@@ -28,7 +28,7 @@ export const useModalStore = defineStore('modal', () => {
     }
   }
 
-  const getActiveModal = computed(()=>{
+  const getActiveModal = computed(() => {
     return activeModal
   })
 

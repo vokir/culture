@@ -10,7 +10,7 @@
   }
 
   :deep(.vue-preview__image),
-  :deep(.vue-advanced-cropper__image){
+  :deep(.vue-advanced-cropper__image) {
     width: initial;
     max-height: initial;
   }

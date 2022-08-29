@@ -7,14 +7,17 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 150%;
+
   &--active {
     .select-wrapper__toggle {
       transform: rotate(180deg);
     }
   }
+
   &__label {
     color: var(--gray-light);
   }
+
   &__placeholder {
     font-family: 'Helvetica', sans-serif;
     font-style: normal;
@@ -23,21 +26,25 @@
     line-height: 21px;
     user-select: none;
   }
+
   &__select {
     position: relative;
     padding: 10px;
     color: var(--variable-13);
     border: 1px solid var(--variable-5);
     border-radius: 2px;
+
     &-input {
       position: absolute;
       opacity: 0;
       top: 10px;
     }
+
     &:focus {
       outline: none;
     }
   }
+
   &__toggle {
     transition: all 0.25s ease-in-out;
     position: absolute;
@@ -50,6 +57,7 @@
     justify-content: center;
     cursor: pointer;
   }
+
   &__list {
     position: absolute;
     z-index: var(--z-index-modal);
@@ -61,6 +69,7 @@
     list-style-type: none;
     top: 74px;
   }
+
   &__item {
     color: var(--variable-13);
     line-height: 36px;
@@ -68,6 +77,7 @@
     transition: all 0.25s ease-in-out;
     user-select: none;
     cursor: pointer;
+
     &:hover {
       background: var(--gray-hover);
     }

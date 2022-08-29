@@ -1,20 +1,20 @@
 <template>
   <div class="input-wrapper">
     <label
-        class="input-wrapper__label"
-        v-if="label"
-        :for="name"
+      class="input-wrapper__label"
+      v-if="label"
+      :for="name"
     >{{ label }}</label>
     <input
-        :id="name"
-        :name="name"
-        class="input-wrapper__input"
-        v-bind="$attrs"
-        :value="modelValue"
-        :maxlength="maxLength"
-        @input="updateValue"
-        @focus="$emit('focus')"
-        @blur="$emit('blur')"
+      :id="name"
+      :name="name"
+      class="input-wrapper__input"
+      v-bind="$attrs"
+      :value="modelValue"
+      :maxlength="maxLength"
+      @input="updateValue"
+      @focus="$emit('focus')"
+      @blur="$emit('blur')"
     />
     <span class="input-wrapper__count" v-if="maxLength">{{ modelValue.length }} / {{ maxLength }}</span>
   </div>

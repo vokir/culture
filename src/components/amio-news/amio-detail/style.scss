@@ -4,23 +4,28 @@
   flex-direction: column;
   gap: 40px;
   position: relative;
+
   &__image {
     height: 280px;
     width: 100%;
+
     img {
       object-fit: cover;
     }
   }
+
   &__content {
     padding: 0 20px 40px;
     display: flex;
     flex-direction: column;
     gap: 40px;
+
     &-info {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
+
     &-title {
       font-family: 'Proxima Nova', sans-serif;
       font-style: normal;
@@ -30,6 +35,7 @@
       letter-spacing: 0.01em;
       color: var(--variable-13);
     }
+
     &-desc {
       font-family: 'Proxima Nova', sans-serif;
       font-style: normal;
@@ -39,6 +45,7 @@
       letter-spacing: 0.01em;
       color: var(--variable-13);
     }
+
     &-date {
       font-family: 'Proxima Nova', sans-serif;
       font-style: normal;
@@ -47,6 +54,7 @@
       line-height: 13px;
       color: var(--variable-13);
     }
+
     &-phone {
       font-family: 'Proxima Nova', sans-serif;
       font-style: normal;
@@ -58,6 +66,7 @@
       color: var(--variable-13);
       display: grid;
       gap: 5px;
+
       &-link {
         font-family: 'Proxima Nova', sans-serif;
         font-style: normal;
@@ -68,14 +77,17 @@
         color: var(--blue);
         text-decoration: none;
         transition: all 0.25s ease-in-out;
+
         &:hover {
           color: var(--variable-12);
         }
       }
     }
+
     &-links {
       display: grid;
       gap: 20px;
+
       &-link {
         font-family: 'Proxima Nova', sans-serif;
         font-style: normal;
@@ -86,11 +98,13 @@
         letter-spacing: 0.01em;
         color: var(--blue);
         transition: all 0.25s ease-in-out;
+
         &:hover {
           color: var(--variable-12);
         }
       }
     }
+
     &-button {
       &-btn {
         display: flex;

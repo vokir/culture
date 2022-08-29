@@ -7,13 +7,16 @@
   gap: 10px 0;
   margin-bottom: 15px;
 }
+
 .preview-header {
   display: flex;
   gap: 0 15px;
+
   &__icon {
     max-width: 40px;
     max-height: 40px;
   }
+
   &__title {
     font-family: 'ProximaNova', sans-serif;
     font-weight: 700;
@@ -26,6 +29,7 @@
     max-width: 240px;
   }
 }
+
 .preview-body {
   font-family: 'ProximaNova', sans-serif;
   font-style: normal;
@@ -35,6 +39,7 @@
   letter-spacing: 0.01em;
   color: var(--white);
 }
+
 .preview-footer {
   display: flex;
   align-items: center;
@@ -48,6 +53,7 @@
     font-size: 12px;
     line-height: 110%;
   }
+
   &__type {
     font-family: 'Proxima Nova', sans-serif;
     font-style: normal;

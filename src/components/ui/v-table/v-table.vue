@@ -24,12 +24,12 @@ export default {
               }, [
                 h('div', { class: 'table__thead-cell' }, [
                   (column.children && Object.keys(column.children).length > 2) ?
-                      column.children.header({
-                        title: column.props.title,
-                        id: column.props.id
-                      })
-                      :
-                      column.props.title
+                    column.children.header({
+                      title: column.props.title,
+                      id: column.props.id
+                    })
+                    :
+                    column.props.title
                 ])
               ])
             })

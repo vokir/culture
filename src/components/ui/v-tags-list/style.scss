@@ -2,10 +2,12 @@
   position: relative;
   display: grid;
   gap: 10px 0;
+
   &__label {
     color: var(--gray-light);
     font-size: 14px;
   }
+
   &__list {
     padding: 10px;
     color: var(--variable-13);
@@ -22,6 +24,7 @@
     list-style-type: none;
     margin: 0;
   }
+
   &__item {
     font-family: 'Helvetica', sans-serif;
     font-style: normal;
@@ -37,6 +40,7 @@
     gap: 10px;
     user-select: none;
   }
+
   &__add {
     cursor: pointer;
     font-family: 'Helvetica', sans-serif;
@@ -49,6 +53,7 @@
     color: var(--variable-14);
     gap: 5px;
   }
+
   &__remove {
     cursor: pointer;
   }

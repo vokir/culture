@@ -4,12 +4,14 @@
   top: 72px;
   left: initial;
 }
+
 .tags-wrapper__actions {
   display: grid;
   gap: 20px;
   width: 100%;
   grid-template-columns: 300px 1fr;
   position: relative;
+
   &-add {
     position: absolute;
     right: 0;
@@ -21,6 +23,7 @@
     top: 31px;
     cursor: pointer;
   }
+
   :deep(.input-link) {
     color: var(--variable-14);
   }

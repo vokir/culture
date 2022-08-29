@@ -4,7 +4,7 @@
   </div>
   <teleport to="body">
     <div v-if="hovering" :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltip" :style="{...mouseCoords}">
-      {{tooltipText}}
+      {{ tooltipText }}
     </div>
   </teleport>
 </template>
@@ -13,6 +13,7 @@
 import { ref } from "vue";
 import debounce from "../../../hooks/useDebounce";
 import { useEventListener } from "../../../hooks/useEventListeners";
+
 export default {
   name: "v-badge",
   props: {
@@ -59,7 +60,7 @@ export default {
     }
 
 
-    useEventListener(window, 'mousemove',  debounce((e)=>getMouseCoords(e), 0))
+    useEventListener(window, 'mousemove', debounce((e) => getMouseCoords(e), 0))
 
 
     return {

@@ -2,7 +2,8 @@
   <nav class="pagination">
     <ul class="pagination-list">
       <li class="pagination-list__item">
-        <button class="pagination-list__button pagination-list__item--prev" @click="prevPage" :disabled="pageNumber === 1">
+        <button class="pagination-list__button pagination-list__item--prev" @click="prevPage"
+                :disabled="pageNumber === 1">
           &lt;
         </button>
       </li>
@@ -52,11 +53,11 @@ export default {
       pageNumber.value = page
     }
 
-    const pageCount = computed(()=>{
+    const pageCount = computed(() => {
       return Math.ceil(total / perPage);
     })
 
-    watch(pageNumber, ()=> emit('update:modelValue', pageNumber.value))
+    watch(pageNumber, () => emit('update:modelValue', pageNumber.value))
 
     return {
       pageNumber,

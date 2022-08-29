@@ -14,7 +14,8 @@
         <v-crop-image ref="cropperBig" size="big" :img="image"/>
       </div>
       <div class="select-image-actions">
-        <v-pagination v-if="pageInfo.perPage < pageInfo.total" v-model="currentPage" :perPage="pageInfo.perPage" :total="pageInfo.total"/>
+        <v-pagination v-if="pageInfo.perPage < pageInfo.total" v-model="currentPage" :perPage="pageInfo.perPage"
+                      :total="pageInfo.total"/>
         <v-button variant="link" @click="$emit('closeModal')">Отменить</v-button>
         <v-button variant="success" @click="submit" :disabled="!isDirty" loading>ВЫБРАТЬ ИЗОБРАЖЕНИЕ</v-button>
       </div>
@@ -26,9 +27,9 @@
 import { useQuery } from "@vue/apollo-composable";
 import axios from "axios";
 import { computed, ref } from "vue";
+import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
 import usePaginate from "../../hooks/usePaginate";
-import { useToast } from "vue-toastification";
 import VButton from "../ui/v-button/v-button.vue";
 import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
 import VLoader from "../ui/v-loader/v-loader.vue";
@@ -42,7 +43,7 @@ export default {
   props: {
     isOpen: Boolean,
   },
-  setup(_, {emit}) {
+  setup(_, { emit }) {
     const image = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
     const cropperBig = ref(null)
@@ -55,7 +56,7 @@ export default {
       perPage: perPage.value
     })
 
-    updatePage(()=> refetch({
+    updatePage(() => refetch({
       currentPage: currentPage.value,
       perPage: perPage.value
     }))
@@ -98,10 +99,10 @@ export default {
       }
     }
 
-    const images = computed(()=> {
+    const images = computed(() => {
       return result.value ? result.value.getImages.data : false
     })
-    const pageInfo = computed(()=> {
+    const pageInfo = computed(() => {
       return result.value ? result.value.getImages.paginatorInfo : false
     })
 

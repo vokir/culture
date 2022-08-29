@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useModalStore } from "./modalStore";
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application

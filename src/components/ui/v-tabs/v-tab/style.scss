@@ -1,6 +1,7 @@
 .tabs-list {
-  &__content{
+  &__content {
     display: none;
+
     &--active {
       display: inherit;
     }

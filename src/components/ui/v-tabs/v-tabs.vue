@@ -15,7 +15,7 @@
           :is="linkTitle ? 'a' : 'button'"
           class="tabs-header__title"
         >
-          {{ title  }}
+          {{ title }}
         </component>
       </li>
     </ul>
@@ -58,5 +58,5 @@ export default {
 }
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" src="./style.scss" scoped/>
 

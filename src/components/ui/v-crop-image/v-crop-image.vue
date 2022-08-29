@@ -1,19 +1,19 @@
 <template>
   <cropper
-      :class="['cropper', `cropper--${size}`]"
-      :src="img"
-      @change="onChange"
-      v-bind="options"
-      ref="cropRef"
+    :class="['cropper', `cropper--${size}`]"
+    :src="img"
+    @change="onChange"
+    v-bind="options"
+    ref="cropRef"
   />
 </template>
 
 <script>
+import { ref } from 'vue'
 // Библиотека для обрезки изображений
 // https://github.com/advanced-cropper/vue-advanced-cropper/
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
-import { ref } from 'vue'
 
 export default {
   name: 'v-crop-image',

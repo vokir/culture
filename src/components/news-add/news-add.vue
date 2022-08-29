@@ -5,7 +5,8 @@
       <v-card class="news-add-form__card-first">
         <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
         <v-select v-model="form.type" name="type" :options="types" labelSelect="Тип новости"/>
-        <v-select v-if="!complexesLoading" v-model="form.complex" name="home" :options="complexes" labelSelect="ЖК" label="UF_NAME"/>
+        <v-select v-if="!complexesLoading" v-model="form.complex" name="home" :options="complexes" labelSelect="ЖК"
+                  label="UF_NAME"/>
         <div class="show-for" v-if="form.complex" @click="openBindModal">
           <div class="show-for__title">
             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -22,7 +23,7 @@
       <v-card class="news-add-form__card-second">
         <v-textarea v-model="form.title" name="name" label="Заголовок*" max-length="130"/>
         <v-textarea v-model="form.desc" name="previewText" label="Текст анонса*" rows="4"
-                 max-length="280"/>
+                    max-length="280"/>
         <v-input v-model="form.fullDesc" name="previewText" label="Текст новости*" rows="4"
                  max-length="280"/>
       </v-card>
@@ -30,23 +31,23 @@
         <div class="card-row">
           <v-input v-model="form.phone" placeholder="+7" name="phone" label="Телефон" v-mask="'+7 (###) ###-##-##'"/>
           <v-add-docs
-              label="Документы"
-              :max-tags="3"
-              v-model="form.docs"
+            label="Документы"
+            :max-tags="3"
+            v-model="form.docs"
           />
         </div>
         <v-input-tags
-            label="Ссылки"
-            input-label="Текст ссылки"
-            inputLabelLink="Ссылка"
-            v-model="form.links"
+          label="Ссылки"
+          input-label="Текст ссылки"
+          inputLabelLink="Ссылка"
+          v-model="form.links"
         />
         <v-input-tags
-            label="Кнопка"
-            input-label="Текст кнопки"
-            inputLabelLink="Ссылка"
-            :max-tags="1"
-            v-model="form.button"
+          label="Кнопка"
+          input-label="Текст кнопки"
+          inputLabelLink="Ссылка"
+          :max-tags="1"
+          v-model="form.button"
         />
       </v-card>
       <div class="news-add__actions">
@@ -54,7 +55,7 @@
         <v-button variant="bordered">Сохранить новость и создать ещё</v-button>
         <v-button variant="link">Отмена</v-button>
       </div>
-    </form >
+    </form>
     <div class="news-add__preview">
       <v-card class="news-add__preview-card">
         <v-tabs>
@@ -87,17 +88,19 @@
         </v-tabs>
       </v-card>
       <v-card class="news-add__preview-icon" v-if="currentTab === 'Превью'">
-        <select-icon/>
+        <select-icon @saveIcon="saveIcon"/>
       </v-card>
     </div>
   </section>
   <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
-  <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID" :complexName="form.complex.UF_NAME"/>
+  <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID"
+               :complexName="form.complex.UF_NAME"/>
 </template>
 
 <script>
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
+import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
 import useModal from "../../hooks/useModal";
 import AmioDetail from "../amio-news/amio-detail/amio-detail.vue";
@@ -106,6 +109,7 @@ import AmioStories from "../amio-news/amio-stories/amio-stories.vue";
 import SelectBind from "../select-bind/select-bind.vue";
 import SelectIcon from "../select-icon/select-icon.vue";
 import SelectImage from "../select-image/select-image.vue";
+import VAddDocs from "../ui/v-add-docs/v-add-docs.vue";
 import VButton from "../ui/v-button/v-button.vue";
 import VCard from "../ui/v-card/v-card.vue";
 import VInputTags from "../ui/v-input-tags/v-input-tags.vue";
@@ -114,13 +118,11 @@ import VModal from "../ui/v-modal/v-modal.vue";
 import VSelect from "../ui/v-select/v-select.vue";
 import VTab from "../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../ui/v-tabs/v-tabs.vue";
-import {mask} from 'vue-the-mask'
 import VTextarea from "../ui/v-textarea/v-input.vue";
-import VAddDocs from "../ui/v-add-docs/v-add-docs.vue";
 
 export default {
   name: "news-add",
-  directives: {mask},
+  directives: { mask },
   components: {
     SelectIcon,
     SelectBind,
@@ -145,14 +147,14 @@ export default {
     const { isOpen: bindIsOpen, openModal: openBindModal, closeModal: closeBindModal } = useModal()
     const currentTab = ref('Превью')
     const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
-    const complexes = computed(()=>{
+    const complexes = computed(() => {
       return complexesData.value.getComplexes
     })
 
     const types = [
-        'Новость',
-        'Акция',
-        'Оповещение'
+      'Новость',
+      'Акция',
+      'Оповещение'
     ]
 
     const form = ref({
@@ -168,6 +170,7 @@ export default {
       button: [],
       imgLandscape: null,
       imgLibrary: null,
+      icon: null
     })
 
     const onLoadFiles = (value) => {
@@ -180,6 +183,14 @@ export default {
         file: value.files.imgLibrary
       }
     }
+
+    const saveIcon = (value) => {
+      form.value.icon = {
+        id: value.id,
+        file: value.icon
+      }
+    }
+
     return {
       form,
       types,
@@ -192,7 +203,8 @@ export default {
       closeModal,
       openBindModal,
       closeBindModal,
-      onLoadFiles
+      onLoadFiles,
+      saveIcon
     }
   }
 }

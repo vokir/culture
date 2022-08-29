@@ -7,7 +7,6 @@ const usePaginate = (initialCurrentPage = 1, initialPerPage = 20) => {
   const updatePage = (callback) => watch(currentPage, callback)
 
 
-
   return { currentPage, perPage, updatePage }
 }
 

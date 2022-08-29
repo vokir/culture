@@ -1,6 +1,7 @@
 .pagination {
 
 }
+
 .pagination-list {
   margin: 0;
   padding: 0;
@@ -8,10 +9,12 @@
   align-items: center;
   gap: 5px;
   list-style-type: none;
+
   &__item {
     width: 30px;
     height: 30px;
   }
+
   &__button {
     width: 100%;
     height: 100%;
@@ -20,7 +23,7 @@
     font-style: normal;
     font-weight: 400;
     font-size: 12px;
-    line-height:18px;
+    line-height: 18px;
     display: flex;
     align-items: center;
     justify-content: center;

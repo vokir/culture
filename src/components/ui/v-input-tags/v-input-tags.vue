@@ -2,7 +2,7 @@
   <v-tags-list :label="label" :max-tags="maxTags" :tags="tags" @removeTag="removeTag" @openModal="openModal">
     <v-modal v-if="isOpen" @closeModal="closeModal" centered class="modal-tags">
       <div class="tags-wrapper__actions">
-        <v-input v-model="currentTag.name" name="text" :label="inputLabel" />
+        <v-input v-model="currentTag.name" name="text" :label="inputLabel"/>
         <v-input class="input-link" v-model="currentTag.link" name="link" :label="inputLabelLink"/>
         <div class="tags-wrapper__actions-add" @click="addTag" v-if="currentTag.name && currentTag.link">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -25,7 +25,7 @@ import VTagsList from "../v-tags-list/v-tags-list.vue";
 export default {
   name: "v-input-tags",
   emits: ['update:modelValue'],
-  components: {VTagsList, VModal, VCard, VInput },
+  components: { VTagsList, VModal, VCard, VInput },
   props: {
     label: String,
     modelValue: [Array, Object, String],
