@@ -77,8 +77,8 @@
     font-size: 12px;
     line-height: 18px;
     user-select: none;
-
-    &:hover {
+    &:hover:not(.bind-list__item-value--no-hover),
+    &--active {
       background: var(--variable-17);
       position: relative;
 

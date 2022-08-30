@@ -48,6 +48,7 @@
 <script>
 import { useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
+import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
@@ -63,6 +64,7 @@ export default {
   components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
   emits: ['saveIcon'],
   setup(_, { emit }) {
+    const toast = useToast();
     const icon = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
     const active = ref({
@@ -100,10 +102,14 @@ export default {
       icon.value = '/src/assets/images/storyPreview.png'
       isDirty.value = false
       emit('saveIcon', active.value)
+      toast.success('Иконка удалена')
     }
 
     const submit = () => {
-      if (isDirty.value && active.value) emit('saveIcon', active.value)
+      if (isDirty.value && active.value) {
+        emit('saveIcon', active.value)
+        toast.success('Иконка выбрано')
+      }
     }
 
     const icons = computed(() => {

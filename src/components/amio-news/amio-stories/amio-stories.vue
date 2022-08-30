@@ -41,6 +41,7 @@ import computeDate from "../../../helpers/dateFormat";
 
 export default {
   name: "amio-stories",
+  inheritAttrs: false,
   props: {
     imgLibrary: {
       type: Object,

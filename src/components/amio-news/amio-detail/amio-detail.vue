@@ -68,6 +68,7 @@ import computeDate from "../../../helpers/dateFormat";
 
 export default {
   name: "amio-detail",
+  inheritAttrs: false,
   props: {
     title: {
       type: String,

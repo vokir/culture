@@ -70,6 +70,7 @@ import computeDate from "@/helpers/dateFormat";
 
 export default {
   name: "amio-preview",
+  inheritAttrs: false,
   props: {
     icon: {
       type: Object,
