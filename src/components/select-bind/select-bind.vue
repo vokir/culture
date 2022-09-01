@@ -65,7 +65,7 @@
                 class="bind-list__item-value bind-list__item-value--no-hover"
                 v-for="premise in premises"
               >
-                <v-checkbox v-model="selectedFloors" :value="premise"/>
+                <v-checkbox v-model="selectedPremises" :value="premise" @click.stop=""/>
                 <span>{{ premise.UF_NAME ? premise.UF_NAME : premise.UF_NUMBER }}</span>
               </div>
             </div>
@@ -74,20 +74,14 @@
       </div>
       <div class="bind-list__selected">
         <div class="bind-list__selected-row" v-if="selectedHouses">
-          <div class="selected__value selected__value--title">Дом</div>
-          <div class="selected__value" v-for="house of selectedHouses">
-            {{ house.UF_NAME }}
-          </div>
+          <div class="selected__value selected__value--title" v-for="(head, key) of bindHead">{{ head }}</div>
         </div>
-        <div class="bind-list__selected-row">
-          <div class="selected__value selected__value--title">Подъезд</div>
-
-        </div>
-        <div class="bind-list__selected-row">
-          <div class="selected__value selected__value--title">Этаж</div>
-        </div>
-        <div class="bind-list__selected-row">
-          <div class="selected__value selected__value--title">Помещение</div>
+        <div class="bind-list__selected-row" v-for="row of selectedValues">
+          <template v-for="(head, key) of bindHead">
+            <div class="selected__value" v-if="key === 'house'">
+              {{ row.UF_NAME}}
+            </div>
+          </template>
         </div>
       </div>
       <div class="bind-list__actions">
@@ -126,7 +120,12 @@ export default {
     const selectedHouse = ref('')
     const selectedApproach = ref('')
     const selectedFloor = ref('')
-
+    const bindHead = {
+        house: 'Дом',
+        approaches: 'Подъезд',
+        floors: 'Этаж',
+        premises: 'Помещение'
+    }
     const { result: housesResult, loading: housesLoading } = useQuery(GET_HOUSES_BY_COMPLEX_ID, {
       complexID: complexID.toString()
     })
@@ -142,15 +141,18 @@ export default {
     const premises = computed(() => premisesResult.value?.getPremises ?? [])
 
     const selectHouse = (houseID) => {
+      if (selectedHouse.value === houseID.toString()) return
       selectedHouse.value = houseID.toString()
       selectedApproach.value = ''
       selectedFloor.value = ''
     }
     const selectApproach = (approachID) => {
+      if (selectedApproach.value === approachID.toString()) return
       selectedApproach.value = approachID.toString()
       selectedFloor.value = ''
     }
     const selectFloor = (floorID) => {
+      if (selectedFloor.value === floorID.toString()) return
       selectedFloor.value = floorID.toString()
     }
 
@@ -162,6 +164,53 @@ export default {
     })
     watch(selectedFloor, () => {
       loadPremises(GET_PREMISES_BY_FLOOR_ID, { premisesID: selectedFloor.value })
+    })
+
+    const selectedValues = computed(()=> {
+      let arr = []
+      if (selectedHouses.value.length) {
+        selectedHouses.value.forEach(house => {
+          let approaches = []
+
+          if (selectedApproaches.value.length) {
+            selectedApproaches.value.forEach(approach => {
+              let floors = []
+
+              if (selectedFloors.value.length) {
+                selectedFloors.value.forEach(floor => {
+                  let premises = []
+
+                  if (selectedPremises.value.length) {
+                    selectedPremises.value.forEach(premise => {
+                      if (floor.ID === premise.floor.ID) {
+                        premises.push(premise)
+                      }
+                    })
+                  }
+                  if (approach.ID === floor.approache.ID) {
+                    floors.push({
+                      ...floor,
+                      premises
+                    })
+                  }
+                })
+              }
+              if (house.ID === approach.house.ID) {
+                approaches.push({
+                  ...approach,
+                  floors
+                })
+              }
+            })
+          }
+
+          arr.push({
+            ...house,
+            approaches
+          })
+        })
+      }
+      return arr
     })
 
     return {
@@ -182,7 +231,9 @@ export default {
       selectedFloors,
       premises,
       premisesLoading,
-      selectedPremises
+      selectedPremises,
+      selectedValues,
+      bindHead
     }
   },
 }
