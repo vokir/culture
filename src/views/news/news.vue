@@ -107,6 +107,17 @@
             </div>
           </template>
         </v-table-column>
+        <v-table-column id="visibility" title="Контакты" width="600px">
+          <template v-slot="{row}">
+            <div class="badges-list">
+              <div class="badges-list__row" v-if="row.contacts.length">
+                <v-badge v-for="(contact, index) in row.contacts" variant="lightblue" :key="'contact-'+index" :text="contact.NAME + ' ' + contact.LAST_NAME + ' ' + contact.SECOND_NAME"
+                         tooltip :tooltip-text="contact.NAME + ' ' + contact.LAST_NAME + ' ' + contact.SECOND_NAME"/>
+                         <br>
+              </div>
+            </div>
+          </template>
+        </v-table-column>
       </v-table>
     </div>
   </section>

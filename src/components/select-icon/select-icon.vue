@@ -47,7 +47,7 @@
 
 <script>
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, toRaw } from "vue";
 import { GET_ICONS } from "../../api/queries/getIcons";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
@@ -59,10 +59,11 @@ import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VTagsList from "../ui/v-tags-list/v-tags-list.vue";
 
 export default {
+  props:['icon'],
   name: "select-icon",
   components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
   emits: ['saveIcon'],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     const icon = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
     const active = ref({
@@ -70,6 +71,17 @@ export default {
       icon: null,
       name: null
     })
+
+    // console.log(props);
+
+    // console.log("Setup props:",toRaw(props));
+    // if (props.icon.src){
+    //     active.value.icon = props.icon?.src
+    //     isDirty.value = true
+    //     // console.log('asd');
+    //   }
+
+
     const { isOpen, openModal, closeModal } = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 2)
     const { result, loading, refetch } = useQuery(GET_ICONS, {
@@ -114,6 +126,7 @@ export default {
     })
 
     return {
+      props,
       isOpen,
       icons,
       icon,

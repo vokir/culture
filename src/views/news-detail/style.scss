@@ -1,0 +1,144 @@
+* {
+  font-size: 14px;
+  line-height: 150%;
+  vertical-align: top;
+}
+p{
+  margin: 0;
+}
+.btn--transparent__svg {
+  width: 6px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.container-header {
+  justify-content: flex-start;
+  gap: 50px;
+}
+
+.container-header__title {
+  font-size: 26px;
+}
+
+.container-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 19px;
+}
+
+.news {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  min-width: 826px;
+}
+.news__top {
+  position: relative;
+}
+.news__type {
+  display: inline-block;
+  padding: 2px 12px;
+  background-color: var(--red);
+  color: var(--variable-19);
+  border-radius: 5px;
+  margin-bottom: 6px;
+}
+.news__title {
+  font-family: 'OpenSans';
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 6px;
+  color: var(--variable-13);
+}
+.news__date {
+  font-size: 12px;
+  color: var(--variable-7);
+  font-weight: 300;
+  margin-bottom: 16px;
+}
+.news__subtitle {
+  color: var(--variable-7);
+  margin-bottom: 11px;
+}
+.news__text {
+  color: var(--variable-13);
+  margin-bottom: 24px;
+}
+.news__row {
+  display: flex;
+  margin-bottom: 16px;
+}
+.news__name {
+  flex: 0 0 150px;
+  position: relative;
+  color: var(--variable-7);
+  &::after {
+    content: url("../../assets/images/icons/info.svg");
+    display: inline-block;
+    position: relative;
+    top: -4px;
+    left: 0;
+    text-align: right;
+  }
+  &-zhk:after {
+    margin-left: 3px;
+  }
+  &-links:after {
+    margin-left: 8px;
+  }
+  &-docs:after {
+    margin-left: 12px;
+  }
+  &-tel:after {
+    margin-left: 6px;
+  }
+}
+
+.news__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.news__value:not(.news__value-zhk){
+  display: block;
+  margin-bottom: 4px;
+  color: var(--variable-6);
+  text-decoration: none;
+}
+.news__edit {
+  text-transform: uppercase;
+  display: flex;
+  position: absolute;
+  top: 34px;
+  right: 32px;
+  color: var(--variable-15);
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  svg path {
+    transition: all 0.25s ease-in-out;
+  }
+  &:hover {
+    color: var(--variable-12);
+    svg path {
+      fill: var(--variable-12);
+    }
+  }
+}
+.news__bottom {
+  padding: 23px 40px 55px;
+}
+.news__label {
+  color: var(--variable-13);
+  margin-bottom: 20px;
+}
+
+.news-add__preview{
+  flex: 0 0 400px
+}
+
+

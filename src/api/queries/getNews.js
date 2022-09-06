@@ -15,6 +15,8 @@ export const GET_NEWS = gql`
         }
         contacts {
           NAME
+          LAST_NAME
+          SECOND_NAME
         },
         houses {
           UF_NAME,

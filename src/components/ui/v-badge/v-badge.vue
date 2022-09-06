@@ -34,7 +34,7 @@ export default {
       required: false,
       default: 'blue',
       validator(value) {
-        return ['blue', 'purple', 'orange', 'teal'].includes(value)
+        return ['blue', 'purple', 'orange', 'teal', 'lightblue'].includes(value)
       }
     }
   },
