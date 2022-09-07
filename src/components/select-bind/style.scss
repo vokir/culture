@@ -57,6 +57,7 @@
   &__item-scroll {
     overflow: hidden auto;
     height: 330px;
+    scrollbar-width: thin
   }
 
   &__actions {
@@ -77,8 +78,8 @@
     font-size: 12px;
     line-height: 18px;
     user-select: none;
-
-    &:hover {
+    &:hover:not(.bind-list__item-value--no-hover),
+    &--active {
       background: var(--variable-17);
       position: relative;
 
@@ -102,18 +103,18 @@
     height: 150px;
     overflow: auto;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: min-content;
     padding: 10px 7px 0 16px;
   }
 
   &__selected-row {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--variable-17);
   }
 }
 
 .selected__value {
-  border-bottom: 1px solid var(--variable-17);
   font-family: 'Helvetica', sans-serif;
   font-style: normal;
   font-weight: 400;

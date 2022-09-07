@@ -14,7 +14,7 @@ Primary.args = {
   variant: "primary",
 };
 export default {
-  title: "UI Components/v-button ",
+  title: "UI Components/v-button",
   component: { VButton },
   decorators: [
     () => ({

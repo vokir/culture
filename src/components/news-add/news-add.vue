@@ -156,9 +156,10 @@ export default {
     const { isOpen, openModal, closeModal } = useModal()
     const { isOpen: bindIsOpen, openModal: openBindModal, closeModal: closeBindModal } = useModal()
     const currentTab = ref('Превью')
+
     const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
     const complexes = computed(() => {
-      return complexesData.value.getComplexes
+      return complexesData.value?.getComplexes
     })
 
     const types = [

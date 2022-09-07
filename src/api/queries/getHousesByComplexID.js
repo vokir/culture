@@ -10,4 +10,4 @@ export const GET_HOUSES_BY_COMPLEX_ID = gql`
       ID
     }
   }
-  `
+`
