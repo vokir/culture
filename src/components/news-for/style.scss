@@ -21,6 +21,9 @@
     &:last-child{
       color:var(--variable-13)
     }
+    &.cell-selected{
+      color:var(--variable-13)
+    }
   }
 
 }

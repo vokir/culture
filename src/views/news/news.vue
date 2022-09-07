@@ -111,8 +111,8 @@
           <template v-slot="{row}">
             <div class="badges-list">
               <div class="badges-list__row" v-if="row.contacts.length">
-                <v-badge v-for="(contact, index) in row.contacts" variant="lightblue" :key="'contact-'+index" :text="contact.NAME + ' ' + contact.LAST_NAME + ' ' + contact.SECOND_NAME"
-                         tooltip :tooltip-text="contact.NAME + ' ' + contact.LAST_NAME + ' ' + contact.SECOND_NAME"/>
+                <v-badge v-for="(contact, index) in row.contacts" variant="lightblue" :key="'contact-'+index" :text="getFullFio(contact.NAME,contact.LAST_NAME,contact.SECOND_NAME)"
+                         />
                          <br>
               </div>
             </div>
@@ -141,6 +141,7 @@ import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import useModal from "../../hooks/useModal";
+import getFullFio from "../../helpers/getFullFio";
 
 export default {
   setup() {
@@ -183,7 +184,8 @@ export default {
       refetch,
       dayjs,
       selectAll,
-      selected
+      selected,
+      getFullFio
     }
   },
 

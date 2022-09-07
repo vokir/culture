@@ -2,8 +2,8 @@
   <div :class="['badge', 'badge--' + variant  ]" @mouseenter="showTooltip" @mouseleave="hideTooltip">
     {{ text }}
   </div>
-  <teleport to="body">
-    <div v-if="hovering" :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltip" :style="{...mouseCoords}">
+  <teleport to="body" v-if="tooltip">
+    <div v-if="hovering" :class="['tooltip', {'tooltip--active': hovering}]" ref="tooltipRef" :style="{...mouseCoords}">
       {{ tooltipText }}
     </div>
   </teleport>
@@ -27,7 +27,7 @@ export default {
     },
     tooltipText: {
       type: String,
-      default: 'Text'
+      default: ''
     },
     variant: {
       type: String,
@@ -39,7 +39,7 @@ export default {
     }
   },
   setup() {
-    const tooltip = ref(null)
+    const tooltipRef = ref(null)
     const mouseCoords = ref({
       top: '0px',
       left: '0px'
@@ -64,7 +64,7 @@ export default {
 
 
     return {
-      tooltip,
+      tooltipRef,
       hovering,
       hideTooltip,
       showTooltip,

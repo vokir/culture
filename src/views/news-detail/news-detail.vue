@@ -27,30 +27,30 @@
     <div class="container-content">
       <div class="news">
         <VCard class="news__top">
-          <p v-if="news.types?.length" class="news__type">
-            {{ news.types[0]?.UF_TITLE }}
+          <p v-if="form.type?.length" class="news__type">
+            {{ form.type}}
           </p>
-          <p class="news__title">{{ news.UF_NAME }}</p>
-          <p class="news__date">{{ computeDate(news.UF_CREATED_AT) }}</p>
-          <p class="news__subtitle">{{ news.UF_PREVIEW_TEXT }}</p>
-          <p v-html="news.UF_TEXT" class="news__text"></p>
+          <p class="news__title">{{ form.UF_NAME }}</p>
+          <p class="news__date">{{ computeDate(form.date) }}</p>
+          <p class="news__subtitle">{{ form.desc }}</p>
+          <p v-html="form.fullDesc" class="news__text"></p>
           <div class="news__links">
-            <div class="news__row" v-if="news.complexes?.length">
+            <div class="news__row" v-if="form.complex?.length">
               <span class="news__name news__name-zhk">ЖК</span>
               <span class="news__value news__value-zhk">
                 {{ filteredZhk }}
               </span>
             </div>
-            <div class="news__row" v-if="news.complexes?.length">
+            <div class="news__row" v-if="form.complex?.length">
               <span class="news__name news__name-links">Ссылки</span>
               <span class="news__value"></span>
             </div>
-            <div class="news__row" v-if="news.documents?.length">
+            <div class="news__row" v-if="form.docs?.length">
               <span class="news__name news__name-docs">Документы</span>
               <ul class="news__list">
                 <a
                   :key="doc.ID"
-                  v-for="doc in news.documents"
+                  v-for="doc in form.docs"
                   :href="doc.file.SRC"
                   download
                   class="news__value"
@@ -58,10 +58,10 @@
                 >
               </ul>
             </div>
-            <div class="news__row" v-if="news.UF_PHONE">
+            <div class="news__row" v-if="form.phone">
               <span class="news__name news__name-tel">Телефон</span>
               <a href="tel:" class="news__value">{{
-                computePhone(news.UF_PHONE)
+                form.phone
               }}</a>
             </div>
           </div>
@@ -84,7 +84,7 @@
             <span>Редактировать</span>
           </div>
         </VCard>
-        <VCard v-if="form.houses?.length" class="news__bottom">
+        <VCard v-if="form.houses?.length | form.approaches?.length | form.floors?.length | form.premises?.length" class="news__bottom">
           <p class="news__label">Отображается для</p>
           <NewsForTable v-bind:newsInfo="newsInfo" />
         </VCard>
@@ -142,8 +142,6 @@ export default {
     onResult((result) => {
       if (result.data?.getNewsAt) {
         newsInfo.value = result.data.getNewsAt;
-        console.log(newsInfo);
-
         form.value.date = newsInfo.value.UF_CREATED_AT;
         form.value.type = getSingular(newsInfo.value.types[0]?.UF_TITLE);
         form.value.complex = newsInfo.value.complexes[0]?.UF_NAME;
@@ -168,7 +166,7 @@ export default {
 
         filteredZhk.value = form.value.complex;
 
-        if (newsInfo.value.houses.length === 0) {
+        if (newsInfo.value.houses?.length === 0) {
           filteredZhk.value += " / Все";
         }
       }

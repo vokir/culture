@@ -1,66 +1,42 @@
-.badge {
+.news__for {
+  color: var(--variable-7);
+}
+
+.for__titles {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  font-family: 'Helvetica', sans-serif;
-  font-weight: 400;
-  font-size: 14px;
+  gap: 10px;
+}
+
+.for__titles p {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 25%;
+          flex: 0 1 25%;
+}
+
+.for__row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.for__row .for__cell {
+  padding: 7px 17px;
   line-height: 150%;
-  padding: 0 7px;
-  color: var(--white);
-  border-radius: 3px;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  border: solid 1px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 25%;
+          flex: 0 1 25%;
 }
 
-.badge--blue {
-  background: var(--material-6);
-}
-
-.badge--purple {
-  background: var(--material-4);
-}
-
-.badge--orange {
-  background: var(--variable-4);
-}
-
-.badge--teal {
-  background: var(--material-8);
-}
-
-.badge--lightblue {
-  background: var(--variable-23);
+.for__row .for__cell:last-child {
   color: var(--variable-13);
 }
 
-.tooltip {
-  position: absolute;
-  background: #F8F8F8;
-  border: 1px solid #D3D3D3;
-  border-radius: 3px;
-  font-family: 'OpenSans', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 150%;
-  color: #666666;
-  padding: 5px 10px;
-  opacity: 0;
-  visibility: hidden;
-  -webkit-transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
-  transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out;
-}
-
-.tooltip--active {
-  opacity: 1;
-  visibility: visible;
+.for__row .for__cell.cell-selected {
+  color: var(--variable-13);
 }

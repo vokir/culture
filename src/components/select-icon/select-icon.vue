@@ -74,14 +74,6 @@ export default {
       name: null
     })
 
-    // console.log(props);
-
-    // console.log("Setup props:",toRaw(props));
-    // if (props.icon.src){
-    //     active.value.icon = props.icon?.src
-    //     isDirty.value = true
-    //     // console.log('asd');
-    //   }
 
 
     const { isOpen, openModal, closeModal } = useModal()
@@ -132,7 +124,6 @@ export default {
     })
 
     return {
-      props,
       isOpen,
       icons,
       icon,
