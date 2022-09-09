@@ -28,7 +28,7 @@
       <div class="news">
         <VCard class="news__top">
           <p v-if="form.type?.length" class="news__type">
-            {{ form.type}}
+            {{ form.type }}
           </p>
           <p class="news__title">{{ form.UF_NAME }}</p>
           <p class="news__date">{{ computeDate(form.date) }}</p>
@@ -60,9 +60,7 @@
             </div>
             <div class="news__row" v-if="form.phone">
               <span class="news__name news__name-tel">Телефон</span>
-              <a href="tel:" class="news__value">{{
-                form.phone
-              }}</a>
+              <a href="tel:" class="news__value">{{ form.phone }}</a>
             </div>
           </div>
           <div class="news__edit" @click="openModal">
@@ -84,12 +82,22 @@
             <span>Редактировать</span>
           </div>
         </VCard>
-        <VCard v-if="form.houses?.length | form.approaches?.length | form.floors?.length | form.premises?.length" class="news__bottom">
+        <VCard
+          v-if="
+            form.houses?.length |
+              form.approaches?.length |
+              form.floors?.length |
+              form.premises?.length
+          "
+          class="news__bottom"
+        >
           <p class="news__label">Отображается для</p>
           <NewsForTable v-bind:newsInfo="newsInfo" />
         </VCard>
       </div>
       <NewsPreview v-bind:form="form"> </NewsPreview>
+
+
     </div>
   </div>
   <v-modal v-if="isOpen" @closeModal="closeModal">
@@ -129,10 +137,9 @@ export default {
 
     const form = ref({});
 
-
     let filteredZhk = ref();
 
-    let newsInfo = ref({})
+    let newsInfo = ref({});
     const { result, load, onResult } = useLazyQuery(GET_NEWS_BY_ID, {
       newsID: parseInt(route.params.id),
     });
@@ -151,12 +158,12 @@ export default {
         form.value.phone = computePhone(newsInfo.value.UF_PHONE);
         form.value.docs = newsInfo.value.documents;
         form.value.premises = newsInfo.value.premises;
-        form.value.houses = newsInfo.value.houses
-        form.value.approaches = newsInfo.value.approaches
-        form.value.floors = newsInfo.value.floors
+        form.value.houses = newsInfo.value.houses;
+        form.value.approaches = newsInfo.value.approaches;
+        form.value.floors = newsInfo.value.floors;
         // form.value.links = newsInfo
-        form.value.buttonText = newsInfo.value.UF_BTN_TEXT
-        form.value.buttonLink = newsInfo.value.UF_BTN_LINK
+        form.value.buttonText = newsInfo.value.UF_BTN_TEXT;
+        form.value.buttonLink = newsInfo.value.UF_BTN_LINK;
         // form.value.imgLandscape = newsInfo.value.imgLandscape?.SRC;
         // form.value.imgLibrary = newsInfo.value.imgLibrary?.SRC;
         form.value.icon = {

@@ -1,42 +1,50 @@
-.news__for {
-  color: var(--variable-7);
-}
-
-.for__titles {
+.badges-list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  gap: 10px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 6px;
 }
 
-.for__titles p {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 1 25%;
-          flex: 0 1 25%;
-}
-
-.for__row {
+.badges-list__row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  gap: 10px;
-  margin-bottom: 5px;
+  gap: 6px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
-.for__row .for__cell {
-  padding: 7px 17px;
-  line-height: 150%;
-  border: solid 1px rgba(0, 0, 0, 0.25);
-  border-radius: 4px;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 1 25%;
-          flex: 0 1 25%;
+.badges-list-contacts .badges-list__row {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
 }
 
-.for__row .for__cell:last-child {
-  color: var(--variable-13);
+.badges-list-contacts .badges-list__row .badge {
+  border: 1px solid #000;
+  -ms-flex-item-align: baseline;
+      align-self: baseline;
 }
 
-.for__row .for__cell.cell-selected {
-  color: var(--variable-13);
+.badges-list__row-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  max-width: 300px;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  -webkit-box-align: baseline;
+      -ms-flex-align: baseline;
+          align-items: baseline;
+  gap: 5px;
 }

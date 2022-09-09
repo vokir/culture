@@ -2,18 +2,27 @@
   <div class="news__for">
     <div class="for__titles">
       <p>Дом</p>
-      <p v-if="newsInfo.approaches?.length | newsInfo.floors?.length | newsInfo.premises?.length">Подъезд</p>
-      <p v-if="newsInfo.floors?.length | newsInfo.premises?.length" >Этаж</p>
+      <p
+        v-if="
+          newsInfo.approaches?.length |
+            newsInfo.floors?.length |
+            newsInfo.premises?.length
+        "
+      >
+        Подъезд
+      </p>
+      <p v-if="newsInfo.floors?.length | newsInfo.premises?.length">Этаж</p>
       <p v-if="newsInfo.premises?.length">Помещение</p>
     </div>
     <div class="for__row" v-for="row in rows" ref="rowsDiv">
-      <div
-        v-for="cell in row"
-        class="for__cell"
-        :class="cell.isSelected"
-        :data-id="cell.isSelected"
-      >
-        {{ cell.name }}
+      <div v-for="cell in row" class="for__cell">
+        <span
+          v-for="(value, i) in cell"
+          class="for__value"
+          :class="value.isSelected"
+          :data-id="value.id"
+          >{{ value.name }}<span v-if="cell[i + 1]">, </span>
+        </span>
       </div>
     </div>
   </div>
@@ -32,90 +41,145 @@ export default {
     const setHouses = new Set();
     const setApproaches = new Set();
     const setFloors = new Set();
-    const setHousesSelected = new Set(props.newsInfo.houses.map((key)=> key.ID));
-    const setApproachesSelected = new Set(props.newsInfo.approaches.map((key)=> key.ID));
-    const setFloorsSelected = new Set(props.newsInfo.floors.map((key)=> key.ID));
-    const checkForSelected = (...arg) => {
-      if (setHousesSelected.has(arg[0])) {
-        rows[rows.length - 1][0].isSelected = "cell-selected";
-      }
-      if (setApproachesSelected.has(arg[1])) {
-        rows[rows.length - 1][1].isSelected = "cell-selected";
-      }
-      if (setFloorsSelected.has(arg[2])) {
-        rows[rows.length - 1][2].isSelected = "cell-selected";
-      }
+    const setHousesSelected = new Set(
+      props.newsInfo.houses.map((key) => key.ID)
+    );
+    const setApproachesSelected = new Set(
+      props.newsInfo.approaches.map((key) => key.ID)
+    );
+    const setFloorsSelected = new Set(
+      props.newsInfo.floors.map((key) => key.ID)
+    );
+
+    const checkForSelected = () => {
+      rows.forEach((row) => {
+        row.forEach((cell, i) => {
+          if (i === 0) {
+            cell.forEach((value) => {
+              if (setHousesSelected.has(value.id)) {
+                value.isSelected = "value-selected";
+              }
+            });
+          } else if (i === 1) {
+            cell.forEach((value) => {
+              if (setApproachesSelected.has(value.id)) {
+                value.isSelected = "value-selected";
+              }
+            });
+          } else if (i === 2) {
+            cell.forEach((value) => {
+              if (setFloorsSelected.has(value.id)) {
+                value.isSelected = "value-selected";
+              }
+            });
+          }
+        });
+      });
     };
 
     const rowsPush = (el) => {
       let floor;
       let approache;
-
-      if (el.__typename === "Floor") {
+      if (el.__typename === "House") {
+        setHouses.add(el.approache?.house.ID);
+        rows.push([
+          [
+            {
+              id: el.ID,
+              name: el.UF_NAME,
+            },
+          ],
+        ]);
+      } else if (el.__typename === "Floor") {
         setHouses.add(el.approache?.house.ID);
         setApproaches.add(el.approache?.ID);
         setFloors.add(el.ID);
-        floor = getFloorNumber(el.UF_NAME);
-        approache = getApproacheNumber(el.approache.UF_NAME);
+        floor = el.UF_NAME;
+        approache = el.approache.UF_NAME;
         rows.push([
-          {
-            name: el.approache.house.UF_NAME,
-          },
-          {
-            name: approache,
-          },
-          {
-            name: floor,
-          },
+          [
+            {
+              id: el.approache.house.ID,
+              name: el.approache.house.UF_NAME,
+            },
+          ],
+          [
+            {
+              id: el.approache.ID,
+              name: approache,
+            },
+          ],
+          [
+            {
+              id: el.ID,
+              name: floor,
+            },
+          ],
         ]);
-        checkForSelected(el.approache?.house?.ID,el.approache?.ID);
-      }else if(el.__typename === "Approache") {
+      } else if (el.__typename === "Approache") {
         setHouses.add(el.house.ID);
         setApproaches.add(el.ID);
-        approache = getApproacheNumber(el.UF_NAME);
+        approache = el.UF_NAME;
         rows.push([
-          {
-            name: el.house?.UF_NAME,
-          },
-          {
-            name: approache,
-          },
+          [
+            {
+              id: el.house.ID,
+              name: el.house?.UF_NAME,
+            },
+          ],
+          [
+            {
+              id: el.ID,
+              name: approache,
+            },
+          ],
         ]);
-        checkForSelected(
-          el.house.ID,
-        );
-      } else if(el.__typename === "Premise") {
+      } else if (el.__typename === "Premise") {
         setHouses.add(el.floor?.approache?.house.ID);
         setApproaches.add(el.floor?.approache?.ID);
         setFloors.add(el.floor?.ID);
-        floor = getFloorNumber(el.floor?.UF_NAME);
-        approache = getApproacheNumber(el.floor?.approache?.UF_NAME);
+        floor = el.floor?.UF_NAME;
+        approache = el.floor?.approache?.UF_NAME;
+        let name = el.UF_NUMBER
+        if(el.UF_NAME){
+          name = el.UF_NAME
+        }
         rows.push([
-          {
-            name: el.floor?.approache?.house?.UF_NAME,
-          },
-          {
-            name: approache,
-          },
-          {
-            name: floor,
-          },
-          {
-            name: el.UF_NUMBER,
-          },
+          [
+            {
+              id: el.floor?.approache?.house?.ID,
+              name: el.floor?.approache?.house?.UF_NAME,
+            },
+          ],
+          [
+            {
+              id: el.floor?.approache?.ID,
+              name: approache,
+            },
+          ],
+          [
+            {
+              id: el.floor?.ID,
+              name: floor,
+            },
+          ],
+          [
+            {
+              id: el.ID,
+              name: name,
+              isSelected: "value-selected",
+            },
+          ],
         ]);
-        checkForSelected(
-          el.floor?.approache?.house.ID,
-          el.floor?.approache?.ID,
-          el.floor?.ID
-        );
       }
     };
 
+    ////Проверка выбранных помещений
     if (props.newsInfo.premises.length > 0) {
       const premises = props.newsInfo.premises;
 
       premises.forEach((el) => {
+
         if (!setHouses.has(el.floor.approache.house.ID)) {
           rowsPush(el);
           return;
@@ -129,55 +193,83 @@ export default {
           rowsPush(el);
           return;
         }
-        rows[rows.length - 1][3].name += ", " + el.UF_NUMBER;
+        let name = el.UF_NUMBER
+        if(el.UF_NAME){
+          name = el.UF_NAME
+        }
+        rows[rows.length - 1][3].push({
+          id: el.ID,
+          name: name,
+          isSelected: "value-selected",
+        });
       });
-    } else if (props.newsInfo.floors.length > 0) {
+    }
+
+    ////Проверка выбранных этажей
+    if (props.newsInfo.floors.length > 0) {
       const floors = props.newsInfo.floors;
-      floors.forEach((el) => {
-        // const rowsPush = (_) => {
-        //   setHouses.add(el.approache.house.ID);
-        //   setApproaches.add(el.approache.ID);
-
-        // };
-
-        let floor = getFloorNumber(el.UF_NAME);
+      floors.forEach((el,i) => {
         if (!setHouses.has(el.approache.house.ID)) {
           rowsPush(el);
           return;
         }
-
         if (!setApproaches.has(el.approache.ID)) {
           rowsPush(el);
           return;
         }
-
-        rows[rows.length - 1][2].name += ", " + floor;
+        if (setFloors.has(el.ID)) {
+          return;
+        }
+        if(rows[rows.length-1][1][0].id === el.approache.ID && rows[rows.length - 1][3] === undefined){
+          rows[rows.length - 1][2].push({
+          id: el.ID,
+          name: el.UF_NAME,
+        });
+        }
+        else{
+          rowsPush(el)
+          return
+        }
       });
-    } else if (props.newsInfo.approaches.length > 0) {
+    }
+
+    //Проверка выбранных подъездов
+    if (props.newsInfo.approaches.length > 0) {
       const approaches = props.newsInfo.approaches;
       approaches.forEach((el) => {
-
-        // const rowsPush = (_) => {
-        //   setHouses.add(el.house.ID);
-        //   rows.push([
-        //     { name: el.house.UF_NAME },
-        //     { name: getApproacheNumber(el.UF_NAME) },
-        //   ]);
-        // };
-
         if (!setHouses.has(el.house.ID)) {
           rowsPush(el);
           return;
         }
+        if (setApproaches.has(el.ID)) {
+          return;
+        }
 
-        rows[rows.length - 1][1].name += ", " + getApproacheNumber(el.UF_NAME);
-      });
-    } else if (props.newsInfo.houses.length > 0) {
-      const houses = props.newsInfo.houses;
-      houses.forEach((el) => {
-        rows.push([{ name: el.UF_NAME }]);
+        if(rows[rows.length-1][0][0].id === el.house.ID && rows[rows.length - 1][2]?.length === undefined){
+          rows[rows.length - 1][1].push({
+          id: el.ID,
+          name: el.UF_NAME,
+          
+        });
+        setApproaches.add(el.ID);
+        }
+        else{
+          rowsPush(el)
+          return
+        }
       });
     }
+
+    //Проверка выбранных домов
+    if (props.newsInfo.houses.length > 0) {
+      const houses = props.newsInfo.houses;
+      houses.forEach((el) => {
+        if (!setHouses.has(el.ID)) {
+          rowsPush(el)
+        }
+      });
+    }
+    checkForSelected();
 
     return {
       rowsDiv,

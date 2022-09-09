@@ -50,6 +50,7 @@ query news($newsID: Int) {
     premises {
       ID
       UF_NUMBER
+      UF_NAME
       floor {
         ID
         UF_NAME
