@@ -17,15 +17,18 @@ export const GET_NEWS = gql`
           NAME
         },
         houses {
+          ID,
           UF_NAME,
         },
         approaches {
+          ID,
           UF_NAME,
           house {
             UF_NAME
           }
         },
         floors {
+          ID,
           UF_NAME,
           UF_NUMBER,
           approache {
@@ -36,6 +39,7 @@ export const GET_NEWS = gql`
           }
         },
         premises {
+          ID,
           UF_NUMBER,
           UF_NAME,
           floor {

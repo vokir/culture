@@ -86,21 +86,21 @@
           <template v-slot="{row}">
             <div class="badges-list">
               <div class="badges-list__row" v-if="row.houses.length">
-                <v-badge v-for="(house, index) in row.houses" variant="blue" :key="'house-'+index" :text="house.UF_NAME"
+                <v-badge v-for="(house, index) in row.houses" variant="blue" :key="'house-'+house.ID" :text="house.UF_NAME"
                          tooltip :tooltip-text="house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.approaches.length">
-                <v-badge v-for="(approache, index) in row.approaches" variant="purple" :key="'approache-'+index"
+                <v-badge v-for="(approache, index) in row.approaches" variant="purple" :key="'approache-'+approache.ID"
                          :text="approache.UF_NAME" tooltip
                          :tooltip-text="approache.UF_NAME + ', ' + approache.house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.floors.length">
-                <v-badge v-for="(floor, index) in row.floors" variant="orange" :key="'floor-'+index"
+                <v-badge v-for="(floor, index) in row.floors" variant="orange" :key="'floor-'+floor.ID"
                          :text="floor.UF_NAME" tooltip
                          :tooltip-text="floor.UF_NAME + ', ' + floor.approache.UF_NAME + ', ' + floor.approache.house.UF_NAME"/>
               </div>
               <div class="badges-list__row" v-if="row.premises.length">
-                <v-badge v-for="(premise, index) in row.premises" variant="teal" :key="'premise-'+index"
+                <v-badge v-for="(premise, index) in row.premises" variant="teal" :key="'premise-'+premise.ID"
                          :text="premise.UF_NAME" tooltip
                          :tooltip-text="premise.UF_NAME + ', ' + premise.floor.UF_NAME + ', ' + premise.floor.approache.UF_NAME + ', ' + premise.floor.approache.house.UF_NAME"/>
               </div>
