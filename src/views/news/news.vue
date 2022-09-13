@@ -19,7 +19,9 @@
           </svg>
         </div>
       </div>
-      <div class="container-header__search">123</div>
+      <div class="container-header__search">
+        <news-search @filterTable="filterTable"/>
+      </div>
       <div class="container-header__action">
         <v-button class="btn--w100" @click="openModal"
           >Добавить новость</v-button
@@ -112,64 +114,7 @@
         </v-table-column>
         <v-table-column id="visibility" title="Отображается для" width="400px">
           <template v-slot="{ row }">
-            <div class="badges-list td-for">
-              <div class="badges-list__row" v-if="row.houses.length">
-                <v-badge
-                  v-for="(house, index) in row.houses"
-                  variant="blue"
-                  :key="'house-' + index"
-                  :text="house.UF_NAME"
-                  tooltip
-                  :tooltip-text="house.UF_NAME"
-                />
-              </div>
-              <div class="badges-list__row" v-if="row.approaches.length">
-                <v-badge
-                  v-for="(approache, index) in row.approaches"
-                  variant="purple"
-                  :key="'approache-' + index"
-                  :text="approache.UF_NAME"
-                  tooltip
-                  :tooltip-text="
-                    approache.UF_NAME + ', ' + approache.house.UF_NAME
-                  "
-                />
-              </div>
-              <div class="badges-list__row" v-if="row.floors.length">
-                <v-badge
-                  v-for="(floor, index) in row.floors"
-                  variant="orange"
-                  :key="'floor-' + index"
-                  :text="floor.UF_NAME"
-                  tooltip
-                  :tooltip-text="
-                    floor.UF_NAME +
-                    ', ' +
-                    floor.approache.UF_NAME +
-                    ', ' +
-                    floor.approache.house.UF_NAME
-                  "
-                />
-              </div>
-              <div class="badges-list__row" v-if="row.premises.length">
-                <v-badge
-                  v-for="(premise, index) in row.premises"
-                  variant="teal"
-                  :key="'premise-' + index"
-                  :text="premise.UF_NUMBER"
-                  tooltip
-                  :tooltip-text="
-                    premise.UF_NAME +
-                    ', ' +
-                    premise.floor.UF_NAME +
-                    ', ' +
-                    premise.floor.approache.UF_NAME +
-                    ', ' +
-                    premise.floor.approache.house.UF_NAME
-                  "
-                />
-              </div>
-            </div>
+              <news-for-column :newsInfo="row"/>
           </template>
         </v-table-column>
         <v-table-column id="visibility" title="Контакты" width="600px">
@@ -185,18 +130,8 @@
                     variant="lightblue"
                     :key="'contact-' + index"
                     :text="
-                      getFullFio(
-                        contact.NAME,
-                        contact.LAST_NAME,
-                        contact.SECOND_NAME
-                      )
-                    "
-                  />
-                  <v-popup
-                    :class="{ 'visibility-hidden': popupIsOpened }"
-                    @togglePopup="togglePopup"
-                    v-if="row.contacts.slice(0, 3).length - 1 === index"
-                    v-bind:contacts="row.contacts"
+                      getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"/>
+                  <v-popup :class="{ 'visibility-hidden': popupIsOpened }" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
                   />
                 </div>
               </div>
@@ -212,7 +147,7 @@
 </template>
 
 <script>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useLazyQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -228,9 +163,12 @@ import VTable from "../../components/ui/v-table/v-table.vue";
 import useModal from "../../hooks/useModal";
 import getFullFio from "../../helpers/getFullFio";
 import VPopup from "../../components/ui/v-popup/v-popup.vue";
+import getNewsFor from "../../helpers/getNewsFor";
+import NewsForColumn from "../../components/news-for/news-for-column.vue";
+import NewsSearch from "../../components/news-search/news-search.vue";
 
 export default {
-  setup() {
+  setup(props, context) {
     const popupIsOpened = ref(false);
     const togglePopup = () => {
       popupIsOpened.value = !popupIsOpened.value;
@@ -239,7 +177,7 @@ export default {
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
 
-    const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+    let { result, loading, variables, refetch } = useQuery(GET_NEWS, {
       currentPage: 1,
       perPage: 20,
     });
@@ -263,6 +201,15 @@ export default {
       },
     });
 
+    const filterTable = (str) => {
+      const { result2, onResult:onRes } = useQuery(GET_NEWS, {
+      str:str,
+    });
+
+
+
+    }
+
     return {
       route,
       isOpen,
@@ -278,6 +225,8 @@ export default {
       getFullFio,
       popupIsOpened,
       togglePopup,
+      getNewsFor,
+      filterTable,
     };
   },
 
@@ -291,6 +240,8 @@ export default {
     VButton,
     VModal,
     VPopup,
+    NewsForColumn,
+    NewsSearch,
   },
 };
 </script>

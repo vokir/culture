@@ -2,7 +2,7 @@
   <div class="container">
     <div class="container-header">
       <router-link class="link" :to="{ name: 'news' }"
-        ><VButton src="/news/" variant="transparent" transparent>
+        ><v-button src="/news/" variant="transparent" transparent>
           <svg
             class="btn--transparent__svg"
             width="6"
@@ -18,7 +18,7 @@
               fill="white"
             />
           </svg>
-          Вернуться к списку новостей</VButton
+          Вернуться к списку новостей</v-button
         >
       </router-link>
 
@@ -26,11 +26,11 @@
     </div>
     <div class="container-content">
       <div class="news">
-        <VCard class="news__top">
+        <v-card class="news__top">
           <p v-if="form.type?.length" class="news__type">
             {{ form.type }}
           </p>
-          <p class="news__title">{{ form.UF_NAME }}</p>
+          <p class="news__title">{{ form.title }}</p>
           <p class="news__date">{{ computeDate(form.date) }}</p>
           <p class="news__subtitle">{{ form.desc }}</p>
           <p v-html="form.fullDesc" class="news__text"></p>
@@ -49,13 +49,14 @@
               <span class="news__name news__name-docs">Документы</span>
               <ul class="news__list">
                 <a
+                  class="news__value"
                   :key="doc.ID"
                   v-for="doc in form.docs"
                   :href="doc.file.SRC"
                   download
-                  class="news__value"
-                  >{{ doc.file.ORIGINAL_NAME }}</a
                 >
+                  {{ doc.file.ORIGINAL_NAME }}
+                </a>
               </ul>
             </div>
             <div class="news__row" v-if="form.phone">
@@ -81,27 +82,25 @@
 
             <span>Редактировать</span>
           </div>
-        </VCard>
-        <VCard
+        </v-card>
+        <v-card
           v-if="
-            form.houses?.length |
-              form.approaches?.length |
-              form.floors?.length |
-              form.premises?.length
+            form.houses.length |
+              form.approaches.length |
+              form.floors.length |
+              form.premises.length
           "
           class="news__bottom"
         >
           <p class="news__label">Отображается для</p>
-          <NewsForTable v-bind:newsInfo="newsInfo" />
-        </VCard>
+          <news-for-table :newsInfo="newsInfo" />
+        </v-card>
       </div>
-      <NewsPreview v-bind:form="form"> </NewsPreview>
-
-
+      <news-preview :form="form"> </news-preview>
     </div>
   </div>
   <v-modal v-if="isOpen" @closeModal="closeModal">
-    <news-add v-bind:typeTitle="typeTitle" v-bind:form="form" />
+    <news-add :typeTitle="typeTitle" :form="form" />
   </v-modal>
 </template>
 
@@ -109,8 +108,8 @@
 import VCard from "../../components/ui/v-card/v-card.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import { GET_NEWS_BY_ID } from "../../api/queries/getNewsByID";
-import { useQuery, useLazyQuery } from "@vue/apollo-composable";
-import { computed, ref, onMounted } from "vue";
+import { useLazyQuery } from "@vue/apollo-composable";
+import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import computeDate from "../../helpers/dateFormat";
 import NewsPreview from "../../components/news-add/news-preview.vue";
@@ -125,6 +124,15 @@ import getSingular from "../../helpers/getSingular";
 import NewsForTable from "../../components/news-for/news-for-table.vue";
 
 export default {
+  name: "news-detail",
+  components: {
+    VCard,
+    VButton,
+    NewsPreview,
+    VModal,
+    NewsAdd,
+    NewsForTable,
+  },
   setup() {
     const typeTitle = ref("Редактировать");
     const route = useRoute();
@@ -135,7 +143,12 @@ export default {
 
     const news = computed(() => result.value?.getNewsAt ?? []);
 
-    const form = ref({});
+    const form = ref({
+      houses: [],
+      approaches: [],
+      floors: [],
+      premises: [],
+    });
 
     let filteredZhk = ref();
 
@@ -196,15 +209,7 @@ export default {
       newsInfo,
     };
   },
-  name: "news-detail",
-  components: {
-    VCard,
-    VButton,
-    NewsPreview,
-    VModal,
-    NewsAdd,
-    NewsForTable,
-  },
+
 };
 </script>
 

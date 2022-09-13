@@ -57,44 +57,9 @@
         <v-button variant="link">Отмена</v-button>
       </div>
     </form>
-    <NewsPreview @openModal = 'openModal' v-bind:form="{...form}">
+    <NewsPreview @openModal = 'openModal' :form="{...form}">
       
     </NewsPreview>
-    <!-- <div class="news-add__preview">
-      <v-card class="news-add__preview-card">
-        <v-tabs>
-          <v-tab title="AMIO">
-            <v-tabs link-title class="news-add__preview-inner-tabs" v-model="currentTab">
-              <v-tab title="Превью">
-                <amio-preview v-bind="{...form}"/>
-              </v-tab>
-              <v-tab title="Подробная">
-                <amio-detail v-bind="{...form}" @openModal="openModal"/>
-              </v-tab>
-              <v-tab title="Сторис">
-                <amio-stories v-bind="{...form}" @openModal="openModal"/>
-              </v-tab>
-            </v-tabs>
-          </v-tab>
-          <v-tab title="Alphaopen">
-            <v-tabs link-title class="news-add__preview-inner-tabs">
-              <v-tab title="Превью">
-                Alphaopen Превью
-              </v-tab>
-              <v-tab title="Подробная">
-                Alphaopen Подробная
-              </v-tab>
-              <v-tab title="Сторис">
-                Alphaopen Сторис
-              </v-tab>
-            </v-tabs>
-          </v-tab>
-        </v-tabs>
-      </v-card>
-      <v-card class="news-add__preview-icon" v-if="currentTab === 'Превью'">
-        <select-icon @saveIcon="saveIcon"/>
-      </v-card>
-    </div> -->
   </section>
   <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
   <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID"
@@ -106,7 +71,6 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed, ref, onMounted } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
-import computeDate from "../../helpers/dateFormat";
 import useModal from "../../hooks/useModal";
 import AmioDetail from "../amio-news/amio-detail/amio-detail.vue";
 import AmioPreview from "../amio-news/amio-preview/amio-preview.vue";

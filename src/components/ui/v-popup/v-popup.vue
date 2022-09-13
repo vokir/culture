@@ -1,16 +1,16 @@
 <template lang="">
   <div class="contacts-btn">
-    <VDropdown class="contacts-vmenu" :triggers="[]" :popperTriggers="[]" :shown="isOpened" :autoHide="false" :placement="'bottom-start'" :delay="{
+    <v-dropdown class="contacts-vmenu" :triggers="[]" :popperTriggers="[]" :shown="isOpened" :autoHide="false" :placement="'bottom-start'" :delay="{
         show: 0,
         hide: 0,
       }" :distance="-30" :skidding="-160">
         <button class="contacts-button" @click="togglePopup">Все > </button>
 
         <template  #popper class="contacts-popup-card" :shown="isOpened">
-      <div class="contact-popup-column">
+      <div class="contacts-popup-column">
         <p
           v-for="(contact, index) in props.contacts"
-          class="contact-popup-person"
+          class="contacts-popup-person"
         >
           {{ getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME) }}
         </p>
@@ -40,7 +40,7 @@
         />
       </svg>
         </template>
-      </VDropdown>
+      </v-dropdown>
 
   </div>
 </template>
@@ -53,6 +53,11 @@ import { ref } from "vue";
 
 export default {
   props: ["contacts"],
+  components: {
+    VButton,
+    VCard,
+    VBadge,
+  },
   setup(props, context) {
     const isOpened = ref(false);
     const togglePopup = () => {
@@ -66,11 +71,7 @@ export default {
       togglePopup,
     };
   },
-  components: {
-    VButton,
-    VCard,
-    VBadge,
-  },
+
 };
 </script>
 <style lang="scss" src="./style.scss" scoped />

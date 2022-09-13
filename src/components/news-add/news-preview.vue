@@ -29,7 +29,7 @@
       </v-tabs>
     </v-card>
     <v-card class="news-add__preview-icon" v-if="currentTab === 'Превью'">
-      <select-icon v-bind:icon="props.form.icon" @saveIcon="saveIcon" />
+      <select-icon :icon="props.form.icon" @saveIcon="saveIcon" />
     </v-card>
   </div>
 </template>
