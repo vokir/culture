@@ -47,7 +47,7 @@
 
 <script>
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, toRaw } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
 import useModal from "../../hooks/useModal";
@@ -60,6 +60,7 @@ import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VTagsList from "../ui/v-tags-list/v-tags-list.vue";
 
 export default {
+  props:['icon'],
   name: "select-icon",
   components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
   emits: ['saveIcon'],
@@ -72,6 +73,9 @@ export default {
       icon: null,
       name: null
     })
+
+
+
     const { isOpen, openModal, closeModal } = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 2)
     const { result, loading, refetch } = useQuery(GET_ICONS, {

@@ -33,7 +33,7 @@ export default {
   emits: ['closeModal'],
   inheritAttrs: false,
   props: {
-    centered: Boolean
+    centered: Boolean,
   },
   setup(_, { emit }) {
     const store = useModalStore()

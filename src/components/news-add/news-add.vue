@@ -1,7 +1,8 @@
 <template>
   <section class="news-add">
-    <div class="news-add__title">Добавить новость</div>
+    <div class="news-add__title">{{typeTitle ? typeTitle : 'Добавить'}} новость</div>
     <form class="news-add-form">
+      
       <v-card class="news-add-form__card-first">
         <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
         <v-select v-model="form.type" name="type" :options="types" labelSelect="Тип новости"/>
@@ -56,41 +57,9 @@
         <v-button variant="link">Отмена</v-button>
       </div>
     </form>
-    <div class="news-add__preview">
-      <v-card class="news-add__preview-card">
-        <v-tabs>
-          <v-tab title="AMIO">
-            <v-tabs link-title class="news-add__preview-inner-tabs" v-model="currentTab">
-              <v-tab title="Превью">
-                <amio-preview v-bind="{...form}"/>
-              </v-tab>
-              <v-tab title="Подробная">
-                <amio-detail v-bind="{...form}" @openModal="openModal"/>
-              </v-tab>
-              <v-tab title="Сторис">
-                <amio-stories v-bind="{...form}" @openModal="openModal"/>
-              </v-tab>
-            </v-tabs>
-          </v-tab>
-          <v-tab title="Alphaopen">
-            <v-tabs link-title class="news-add__preview-inner-tabs">
-              <v-tab title="Превью">
-                Alphaopen Превью
-              </v-tab>
-              <v-tab title="Подробная">
-                Alphaopen Подробная
-              </v-tab>
-              <v-tab title="Сторис">
-                Alphaopen Сторис
-              </v-tab>
-            </v-tabs>
-          </v-tab>
-        </v-tabs>
-      </v-card>
-      <v-card class="news-add__preview-icon" v-if="currentTab === 'Превью'">
-        <select-icon @saveIcon="saveIcon"/>
-      </v-card>
-    </div>
+    <NewsPreview @openModal = 'openModal' :form="{...form}">
+      
+    </NewsPreview>
   </section>
   <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
   <select-bind v-if="bindIsOpen" :isOpen="bindIsOpen" @closeModal="closeBindModal" :complexID="form.complex.ID"
@@ -99,7 +68,7 @@
 
 <script>
 import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
 import useModal from "../../hooks/useModal";
@@ -119,8 +88,13 @@ import VSelect from "../ui/v-select/v-select.vue";
 import VTab from "../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../ui/v-tabs/v-tabs.vue";
 import VTextarea from "../ui/v-textarea/v-input.vue";
+import NewsPreview from "./news-preview.vue";
 
 export default {
+  props:[
+    'typeTitle',
+    'form'
+  ],
   name: "news-add",
   directives: { mask },
   components: {
@@ -139,10 +113,10 @@ export default {
     VTabs,
     VSelect,
     VInput,
-    VCard
+    VCard,
+    NewsPreview
   },
-
-  setup() {
+  setup(props) {
     const { isOpen, openModal, closeModal } = useModal()
     const { isOpen: bindIsOpen, openModal: openBindModal, closeModal: closeBindModal } = useModal()
     const currentTab = ref('Превью')
@@ -174,6 +148,14 @@ export default {
       icon: null
     })
 
+    onMounted(() => {
+      const dataForm = {...props.form}
+      if(Object.keys(dataForm).length !== 0){
+        dataForm.date = dataForm.date.slice(0,16)
+        form.value = dataForm
+      }
+    })
+  
     const onLoadFiles = (value) => {
       form.value.imgLandscape = {
         id: value.id[0],
@@ -205,9 +187,11 @@ export default {
       openBindModal,
       closeBindModal,
       onLoadFiles,
-      saveIcon
+      saveIcon,
+      
     }
-  }
+  },
+
 }
 </script>
 

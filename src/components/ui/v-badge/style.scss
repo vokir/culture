@@ -27,6 +27,10 @@
   &--teal {
     background: var(--material-8);
   }
+  &--lightblue {
+    background: var(--variable-23);
+    color: var(--variable-13)
+  }
 }
 
 .tooltip {
@@ -50,3 +54,5 @@
     visibility: visible;
   }
 }
+
+

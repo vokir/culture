@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="container-header__search">
-        123
+        <news-search @filterTable="filterTable"/>
       </div>
       <div class="container-header__action">
         <v-button class="btn--w100" @click="openModal">Добавить новость</v-button>
@@ -26,7 +26,7 @@
 
         <v-table-column id="choice" title="check" class="table__thead-th-check">
           <template v-slot:header="{ id, title }">
-            <v-checkbox v-model='selectAll'/>
+            <v-checkbox v-model="selectAll" />
           </template>
 
           <template v-slot="{ row, items }">
@@ -61,48 +61,52 @@
         </v-table-column>
         <v-table-column id="UF_NAME" title="Заголовок" width="190px">
           <template v-slot="{row}">
-            <router-link class="link" :to="{ name: 'news-detail', params: { id: row.ID } }">{{
-                row.UF_NAME
-              }}
+            <router-link class="link" :to="{ name: 'news-detail', params: { id: row.ID } }">
+              {{ row.UF_NAME }}
             </router-link>
           </template>
         </v-table-column>
         <v-table-column id="types" title="Тип новости" width="120px">
-          <template v-slot="{row}">
-            <span v-for="(type, index) of row.types" :key="index">{{ type.UF_TITLE }}</span>
+          <template v-slot="{ row }">
+            <span v-for="(type, index) of row.types" :key="index">
+              {{ type.UF_TITLE }}
+            </span>
           </template>
         </v-table-column>
         <v-table-column id="UF_CREATED_AT" title="Дата" width="80px">
-          <template v-slot="{row}">
-            {{ dayjs(row.UF_CREATED_AT).format('DD.MM.YYYY hh:mm') }}
+          <template v-slot="{ row }">
+            {{ dayjs(row.UF_CREATED_AT).format("DD.MM.YYYY hh:mm") }}
           </template>
         </v-table-column>
         <v-table-column id="complexes" title="ЖК" width="200px">
-          <template v-slot="{row}">
-            <div v-for="(complex, index) in row.complexes" :key="index">{{ complex.UF_NAME }}</div>
+          <template v-slot="{ row }">
+            <div v-for="(complex, index) in row.complexes" :key="index">
+              {{ complex.UF_NAME }}
+            </div>
           </template>
         </v-table-column>
         <v-table-column id="visibility" title="Отображается для" width="400px">
-          <template v-slot="{row}">
-            <div class="badges-list">
-              <div class="badges-list__row" v-if="row.houses.length">
-                <v-badge v-for="(house, index) in row.houses" variant="blue" :key="'house-'+house.ID" :text="house.UF_NAME"
-                         tooltip :tooltip-text="house.UF_NAME"/>
-              </div>
-              <div class="badges-list__row" v-if="row.approaches.length">
-                <v-badge v-for="(approache, index) in row.approaches" variant="purple" :key="'approache-'+approache.ID"
-                         :text="approache.UF_NAME" tooltip
-                         :tooltip-text="approache.UF_NAME + ', ' + approache.house.UF_NAME"/>
-              </div>
-              <div class="badges-list__row" v-if="row.floors.length">
-                <v-badge v-for="(floor, index) in row.floors" variant="orange" :key="'floor-'+floor.ID"
-                         :text="floor.UF_NAME" tooltip
-                         :tooltip-text="floor.UF_NAME + ', ' + floor.approache.UF_NAME + ', ' + floor.approache.house.UF_NAME"/>
-              </div>
-              <div class="badges-list__row" v-if="row.premises.length">
-                <v-badge v-for="(premise, index) in row.premises" variant="teal" :key="'premise-'+premise.ID"
-                         :text="premise.UF_NAME" tooltip
-                         :tooltip-text="premise.UF_NAME + ', ' + premise.floor.UF_NAME + ', ' + premise.floor.approache.UF_NAME + ', ' + premise.floor.approache.house.UF_NAME"/>
+          <template v-slot="{ row }">
+              <news-for-column :newsInfo="row"/>
+          </template>
+        </v-table-column>
+        <v-table-column id="visibility" title="Контакты" width="600px">
+          <template v-slot="{ row }">
+            <div class="badges-list-contacts">
+              <div class="badges-list__row" v-if="row.contacts.length">
+                <div
+                  class="badges-list__row-wrapper"
+                  v-for="(contact, index) in row.contacts.slice(0, 3)"
+                >
+                  <v-badge
+                    :class="{ 'transparent-background': popupIsOpened }"
+                    variant="lightblue"
+                    :key="'contact-' + index"
+                    :text="
+                      getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"/>
+                  <v-popup :class="{ 'visibility-hidden': popupIsOpened }" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
+                  />
+                </div>
               </div>
             </div>
           </template>
@@ -116,10 +120,10 @@
 </template>
 
 <script>
-import { useQuery } from '@vue/apollo-composable'
-import dayjs from 'dayjs'
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useQuery, useLazyQuery } from "@vue/apollo-composable";
+import dayjs from "dayjs";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 import { GET_NEWS } from "../../api/queries/getNews";
 import NewsAdd from "../../components/news-add/news-add.vue";
 import VBadge from "../../components/ui/v-badge/v-badge.vue";
@@ -130,36 +134,54 @@ import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import useModal from "../../hooks/useModal";
+import getFullFio from "../../helpers/getFullFio";
+import VPopup from "../../components/ui/v-popup/v-popup.vue";
+import getNewsFor from "../../helpers/getNewsFor";
+import NewsForColumn from "../../components/news-for/news-for-column.vue";
+import NewsSearch from "../../components/news-search/news-search.vue";
 
 export default {
-  setup() {
-    const route = useRoute()
-    const selected = ref([])
-    const { isOpen, openModal, closeModal } = useModal()
+  setup(props, context) {
+    const popupIsOpened = ref(false);
+    const togglePopup = () => {
+      popupIsOpened.value = !popupIsOpened.value;
+    };
+    const route = useRoute();
+    const selected = ref([]);
+    const { isOpen, openModal, closeModal } = useModal();
 
-    const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+    let { result, loading, variables, refetch } = useQuery(GET_NEWS, {
       currentPage: 1,
-      perPage: 20
-    })
+      perPage: 20,
+    });
 
     const news = computed(() => {
-      return result.value.getNews.data
-    })
+      return result.value.getNews.data;
+    });
 
     const selectAll = computed({
       get() {
-        return selected.value.length === result.value.getNews.data.length
+        return selected.value.length === result.value.getNews.data.length;
       },
       set(value) {
-        selected.value = []
+        selected.value = [];
 
         if (value) {
           result.value.getNews.data.forEach((select) => {
-            selected.value.push(select)
-          })
+            selected.value.push(select);
+          });
         }
-      }
-    })
+      },
+    });
+
+    const filterTable = (str) => {
+      const { result2, onResult:onRes } = useQuery(GET_NEWS, {
+      str:str,
+    });
+
+
+
+    }
 
     return {
       route,
@@ -172,12 +194,29 @@ export default {
       refetch,
       dayjs,
       selectAll,
-      selected
-    }
+      selected,
+      getFullFio,
+      popupIsOpened,
+      togglePopup,
+      getNewsFor,
+      filterTable,
+    };
   },
 
-  components: { VCropImage, NewsAdd, VBadge, VTable, VCheckbox, VTableColumn, VButton, VModal }
-}
+  components: {
+    VCropImage,
+    NewsAdd,
+    VBadge,
+    VTable,
+    VCheckbox,
+    VTableColumn,
+    VButton,
+    VModal,
+    VPopup,
+    NewsForColumn,
+    NewsSearch,
+  },
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />
