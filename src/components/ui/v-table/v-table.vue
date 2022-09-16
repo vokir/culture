@@ -48,7 +48,10 @@ export default {
             ])
           })
         ])
-      ])
+      ]),
+			h('div', { class: 'table-action' }, [
+				h(slots.action)
+			])
     ])
   }
 };

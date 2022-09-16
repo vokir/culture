@@ -1,7 +1,7 @@
 <template>
   <section class="news-add">
     <div class="news-add__title">Добавить новость</div>
-    <form class="news-add-form">
+    <form class="news-add-form" @submit.prevent>
       <v-card class="news-add-form__card-first">
         <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
         <v-select v-model="form.type" name="type" :options="types" labelSelect="Тип новости"/>
@@ -51,9 +51,9 @@
         />
       </v-card>
       <div class="news-add__actions">
-        <v-button type="submit" variant="success">Сохранить</v-button>
+        <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
         <v-button variant="bordered">Сохранить новость и создать ещё</v-button>
-        <v-button variant="link">Отмена</v-button>
+        <v-button variant="link" @click="onCancel">Отмена</v-button>
       </div>
     </form>
     <div class="news-add__preview">
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
@@ -119,6 +119,7 @@ import VSelect from "../ui/v-select/v-select.vue";
 import VTab from "../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../ui/v-tabs/v-tabs.vue";
 import VTextarea from "../ui/v-textarea/v-input.vue";
+import {CREATE_NEWS} from "../../api/mutations/createNews";
 
 export default {
   name: "news-add",
@@ -151,7 +152,9 @@ export default {
     const complexes = computed(() => {
       return complexesData.value?.getComplexes
     })
-
+	
+		const { mutate: createNews } = useMutation(CREATE_NEWS)
+		
     const types = [
       'Новость',
       'Акция',
@@ -159,19 +162,19 @@ export default {
     ]
 
     const form = ref({
+      title: '',
+			icon: null,
+      desc: '',
+      imgLandscape: null,
+      imgLibrary: null,
+      fullDesc: '',
+      phone: '',
       date: '',
       type: '',
       complex: '',
-      title: '',
-      desc: '',
-      fullDesc: '',
-      phone: '',
       docs: [],
       links: [],
       button: [],
-      imgLandscape: null,
-      imgLibrary: null,
-      icon: null
     })
 
     const onLoadFiles = (value) => {
@@ -192,6 +195,41 @@ export default {
       }
     }
 
+    const onSave = () => {
+    	const data = {
+				title: form.value.title,
+				icon: form.value.icon.id,
+				desc: form.value.desc,
+				imgLandscape: form.value.imgLandscape ? form.value.imgLandscape.id : null,
+				imgLibrary: form.value.imgLibrary ? form.value.imgLibrary.id : null,
+				fullDesc: form.value.fullDesc,
+				phone: form.value.phone,
+			}
+    	createNews(data)
+			clearForm()
+		}
+		const onCancel = () => {
+			clearForm()
+		}
+		
+		const clearForm = () => {
+			form.value = {
+				title: '',
+				icon: null,
+				desc: '',
+				imgLandscape: null,
+				imgLibrary: null,
+				fullDesc: '',
+				phone: '',
+				date: '',
+				type: '',
+				complex: '',
+				docs: [],
+				links: [],
+				button: [],
+			}
+		}
+    
     return {
       form,
       types,
@@ -205,7 +243,9 @@ export default {
       openBindModal,
       closeBindModal,
       onLoadFiles,
-      saveIcon
+      saveIcon,
+			onSave,
+			onCancel
     }
   }
 }
