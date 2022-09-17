@@ -20,8 +20,7 @@
       </div>
     </div>
     <div class="container-content">
-
-      <div class="loading" v-if="loading">Загрузка...</div>
+			<v-loader v-if="loading"/>
       <v-table v-else :rows="news">
 
         <v-table-column id="choice" title="check" class="table__thead-th-check">
@@ -111,6 +110,13 @@
             </div>
           </template>
         </v-table-column>
+				<template #action>
+					<div class="wrap">
+						<v-button variant="danger">Удалить</v-button>
+						<v-button variant="link">Отмена</v-button>
+						<span class="table-action__selected">Отмечено: {{selected.length}} / 20</span>
+					</div>
+				</template>
       </v-table>
     </div>
   </section>
@@ -134,6 +140,7 @@ import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import useModal from "../../hooks/useModal";
+import VLoader from "../../components/ui/v-loader/v-loader.vue";
 import getFullFio from "../../helpers/getFullFio";
 import VPopup from "../../components/ui/v-popup/v-popup.vue";
 import getNewsFor from "../../helpers/getNewsFor";
@@ -202,7 +209,6 @@ export default {
       filterTable,
     };
   },
-
   components: {
     VCropImage,
     NewsAdd,
@@ -215,6 +221,7 @@ export default {
     VPopup,
     NewsForColumn,
     NewsSearch,
+    VLoader,
   },
 };
 </script>

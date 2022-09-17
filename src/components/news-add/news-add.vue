@@ -1,8 +1,7 @@
 <template>
   <section class="news-add">
     <div class="news-add__title">{{typeTitle ? typeTitle : 'Добавить'}} новость</div>
-    <form class="news-add-form">
-      
+    <form class="news-add-form" @submit.prevent>
       <v-card class="news-add-form__card-first">
         <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
         <v-select v-model="form.type" name="type" :options="types" labelSelect="Тип новости"/>
@@ -52,13 +51,13 @@
         />
       </v-card>
       <div class="news-add__actions">
-        <v-button type="submit" variant="success">Сохранить</v-button>
+        <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
         <v-button variant="bordered">Сохранить новость и создать ещё</v-button>
-        <v-button variant="link">Отмена</v-button>
+        <v-button variant="link" @click="onCancel">Отмена</v-button>
       </div>
     </form>
     <NewsPreview @openModal = 'openModal' :form="{...form}">
-      
+
     </NewsPreview>
   </section>
   <select-image v-if="isOpen" :isOpen="isOpen" @closeModal="closeModal" @onLoadFiles="onLoadFiles"/>
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-import { useQuery } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { computed, ref, onMounted } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../api/queries/getComplexes";
@@ -89,12 +88,9 @@ import VTab from "../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../ui/v-tabs/v-tabs.vue";
 import VTextarea from "../ui/v-textarea/v-input.vue";
 import NewsPreview from "./news-preview.vue";
+import {CREATE_NEWS} from "../../api/mutations/createNews";
 
 export default {
-  props:[
-    'typeTitle',
-    'form'
-  ],
   name: "news-add",
   directives: { mask },
   components: {
@@ -116,15 +112,23 @@ export default {
     VCard,
     NewsPreview
   },
-  setup(props) {
+  props:[
+    'typeTitle',
+    'form'
+  ],
+  setup() {
     const { isOpen, openModal, closeModal } = useModal()
+
     const { isOpen: bindIsOpen, openModal: openBindModal, closeModal: closeBindModal } = useModal()
+  setup(props) {
     const currentTab = ref('Превью')
 
     const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
     const complexes = computed(() => {
       return complexesData.value?.getComplexes
     })
+
+		const { mutate: createNews } = useMutation(CREATE_NEWS)
 
     const types = [
       'Новость',
@@ -133,19 +137,19 @@ export default {
     ]
 
     const form = ref({
+      title: '',
+			icon: null,
+      desc: '',
+      imgLandscape: null,
+      imgLibrary: null,
+      fullDesc: '',
+      phone: '',
       date: '',
       type: '',
       complex: '',
-      title: '',
-      desc: '',
-      fullDesc: '',
-      phone: '',
       docs: [],
       links: [],
       button: [],
-      imgLandscape: null,
-      imgLibrary: null,
-      icon: null
     })
 
     onMounted(() => {
@@ -155,7 +159,7 @@ export default {
         form.value = dataForm
       }
     })
-  
+
     const onLoadFiles = (value) => {
       form.value.imgLandscape = {
         id: value.id[0],
@@ -174,6 +178,41 @@ export default {
       }
     }
 
+    const onSave = () => {
+    	const data = {
+				title: form.value.title,
+				icon: form.value.icon.id,
+				desc: form.value.desc,
+				imgLandscape: form.value.imgLandscape ? form.value.imgLandscape.id : null,
+				imgLibrary: form.value.imgLibrary ? form.value.imgLibrary.id : null,
+				fullDesc: form.value.fullDesc,
+				phone: form.value.phone,
+			}
+    	createNews(data)
+			clearForm()
+		}
+		const onCancel = () => {
+			clearForm()
+		}
+
+		const clearForm = () => {
+			form.value = {
+				title: '',
+				icon: null,
+				desc: '',
+				imgLandscape: null,
+				imgLibrary: null,
+				fullDesc: '',
+				phone: '',
+				date: '',
+				type: '',
+				complex: '',
+				docs: [],
+				links: [],
+				button: [],
+			}
+		}
+
     return {
       form,
       types,
@@ -188,10 +227,10 @@ export default {
       closeBindModal,
       onLoadFiles,
       saveIcon,
-      
+			onSave,
+			onCancel
     }
-  },
-
+  }
 }
 </script>
 
