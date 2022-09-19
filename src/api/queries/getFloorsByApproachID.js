@@ -8,7 +8,7 @@ export const GET_FLOORS_BY_APPROACH_ID = gql`
     }){
       UF_NAME,
       ID,
-      approache{
+      approach{
         ID,
         UF_NAME,
         house {

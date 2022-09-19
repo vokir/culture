@@ -5,14 +5,21 @@
       <form class="news-form__form" @submit.prevent>
         <v-card class="news-form__card-first">
           <v-input v-model="form.date" name="date" type="datetime-local" label="Дата*"/>
-          <v-select v-model="form.type" name="type" :options="types" label="name" labelSelect="Тип новости"/>
           <v-select
-            v-if="!complexesLoading"
+            v-model="form.type"
+            name="type"
+            :options="types"
+            label="UF_TITLE"
+            labelSelect="Тип новости"
+            placeholder="Выберите тип новости"
+          />
+          <v-select
             v-model="form.complex"
             name="home"
             :options="complexes"
             labelSelect="ЖК"
             label="UF_NAME"
+            placeholder="Выберите ЖК"
           />
           <div class="show-for" v-if="form.complex" @click="openModal">
             <div class="show-for__title">
@@ -24,7 +31,14 @@
             <span class="show-for__desc">Дома / Подъезда / Этажа / Помещения</span>
           </div>
           <div class="select-contacts">
-            <v-select name="contacts" :options="[1,2]" labelSelect="Контакты"/>
+            <v-select
+              v-model="form.contacts"
+              name="contacts"
+              :options="contacts"
+              labelSelect="Контакты"
+              label="FULL_NAME"
+              placeholder="Выберите контакты"
+            />
           </div>
         </v-card>
         <v-card class="news-form__card-second">
@@ -91,6 +105,11 @@
       :complexID="form.complex.ID"
       :complexName="form.complex.UF_NAME"
       @closeModal="closeModal"
+      @onSave="setBind"
+      :houses="form.houses"
+      :approaches="form.approaches"
+      :floors="form.floors"
+      :premises="form.premises"
     />
   </v-modal>
 </template>
@@ -100,6 +119,8 @@ import { useQuery } from "@vue/apollo-composable";
 import { computed, ref } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../../api/queries/getComplexes";
+import { GET_CONTACTS } from "../../../api/queries/getContacts";
+import { GET_NEWS_TYPES } from "../../../api/queries/getNewsTypes";
 import useModal from "../../../hooks/useModal";
 import AmioDetail from "../../amio-news/amio-detail/amio-detail.vue";
 import AmioPreview from "../../amio-news/amio-preview/amio-preview.vue";
@@ -153,7 +174,11 @@ export default {
       required: false,
       default: () => ({
         title: '',
-        icon: null,
+        icon: {
+          id: null,
+          src: null,
+          name: null
+        },
         desc: '',
         imgLandscape: null,
         imgLibrary: null,
@@ -169,6 +194,7 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
+        contacts: []
       })
     },
     closeModalProp: {
@@ -186,25 +212,20 @@ export default {
     const currentTab = ref('Превью')
     const { isOpen, openModal, closeModal } = useModal()
 
-    const { result: complexesData, loading: complexesLoading } = useQuery(GET_COMPLEXES)
+    const { result: complexesData } = useQuery(GET_COMPLEXES)
     const complexes = computed(() => {
-      return complexesData.value?.getComplexes
+      return complexesData.value?.getComplexes ?? []
     })
 
-    const types = [
-      {
-        id: 1,
-        name: 'Новости'
-      },
-      {
-        id: 2,
-        name: 'Акции'
-      },
-      {
-        id: 3,
-        name: 'Оповещения'
-      }
-    ]
+    const { result: typesData } = useQuery(GET_NEWS_TYPES)
+    const types = computed(() => {
+      return typesData.value?.getNewsTypes ?? []
+    })
+
+    const { result: contactsData } = useQuery(GET_CONTACTS)
+    const contacts = computed(() => {
+      return contactsData.value?.getContacts ?? []
+    })
 
     const form = ref(formData)
 
@@ -222,8 +243,16 @@ export default {
     const saveIcon = (value) => {
       form.value.icon = {
         id: value.id,
-        file: value.icon
+        src: value.icon,
+        name: value.name
       }
+    }
+
+    const setBind = (value) => {
+      form.value.houses = value.houses
+      form.value.approaches = value.approaches
+      form.value.floors = value.floors
+      form.value.premises = value.premises
     }
 
     const onSave = () => {
@@ -243,7 +272,11 @@ export default {
     const clearForm = () => {
       form.value = {
         title: '',
-        icon: null,
+        icon: {
+          id: null,
+          src: null,
+          name: null
+        },
         desc: '',
         imgLandscape: null,
         imgLibrary: null,
@@ -259,6 +292,7 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
+        contacts: []
       }
 
     }
@@ -266,8 +300,8 @@ export default {
     return {
       form,
       types,
+      contacts,
       complexes,
-      complexesLoading,
       currentTab,
       isOpen,
       openModal,
@@ -277,6 +311,7 @@ export default {
       onSave,
       onCopy,
       onCancel,
+      setBind,
     }
   }
 }

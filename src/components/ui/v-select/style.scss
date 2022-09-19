@@ -66,6 +66,8 @@
     width: 100%;
     background: var(--white);
     box-shadow: 0 7px 21px rgb(83 92 105 / 12%), 0 -1px 6px 0 rgb(83 92 105 / 6%);
+    overflow: auto;
+    max-height: 230px;
     margin: 0;
     padding: 10px 0;
     list-style-type: none;

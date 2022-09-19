@@ -1,13 +1,13 @@
 <template>
   <div class="select-icon">
-    <v-tags-list v-if="!isDirty" label="Добавить иконку" @openModal="openModal"/>
+    <v-tags-list v-if="active && !active.src" label="Добавить иконку" @openModal="openModal"/>
     <div class="select-icon__load" v-else>
       <div class="select-icon__label">
         Добавить иконку
       </div>
       <div class="select-icon__preview">
         <div class="select-icon__preview-icon">
-          <img :src="active.icon" :alt="active.name">
+          <img :src="active.src" :alt="active.name">
         </div>
         <div class="select-icon__preview-name">
           {{ active.name }}
@@ -63,16 +63,21 @@ export default {
   name: "select-icon",
   components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
   emits: ['saveIcon'],
-  props:['icon'],
-  setup(_, { emit }) {
+  inheritAttrs: false,
+  props: {
+    icon: {
+      type: Object,
+      default: () => ({
+        id: null,
+        src: null,
+        name: null
+      })
+    }
+  },
+  setup(props, { emit }) {
     const toast = useToast();
     const icon = ref('/src/assets/images/storyPreview.png')
-    const isDirty = ref(false)
-    const active = ref({
-      id: null,
-      icon: null,
-      name: null
-    })
+    const active = ref(props.icon)
 
     const { isOpen, openModal, closeModal } = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
@@ -86,10 +91,9 @@ export default {
     }))
 
     const selectIcon = (file) => {
-      if (!isDirty.value) isDirty.value = true
       active.value = {
         id: file.ID,
-        icon: file.SRC,
+        src: file.SRC,
         name: file.ORIGINAL_NAME
       }
       icon.value = file.SRC
@@ -98,17 +102,16 @@ export default {
     const deleteIcon = () => {
       active.value = {
         id: null,
-        icon: null,
+        src: null,
         name: null
       }
       icon.value = '/src/assets/images/storyPreview.png'
-      isDirty.value = false
       emit('saveIcon', active.value)
       toast.success('Иконка удалена')
     }
 
     const submit = () => {
-      if (isDirty.value && active.value) {
+      if (active.value && active.value.src) {
         emit('saveIcon', active.value)
         toast.success('Иконка выбрано')
       }
@@ -127,6 +130,11 @@ export default {
       }
     })
 
+    watch(() => props.icon, (value) => {
+      active.value = value
+      icon.value = value.src
+    })
+
     return {
       isOpen,
       icons,
@@ -135,7 +143,6 @@ export default {
       currentPage,
       loading,
       active,
-      isDirty,
       openModal,
       closeModal,
       selectIcon,

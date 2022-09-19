@@ -4,28 +4,28 @@
       <template v-for="column in row">
         <template v-for="cell in column">
           <v-badge
-            v-if="cell.isSelected?.length > 0 && cell.type === 'house'"
+            v-if="cell.isSelected > 0 && cell.type === 'house'"
             variant="blue"
             :text="cell.name"
             tooltip
             :tooltip-text="'Дом ' + cell.name"
           />
 					<v-badge
-            v-if="cell.isSelected?.length > 0 && cell.type === 'approache'"
+            v-if="cell.isSelected > 0 && cell.type === 'approache'"
             variant="purple"
             :text="cell.name"
             tooltip
             :tooltip-text="cell.name + ', Дом ' + cell.house"
           />
 					<v-badge
-            v-if="cell.isSelected?.length > 0 && cell.type === 'floor'"
+            v-if="cell.isSelected > 0 && cell.type === 'floor'"
             variant="orange"
             :text="cell.name"
             tooltip
             :tooltip-text="cell.name + ', ' + cell.approache +', Дом ' + cell.house"
           />
 					<v-badge
-            v-if="cell.isSelected?.length > 0 && cell.type === 'premise'"
+            v-if="cell.isSelected > 0 && cell.type === 'premise'"
             variant="teal"
             :text="cell.name"
             tooltip
@@ -38,7 +38,7 @@
 </template>
 <script>
 import bindRowsLogic from "./bindRowsLogic";
-import VBadge from "../ui/v-badge/v-badge.vue";
+import VBadge from "../../ui/v-badge/v-badge.vue";
 
 export default {
   props: ["newsInfo"],

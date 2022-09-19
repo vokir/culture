@@ -26,6 +26,10 @@
   display: grid;
   grid-template-columns: 1fr 406px;
   gap: 15px;
+  &__info {
+    display: grid;
+    gap: 20px;
+  }
   &__top{
     position: relative;
   }

@@ -1,5 +1,5 @@
 <template>
-  <v-modal class="modal-select-bind" centered @closeModal="$emit('closeModal')">
+  <v-modal :closeModalProp="closeModalProp" class="modal-select-bind" centered>
     <div class="modal-title">{{ complexName }}</div>
     <div class="modal-title-desc">Задать принадлежность новости к Дому/ Подъезду / Этажу / Помещению.</div>
     <span class="modal-hint">Выберите один или несколько вариантов</span>
@@ -72,18 +72,22 @@
           </div>
         </div>
       </div>
-        <bind-rows :bind="selectedValues"></bind-rows>
       <div class="bind-list__selected">
         <div class="bind-list__selected-row" v-if="selectedHouses">
-          <div class="selected__value selected__value--title" v-for="(head, key) of bindHead">{{ head }}</div>
+          <div class="selected__value selected__value--title" v-for="head of bindHead" :key="head">{{ head }}</div>
         </div>
-        <div class="bind-list__selected-row" v-for="row of selectedValues">
-
+        <div class="bind-list__selected-row" v-for="row in bindRowsLogic(selectedValues)">
+          <div v-for="cell in row" class="selected__value">
+            <span v-for="(value, i) in cell" class="for__value" :class="[{'selected__value--active': value.isSelected}]" :data-id="value.id">
+                <template v-if="true"> {{ value.name}} </template>
+                <template v-if="cell[i + 1]">, </template>
+            </span>
+          </div>
         </div>
       </div>
       <div class="bind-list__actions">
-        <v-button variant="success">Сохранить</v-button>
-        <v-button variant="link">Отмена</v-button>
+        <v-button variant="success" @click="onSave">Сохранить</v-button>
+        <v-button variant="link" @click="onCancel">Отмена</v-button>
       </div>
     </div>
   </v-modal>
@@ -96,7 +100,7 @@ import { GET_APPROACHES_BY_HOUSE_ID } from "../../api/queries/getApproachesByHou
 import { GET_FLOORS_BY_APPROACH_ID } from "../../api/queries/getFloorsByApproachID";
 import { GET_HOUSES_BY_COMPLEX_ID } from "../../api/queries/getHousesByComplexID";
 import { GET_PREMISES_BY_FLOOR_ID } from "../../api/queries/getPremisesByFloorID";
-import BindRows from "../bind-rows/bind-rows.vue";
+import bindRowsLogic from "../news/bind-rows/bindRowsLogic";
 import VButton from "../ui/v-button/v-button.vue";
 import VCheckbox from "../ui/v-checkbox/v-checkbox.vue";
 import VLoader from "../ui/v-loader/v-loader.vue";
@@ -104,16 +108,22 @@ import VModal from "../ui/v-modal/v-modal.vue";
 
 export default {
   name: "select-bind",
-  components: { BindRows, VButton, VCheckbox, VLoader, VModal },
+  components: { VButton, VCheckbox, VLoader, VModal },
+  emits: ['onSave', 'onCancel', 'update:modelValue'],
   props: {
     complexID: Number,
     complexName: String,
+    houses: Object,
+    approaches: Object,
+    floors: Object,
+    premises: Object
   },
-  setup({ complexID }) {
-    const selectedHouses = ref([])
-    const selectedApproaches = ref([])
-    const selectedFloors = ref([])
-    const selectedPremises = ref([])
+  setup(props, { emit }) {
+    const closeModalProp = ref(false)
+    const selectedHouses = ref(props.houses)
+    const selectedApproaches = ref(props.approaches)
+    const selectedFloors = ref(props.floors)
+    const selectedPremises = ref(props.premises)
     const selectedHouse = ref('')
     const selectedApproach = ref('')
     const selectedFloor = ref('')
@@ -123,8 +133,9 @@ export default {
         floors: 'Этаж',
         premises: 'Помещение'
     }
+
     const { result: housesResult, loading: housesLoading } = useQuery(GET_HOUSES_BY_COMPLEX_ID, {
-      complexID: complexID.toString()
+      complexID: props.complexID.toString()
     })
     const houses = computed(() => housesResult.value?.getHouses ?? [])
 
@@ -172,6 +183,26 @@ export default {
       }
     })
 
+    const onSave = () => {
+      emit('onSave', selectedValues.value)
+      clear()
+      closeModalProp.value = true
+    }
+    const onCancel = () => {
+      emit('onCancel')
+      clear()
+    }
+
+    const clear = () => {
+      selectedHouses.value = []
+      selectedApproaches.value = []
+      selectedFloors.value = []
+      selectedPremises.value = []
+      selectedHouse.value = ''
+      selectedApproach.value = ''
+      selectedFloor.value = ''
+    }
+
     return {
       houses,
       housesLoading,
@@ -192,7 +223,11 @@ export default {
       premisesLoading,
       selectedPremises,
       selectedValues,
-      bindHead
+      bindHead,
+      bindRowsLogic,
+      onSave,
+      onCancel,
+      closeModalProp
     }
   },
 }

@@ -2,8 +2,8 @@
   <div class="preview">
     <div class="preview-header">
       <div class="preview-header__icon">
-        <template v-if="icon && icon.file">
-          <img :src="icon.file" alt="title">
+        <template v-if="icon && icon.src">
+          <img :src="icon.src" alt="title">
         </template>
         <template v-else>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -54,8 +54,8 @@
         </template>
       </div>
       <div class="preview-footer__type">
-        <template v-if="type && type.name">
-          {{ type.name }}
+        <template v-if="type && type.UF_TITLE">
+          {{ type.UF_TITLE }}
         </template>
         <template v-else>
           Новость
@@ -76,7 +76,8 @@ export default {
       type: Object,
       required: false,
       default: () => ({
-        file: null,
+        src: null,
+        name: null,
         id: null
       })
     },
@@ -98,7 +99,7 @@ export default {
     type: {
       type: Object,
       required: false,
-      default: () => ({})
+      default: () => ([])
     }
   },
   setup() {

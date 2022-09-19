@@ -148,7 +148,7 @@ import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { DELETE_NEWS } from "../../api/mutations/deleteNews";
 import { GET_NEWS } from "../../api/queries/getNews";
-import BindRowsColumn from "../../components/bind-rows/bind-rows-column.vue";
+import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
 import NewsAdd from "../../components/news/news-add/news-add.vue";
 import NewsForm from "../../components/news/news-form/news-form.vue";
 import NewsSearch from "../../components/news/news-search/news-search.vue";

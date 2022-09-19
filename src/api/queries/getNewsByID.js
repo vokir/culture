@@ -40,7 +40,7 @@ query news($newsID: Int) {
     floors {
       ID
       UF_NAME
-      approache {
+      approach {
         ID
         UF_NAME
         house {
@@ -56,7 +56,7 @@ query news($newsID: Int) {
       floor {
         ID
         UF_NAME
-        approache {
+        approach {
           ID
           UF_NAME
           house {
@@ -68,6 +68,7 @@ query news($newsID: Int) {
     }
     icon {
       file {
+        ID
         ORIGINAL_NAME
         SRC
       }

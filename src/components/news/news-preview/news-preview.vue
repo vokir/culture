@@ -28,8 +28,8 @@
         </v-tab>
       </v-tabs>
     </v-card>
-    <v-card class="news-preview__icon" v-if="currentTab === 'Превью'">
-      <select-icon @saveIcon="saveIcon"/>
+    <v-card class="news-preview__icon" v-if="currentTab === 'Превью' && !hideIcon">
+      <select-icon @saveIcon="saveIcon" v-bind="{ ...modelValue }"/>
     </v-card>
   </div>
   <select-image
@@ -65,7 +65,8 @@
 		},
 		emits: ['openModal', 'update:modelValue'],
 		props: {
-		  modelValue: Object
+		  modelValue: Object,
+      hideIcon: Boolean
     },
 		setup({ modelValue }, { emit }) {
 			const { isOpen, openModal, closeModal } = useModal()
@@ -90,7 +91,8 @@
           ...modelValue,
           icon: {
             id: value.id,
-            file: value.icon
+            src: value.src,
+            name: value.name
           }
         })
 			}

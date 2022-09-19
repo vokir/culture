@@ -87,13 +87,13 @@ export default {
             form.append('files[]', blob)
             axios({
               method: 'post',
-              url: '/api/management/local/file',
+              url: '/api/v2/master-system/local/helper/file',
               data: form,
             })
               .then(res => {
                 toast.success('Изображение выбрано')
                 emit('onLoadFiles', {
-                  id: res.data.response,
+                  id: res.data.data,
                   files: {
                     imgLandscape: canvasSmall.toDataURL("image/png"),
                     imgLibrary: canvasBig.toDataURL("image/png")

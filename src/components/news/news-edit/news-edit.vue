@@ -1,5 +1,5 @@
 <template>
-  <news-form edit title="Реадктировать новость" @onSave="update"/>
+  <news-form edit title="Редактировать новость" @onSave="update"/>
 </template>
 
 <script>
@@ -37,7 +37,7 @@ export default {
         id: Number(id),
         title: data.title,
         icon: data.icon?.id,
-        types: Object.keys(data.type).length ? [data.type].map(type => type.id) : [],
+        types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,
         imgLibrary: data.imgLibrary?.id ?? null,

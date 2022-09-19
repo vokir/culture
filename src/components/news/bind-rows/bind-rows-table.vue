@@ -9,7 +9,7 @@
     </div>
     <div class="for__row" v-for="row in rows" ref="rowsDiv">
       <div v-for="cell in row" class="for__cell">
-        <span v-for="(value, i) in cell" class="for__value" :class="value.isSelected" :data-id="value.id">
+        <span v-for="(value, i) in cell" class="for__value" :class="[{'value-selected':value.isSelected}]" :data-id="value.id">
             <template v-if="true"> {{ value.name}} </template>
             <template v-if="cell[i + 1]">, </template>
         </span>

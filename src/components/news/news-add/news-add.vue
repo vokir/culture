@@ -43,7 +43,7 @@ export default {
       const news = {
         title: data.title,
         icon: data.icon?.id ?? 1996,
-        types: Object.keys(data.type).length ? [data.type].map(type => type.id) : [],
+        types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,
         imgLibrary: data.imgLibrary?.id ?? null,
@@ -51,7 +51,11 @@ export default {
         phone: data.phone,
         btnLink: data.button.length ? data.button[0].link : '',
         btnText: data.button.length ? data.button[0].name : '',
-        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : []
+        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : [],
+        houses: data.houses.map(el => el.ID),
+        approaches: data.approaches.map(el => el.ID),
+        floors: data.floors.map(el => el.ID),
+        premises: data.premises.map(el => el.ID)
       }
       createNews(news).then(() => {
         if (closeModal) {

@@ -34,7 +34,7 @@ export const GET_NEWS = gql`
           ID,
           UF_NAME,
           UF_NUMBER,
-          approache {
+          approach {
             ID,
             UF_NAME,
             house {
@@ -51,7 +51,7 @@ export const GET_NEWS = gql`
             ID,
             UF_NAME,
             UF_NUMBER,
-            approache {
+            approach {
               ID,
               UF_NAME,
               house {

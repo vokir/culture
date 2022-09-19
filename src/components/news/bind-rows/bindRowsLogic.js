@@ -1,37 +1,27 @@
 const bindRowsLogic = (news) =>{
 	const rows = [];
-	const setHouses = new Set();
-	const setApproaches = new Set();
-	const setFloors = new Set();
-	const setHousesSelected = new Set(
-		news.houses.map((key) => key.ID)
-	);
-	const setApproachesSelected = new Set(
-		news.approaches.map((key) => key.ID)
-	);
-	const setFloorsSelected = new Set(
-		news.floors.map((key) => key.ID)
-	);
+	const arrHouses = [];
+	const arrApproaches = [];
+	const arrFloors = [];
+	const arrHousesSelected = news.houses.map(el => el.ID);
+	const arrApproachesSelected = news.approaches.map(el => el.ID);
+	const arrFloorsSelected = news.floors.map(el => el.ID);
 
 	const checkForSelected = () => {
 		rows.forEach((row) => {
 			row.forEach((cell, i) => {
 				if (i === 0) {
-					cell.forEach((value) => {
-						if (setHousesSelected.has(value.id)) {
-							value.isSelected = "value-selected";
-						}
-					});
+					cell.forEach((value) => value.isSelected = arrHousesSelected.includes(value.id));
 				} else if (i === 1) {
 					cell.forEach((value) => {
-						if (setApproachesSelected.has(value.id)) {
-							value.isSelected = "value-selected";
+						if (arrApproachesSelected.includes(value.id)) {
+							value.isSelected = true;
 						}
 					});
 				} else if (i === 2) {
 					cell.forEach((value) => {
-						if (setFloorsSelected.has(value.id)) {
-							value.isSelected = "value-selected";
+						if (arrFloorsSelected.includes(value.id)) {
+							value.isSelected = true;
 						}
 					});
 				}
@@ -41,9 +31,9 @@ const bindRowsLogic = (news) =>{
 
 	const rowsPush = (el) => {
 		let floor;
-		let approache;
+		let approach;
 		if (el.__typename === "House") {
-			setHouses.add(el.approache?.house.ID);
+			arrHouses.push(el.approach?.house.ID);
 			rows.push([
 				[
 					{
@@ -54,25 +44,25 @@ const bindRowsLogic = (news) =>{
 				],
 			]);
 		} else if (el.__typename === "Floor") {
-			setHouses.add(el.approache?.house.ID);
-			setApproaches.add(el.approache?.ID);
-			setFloors.add(el.ID);
+			arrHouses.push(el.approach?.house.ID);
+			arrApproaches.push(el.approach?.ID);
+			arrFloors.push(el.ID);
 			floor = el.UF_NAME;
-			approache = el.approache.UF_NAME;
+			approach = el.approach.UF_NAME;
 			rows.push([
 				[
 					{
-						id: el.approache.house.ID,
-						name: el.approache.house.UF_NAME,
+						id: el.approach.house.ID,
+						name: el.approach.house.UF_NAME,
 						type: "house"
 					},
 				],
 				[
 					{
-						id: el.approache.ID,
-						name: approache,
-						type: "approache",
-						house: el.approache.house.UF_NAME
+						id: el.approach.ID,
+						name: approach,
+						type: "approach",
+						house: el.approach.house.UF_NAME
 					},
 				],
 				[
@@ -80,15 +70,15 @@ const bindRowsLogic = (news) =>{
 						id: el.ID,
 						name: floor,
 						type: "floor",
-						approache: el.approache.UF_NAME,
-						house: el.approache.house.UF_NAME
+						approach: el.approach.UF_NAME,
+						house: el.approach.house.UF_NAME
 					},
 				],
 			]);
 		} else if (el.__typename === "Approache") {
-			setHouses.add(el.house.ID);
-			setApproaches.add(el.ID);
-			approache = el.UF_NAME;
+			arrHouses.push(el.house.ID);
+			arrApproaches.push(el.ID);
+			approach = el.UF_NAME;
 			rows.push([
 				[
 					{
@@ -100,18 +90,18 @@ const bindRowsLogic = (news) =>{
 				[
 					{
 						id: el.ID,
-						name: approache,
-						type: "approache",
+						name: approach,
+						type: "approach",
 						house: el.house.UF_NAME
 					},
 				],
 			]);
 		} else if (el.__typename === "Premise") {
-			setHouses.add(el.floor?.approache?.house.ID);
-			setApproaches.add(el.floor?.approache?.ID);
-			setFloors.add(el.floor?.ID);
+			arrHouses.push(el.floor?.approach?.house.ID);
+			arrApproaches.push(el.floor?.approach?.ID);
+			arrFloors.push(el.floor?.ID);
 			floor = el.floor?.UF_NAME;
-			approache = el.floor?.approache?.UF_NAME;
+			approach = el.floor?.approach?.UF_NAME;
 			let name = el.UF_NUMBER
 			if(el.UF_NAME){
 				name = el.UF_NAME
@@ -119,17 +109,17 @@ const bindRowsLogic = (news) =>{
 			rows.push([
 				[
 					{
-						id: el.floor?.approache?.house?.ID,
-						name: el.floor?.approache?.house?.UF_NAME,
+						id: el.floor?.approach?.house?.ID,
+						name: el.floor?.approach?.house?.UF_NAME,
 						type: "house"
 					},
 				],
 				[
 					{
-						id: el.floor?.approache?.ID,
-						name: approache,
-						type: "approache",
-						house: el.floor.approache.house.UF_NAME
+						id: el.floor?.approach?.ID,
+						name: approach,
+						type: "approach",
+						house: el.floor.approach.house.UF_NAME
 					},
 				],
 				[
@@ -137,19 +127,19 @@ const bindRowsLogic = (news) =>{
 						id: el.floor?.ID,
 						name: floor,
 						type: "floor",
-						approache: el.floor.approache.UF_NAME,
-						house: el.floor.approache.house.UF_NAME
+						approach: el.floor.approach.UF_NAME,
+						house: el.floor.approach.house.UF_NAME
 					},
 				],
 				[
 					{
 						id: el.ID,
 						name: name,
-						isSelected: "value-selected",
+						isSelected: true,
 						type: "premise",
 						floor: el.floor.UF_NAME,
-						approache: el.floor.approache.UF_NAME,
-						house: el.floor.approache.house.UF_NAME
+						approach: el.floor.approach.UF_NAME,
+						house: el.floor.approach.house.UF_NAME
 					},
 				],
 			]);
@@ -162,16 +152,16 @@ const bindRowsLogic = (news) =>{
 
 		premises.forEach((el) => {
 
-			if (!setHouses.has(el.floor.approache.house.ID)) {
+			if (!arrHouses.includes(el.floor.approach.house.ID)) {
 				rowsPush(el);
 				return;
 			}
 
-			if (!setApproaches.has(el.floor.approache.ID)) {
+			if (!arrApproaches.includes(el.floor.approach.ID)) {
 				rowsPush(el);
 				return;
 			}
-			if (!setFloors.has(el.floor.ID)) {
+			if (!arrFloors.includes(el.floor.ID)) {
 				rowsPush(el);
 				return;
 			}
@@ -182,11 +172,11 @@ const bindRowsLogic = (news) =>{
 			rows[rows.length - 1][3].push({
 				id: el.ID,
 				name: name,
-				isSelected: "value-selected",
+				isSelected: true,
 				type: "premise",
 				floor: el.floor.UF_NAME,
-				approache: el.floor.approache.UF_NAME,
-				house: el.floor.approache.house.UF_NAME
+				approach: el.floor.approach.UF_NAME,
+				house: el.floor.approach.house.UF_NAME
 			});
 		});
 	}
@@ -195,24 +185,24 @@ const bindRowsLogic = (news) =>{
 	if (news.floors.length > 0) {
 		const floors = news.floors;
 		floors.forEach((el,i) => {
-			if (!setHouses.has(el.approache.house.ID)) {
+			if (!arrHouses.includes(el.approach.house.ID)) {
 				rowsPush(el);
 				return;
 			}
-			if (!setApproaches.has(el.approache.ID)) {
+			if (!arrApproaches.includes(el.approach.ID)) {
 				rowsPush(el);
 				return;
 			}
-			if (setFloors.has(el.ID)) {
+			if (arrFloors.includes(el.ID)) {
 				return;
 			}
-			if(rows[rows.length-1][1][0].id === el.approache.ID && rows[rows.length - 1][3] === undefined){
+			if(rows[rows.length-1][1][0].id === el.approach.ID && rows[rows.length - 1][3] === undefined){
 				rows[rows.length - 1][2].push({
 				id: el.ID,
 				name: el.UF_NAME,
 				type: "floor",
-				approache: el.approache.UF_NAME,
-				house: el.approache.house.UF_NAME
+				approach: el.approach.UF_NAME,
+				house: el.approach.house.UF_NAME
 			});
 			}
 			else{
@@ -225,11 +215,11 @@ const bindRowsLogic = (news) =>{
 	if (news.approaches.length > 0) {
 		const approaches = news.approaches;
 		approaches.forEach((el) => {
-			if (!setHouses.has(el.house.ID)) {
+			if (!arrHouses.includes(el.house.ID)) {
 				rowsPush(el);
 				return;
 			}
-			if (setApproaches.has(el.ID)) {
+			if (arrApproaches.includes(el.ID)) {
 				return;
 			}
 
@@ -237,10 +227,10 @@ const bindRowsLogic = (news) =>{
 				rows[rows.length - 1][1].push({
 				id: el.ID,
 				name: el.UF_NAME,
-				type: "approache",
+				type: "approach",
 				house: el.house.UF_NAME
 			});
-			setApproaches.add(el.ID);
+			arrApproaches.push(el.ID);
 			}
 			else{
 				rowsPush(el)
@@ -252,14 +242,14 @@ const bindRowsLogic = (news) =>{
 	if (news.houses.length > 0) {
 		const houses = news.houses;
 		houses.forEach((el) => {
-			if (!setHouses.has(el.ID)) {
+			if (!arrHouses.includes(el.ID)) {
 				rowsPush(el)
 			}
 		});
 	}
+
 	checkForSelected();
 
-	// console.log(rows);
 	return rows
 
 }

@@ -25,15 +25,15 @@
       <v-loader v-if="loading"/>
       <div class="news-detail__info" v-else>
         <v-card class="news-detail__top">
-          <p v-if="form.type" class="news-detail__type">
-            {{ form.type.name }}
+          <p v-if="form.type && form.type.UF_TITLE" class="news-detail__type">
+            {{ form.type.UF_TITLE }}
           </p>
           <p class="news-detail__title">{{ form.title }}</p>
           <p class="news-detail__date">{{ computeDate(form.date) }}</p>
           <p class="news-detail__subtitle">{{ form.desc }}</p>
           <p v-html="form.fullDesc" class="news-detail__text"></p>
           <div class="news-detail__links">
-            <div class="news-detail__row" v-if="form.complex.length">
+            <div class="news-detail__row" v-if="form.complex">
               <span class="news-detail__name news-detail__name-zhk">ЖК</span>
               <span class="news-detail__value news-detail__value-zhk">
                 {{ computedZhk }}
@@ -89,7 +89,7 @@
           <news-for-table :newsInfo="news" />
         </v-card>
       </div>
-      <news-preview v-model="form"/>
+      <news-preview v-model="form" hideIcon/>
     </div>
   </div>
   <news-edit v-if="isOpen" :formData="form" :id="route.params.id" @closeModal="closeModal"/>
@@ -111,7 +111,7 @@ import useModal from "../../hooks/useModal";
 import NewsForm from "../../components/news/news-form/news-form.vue";
 import computePhone from "../../helpers/phoneFormat";
 import getSingular from "../../helpers/getSingular";
-import NewsForTable from "../../components/bind-rows/bind-rows-table.vue";
+import NewsForTable from "../../components/news/bind-rows/bind-rows-table.vue";
 
 export default {
   name: "news-detail",
@@ -129,7 +129,11 @@ export default {
     const { isOpen, openModal, closeModal } = useModal();
     const form = ref({
       title: '',
-      icon: null,
+      icon: {
+        id: null,
+        src: null,
+        name: null
+      },
       desc: '',
       imgLandscape: null,
       imgLibrary: null,
@@ -145,6 +149,7 @@ export default {
       approaches: [],
       floors: [],
       premises: [],
+      contacts: []
     });
 
     const { result, load, onResult, loading } = useLazyQuery(GET_NEWS_BY_ID, {
@@ -154,11 +159,11 @@ export default {
       let data = result.data?.getNewsAt
       if (data) {
         form.value.date = dayjs(data.UF_CREATED_AT).format('YYYY-MM-DDTHH:mm');
-        form.value.type = data.types.length ? {id: data.types[0].ID, name: data.types[0].UF_TITLE} : []
+        form.value.type = data.types.length ? data.types[0] : []
         form.value.complex = data.complexes.length ? data.complexes[0] : []
-        form.value.title = data.UF_NAME;
-        form.value.desc = data.UF_PREVIEW_TEXT;
-        form.value.fullDesc = data.UF_TEXT;
+        form.value.title = data.UF_NAME ? data.UF_NAME : '';
+        form.value.desc = data.UF_PREVIEW_TEXT ? data.UF_PREVIEW_TEXT : '';
+        form.value.fullDesc = data.UF_TEXT ? data.UF_TEXT : '';
         form.value.phone = computePhone(data.UF_PHONE);
         form.value.docs = data.documents;
         form.value.premises = data.premises;
@@ -173,6 +178,7 @@ export default {
         // form.value.imgLandscape = data.imgLandscape?.SRC;
         // form.value.imgLibrary = data.imgLibrary?.SRC;
         form.value.icon = {
+          id: data.icon?.file?.ID,
           name: data.icon?.file?.ORIGINAL_NAME,
           src: data.icon?.file?.SRC,
         };

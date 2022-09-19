@@ -12,7 +12,7 @@ export const GET_PREMISES_BY_FLOOR_ID = gql`
       floor{
         ID,
         UF_NAME
-        approache{
+        approach{
           ID,
           UF_NAME
           house {
