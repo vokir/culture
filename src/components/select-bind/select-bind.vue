@@ -1,5 +1,5 @@
 <template>
-  <v-modal v-if="isOpen" class="modal-select-bind" centered @closeModal="$emit('closeModal')">
+  <v-modal class="modal-select-bind" centered @closeModal="$emit('closeModal')">
     <div class="modal-title">{{ complexName }}</div>
     <div class="modal-title-desc">Задать принадлежность новости к Дому/ Подъезду / Этажу / Помещению.</div>
     <span class="modal-hint">Выберите один или несколько вариантов</span>
@@ -72,16 +72,13 @@
           </div>
         </div>
       </div>
+        <bind-rows :bind="selectedValues"></bind-rows>
       <div class="bind-list__selected">
         <div class="bind-list__selected-row" v-if="selectedHouses">
           <div class="selected__value selected__value--title" v-for="(head, key) of bindHead">{{ head }}</div>
         </div>
         <div class="bind-list__selected-row" v-for="row of selectedValues">
-          <template v-for="(head, key) of bindHead">
-            <div class="selected__value" v-if="key === 'house'">
-              {{ row.UF_NAME}}
-            </div>
-          </template>
+
         </div>
       </div>
       <div class="bind-list__actions">
@@ -99,6 +96,7 @@ import { GET_APPROACHES_BY_HOUSE_ID } from "../../api/queries/getApproachesByHou
 import { GET_FLOORS_BY_APPROACH_ID } from "../../api/queries/getFloorsByApproachID";
 import { GET_HOUSES_BY_COMPLEX_ID } from "../../api/queries/getHousesByComplexID";
 import { GET_PREMISES_BY_FLOOR_ID } from "../../api/queries/getPremisesByFloorID";
+import BindRows from "../bind-rows/bind-rows.vue";
 import VButton from "../ui/v-button/v-button.vue";
 import VCheckbox from "../ui/v-checkbox/v-checkbox.vue";
 import VLoader from "../ui/v-loader/v-loader.vue";
@@ -106,9 +104,8 @@ import VModal from "../ui/v-modal/v-modal.vue";
 
 export default {
   name: "select-bind",
-  components: { VButton, VCheckbox, VLoader, VModal },
+  components: { BindRows, VButton, VCheckbox, VLoader, VModal },
   props: {
-    isOpen: Boolean,
     complexID: Number,
     complexName: String,
   },
@@ -166,51 +163,13 @@ export default {
       loadPremises(GET_PREMISES_BY_FLOOR_ID, { premisesID: selectedFloor.value })
     })
 
-    const selectedValues = computed(()=> {
-      let arr = []
-      if (selectedHouses.value.length) {
-        selectedHouses.value.forEach(house => {
-          let approaches = []
-
-          if (selectedApproaches.value.length) {
-            selectedApproaches.value.forEach(approach => {
-              let floors = []
-
-              if (selectedFloors.value.length) {
-                selectedFloors.value.forEach(floor => {
-                  let premises = []
-
-                  if (selectedPremises.value.length) {
-                    selectedPremises.value.forEach(premise => {
-                      if (floor.ID === premise.floor.ID) {
-                        premises.push(premise)
-                      }
-                    })
-                  }
-                  if (approach.ID === floor.approache.ID) {
-                    floors.push({
-                      ...floor,
-                      premises
-                    })
-                  }
-                })
-              }
-              if (house.ID === approach.house.ID) {
-                approaches.push({
-                  ...approach,
-                  floors
-                })
-              }
-            })
-          }
-
-          arr.push({
-            ...house,
-            approaches
-          })
-        })
+    const selectedValues = computed(()=>{
+      return {
+        houses: selectedHouses.value,
+        premises: selectedPremises.value,
+        approaches: selectedApproaches.value,
+        floors: selectedFloors.value
       }
-      return arr
     })
 
     return {

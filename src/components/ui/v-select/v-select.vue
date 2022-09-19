@@ -5,7 +5,7 @@
     </div>
     <div class="select-wrapper__select">
       <div class="select-wrapper__placeholder">
-        {{ selectedValue.length ? selectedValue : placeholder }}
+        {{ selectedValue ? selectedValue : placeholder }}
       </div>
       <input
         ref="input"
@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 export default {
   name: "v-select",
@@ -72,13 +72,10 @@ export default {
     },
     modelValue: {
       type: null,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
-    multiple: Boolean,
   },
-  setup({ label, multiple, modelValue }, { emit }) {
+  setup({ label, modelValue }, { emit }) {
     const selectedValue = ref([]);
     const isOpen = ref(false);
     const input = ref(null);
@@ -102,19 +99,13 @@ export default {
       } else {
         selected = option;
       }
-      if (multiple) {
-        const idx = selectedValue.value.indexOf(selected);
-        if (idx === -1) {
-          selectedValue.value.push(selected);
-        } else {
-          selectedValue.value.splice(idx, 1);
-        }
-        emit("update:modelValue", selectedValue.value);
-      } else {
-        selectedValue.value = selected;
-        emit("update:modelValue", option);
-      }
+      selectedValue.value = selected;
+      emit("update:modelValue", option);
     };
+
+    onMounted(()=>{
+      select(modelValue)
+    })
 
     return {
       selectedValue,

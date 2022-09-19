@@ -68,6 +68,10 @@ export const GET_NEWS = gql`
             ID
           }
         }
+      },
+      paginatorInfo {
+        total,
+        perPage,
       }
     }
   }`

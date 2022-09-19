@@ -33,11 +33,13 @@
     color: var(--variable-13);
     border: 1px solid var(--variable-5);
     border-radius: 2px;
+    overflow: hidden;
 
     &-input {
       position: absolute;
       opacity: 0;
       top: 10px;
+      width: calc(100% - 20px);
     }
 
     &:focus {

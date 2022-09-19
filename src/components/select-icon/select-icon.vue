@@ -46,8 +46,8 @@
 </template>
 
 <script>
-import { useQuery } from "@vue/apollo-composable";
-import { computed, ref, onMounted, toRaw } from "vue";
+import { useLazyQuery } from "@vue/apollo-composable";
+import { computed, ref, watch } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
 import useModal from "../../hooks/useModal";
@@ -60,10 +60,10 @@ import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VTagsList from "../ui/v-tags-list/v-tags-list.vue";
 
 export default {
-  props:['icon'],
   name: "select-icon",
   components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
   emits: ['saveIcon'],
+  props:['icon'],
   setup(_, { emit }) {
     const toast = useToast();
     const icon = ref('/src/assets/images/storyPreview.png')
@@ -74,11 +74,9 @@ export default {
       name: null
     })
 
-
-
     const { isOpen, openModal, closeModal } = useModal()
-    const { currentPage, perPage, updatePage } = usePaginate(1, 2)
-    const { result, loading, refetch } = useQuery(GET_ICONS, {
+    const { currentPage, perPage, updatePage } = usePaginate(1, 20)
+    const { result, loading, refetch, load } = useLazyQuery(GET_ICONS, {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
@@ -117,10 +115,16 @@ export default {
     }
 
     const icons = computed(() => {
-      return result.value ? result.value.getIcons.data : false
+      return result.value?.getIcons.data ?? []
     })
     const pageInfo = computed(() => {
-      return result.value ? result.value.getIcons.paginatorInfo : false
+      return result.value?.getIcons.paginatorInfo ?? []
+    })
+
+    watch(isOpen, ()=> {
+      if (!icons.value.length) {
+        load()
+      }
     })
 
     return {

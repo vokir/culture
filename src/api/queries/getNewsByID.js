@@ -11,10 +11,12 @@ query news($newsID: Int) {
     UF_PHONE
     UF_CREATED_AT
     types {
-      UF_TITLE
+      UF_TITLE,
+      ID
     }
     complexes {
-      UF_NAME
+      UF_NAME,
+      ID
     }
     documents {
       ID

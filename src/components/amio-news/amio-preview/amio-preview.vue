@@ -54,8 +54,8 @@
         </template>
       </div>
       <div class="preview-footer__type">
-        <template v-if="type.length">
-          {{ type }}
+        <template v-if="type && type.name">
+          {{ type.name }}
         </template>
         <template v-else>
           Новость
@@ -96,9 +96,9 @@ export default {
       default: ''
     },
     type: {
-      type: String,
+      type: Object,
       required: false,
-      default: ''
+      default: () => ({})
     }
   },
   setup() {

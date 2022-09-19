@@ -13,7 +13,8 @@ const routes = [
     path: '/news/',
     component: News,
     meta: {
-      pageTitle: 'Новости'
+      pageTitle: 'Новости',
+      layout: 'layout-default'
     }
   },
   {
@@ -21,7 +22,8 @@ const routes = [
     name: 'news-detail',
     component: NewsDetail,
     meta: {
-      pageTitle: 'Новости'
+      pageTitle: 'Новости',
+      layout: 'layout-default'
     }
   },
 ]

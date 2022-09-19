@@ -1,55 +1,53 @@
 <template>
-  <div class="container">
+  <div class="container-content">
     <div class="container-header">
-      <router-link class="link" :to="{ name: 'news' }"
-        ><v-button src="/news/" variant="transparent" transparent>
-          <svg
-            class="btn--transparent__svg"
-            width="6"
-            height="10"
-            viewBox="0 0 6 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M6 1.31434L1.24816 6.31434L-0.00183761 5L4.75 -5.46393e-08L6 1.31434ZM2.48897 5.00919C2.50551 5.00919 6 8.68566 6 8.68566L4.75 10C4.75 10 1.23621 6.31066 1.24816 6.31066L2.48897 5.00919Z"
-              fill="white"
-            />
-          </svg>
-          Вернуться к списку новостей</v-button
+      <v-button href="/news" variant="transparent" transparent>
+        <svg
+          class="btn--transparent__svg"
+          width="6"
+          height="10"
+          viewBox="0 0 6 10"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-      </router-link>
-
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M6 1.31434L1.24816 6.31434L-0.00183761 5L4.75 -5.46393e-08L6 1.31434ZM2.48897 5.00919C2.50551 5.00919 6 8.68566 6 8.68566L4.75 10C4.75 10 1.23621 6.31066 1.24816 6.31066L2.48897 5.00919Z"
+            fill="white"
+          />
+        </svg>
+        Вернуться к списку новостей
+      </v-button>
       <div class="container-header__title">Новости</div>
     </div>
-    <div class="container-content">
-      <div class="news">
-        <v-card class="news__top">
-          <p v-if="form.type?.length" class="news__type">
-            {{ form.type }}
+    <div class="news-detail">
+      <v-loader v-if="loading"/>
+      <div class="news-detail__info" v-else>
+        <v-card class="news-detail__top">
+          <p v-if="form.type" class="news-detail__type">
+            {{ form.type.name }}
           </p>
-          <p class="news__title">{{ form.title }}</p>
-          <p class="news__date">{{ computeDate(form.date) }}</p>
-          <p class="news__subtitle">{{ form.desc }}</p>
-          <p v-html="form.fullDesc" class="news__text"></p>
-          <div class="news__links">
-            <div class="news__row" v-if="form.complex?.length">
-              <span class="news__name news__name-zhk">ЖК</span>
-              <span class="news__value news__value-zhk">
-                {{ filteredZhk }}
+          <p class="news-detail__title">{{ form.title }}</p>
+          <p class="news-detail__date">{{ computeDate(form.date) }}</p>
+          <p class="news-detail__subtitle">{{ form.desc }}</p>
+          <p v-html="form.fullDesc" class="news-detail__text"></p>
+          <div class="news-detail__links">
+            <div class="news-detail__row" v-if="form.complex.length">
+              <span class="news-detail__name news-detail__name-zhk">ЖК</span>
+              <span class="news-detail__value news-detail__value-zhk">
+                {{ computedZhk }}
               </span>
             </div>
-            <div class="news__row" v-if="form.complex?.length">
-              <span class="news__name news__name-links">Ссылки</span>
-              <span class="news__value"></span>
-            </div>
-            <div class="news__row" v-if="form.docs?.length">
-              <span class="news__name news__name-docs">Документы</span>
-              <ul class="news__list">
+<!--            <div class="news-detail__row" v-if="form.complex.length">-->
+<!--              <span class="news-detail__name news-detail__name-links">Ссылки</span>-->
+<!--              <span class="news-detail__value"></span>-->
+<!--            </div>-->
+            <div class="news-detail__row" v-if="form.docs?.length">
+              <span class="news-detail__name news-detail__name-docs">Документы</span>
+              <ul class="news-detail__list">
                 <a
-                  class="news__value"
+                  class="news-detail__value"
                   :key="doc.ID"
                   v-for="doc in form.docs"
                   :href="doc.file.SRC"
@@ -59,12 +57,12 @@
                 </a>
               </ul>
             </div>
-            <div class="news__row" v-if="form.phone">
-              <span class="news__name news__name-tel">Телефон</span>
-              <a href="tel:" class="news__value">{{ form.phone }}</a>
+            <div class="news-detail__row" v-if="form.phone">
+              <span class="news-detail__name news-detail__name-tel">Телефон</span>
+              <a href="tel:" class="news-detail__value">{{ form.phone }}</a>
             </div>
           </div>
-          <div class="news__edit" @click="openModal">
+          <div class="news-detail__edit" @click="openModal">
             <svg
               width="11"
               height="21"
@@ -84,129 +82,131 @@
           </div>
         </v-card>
         <v-card
-          v-if="
-            form.houses.length |
-              form.approaches.length |
-              form.floors.length |
-              form.premises.length
-          "
-          class="news__bottom"
+          v-if="form.houses.length || form.approaches.length || form.floors.length || form.premises.length"
+          class="news-detail__bottom"
         >
-          <p class="news__label">Отображается для</p>
-          <news-for-table :newsInfo="newsInfo" />
+          <p class="news-detail__label">Отображается для</p>
+          <news-for-table :newsInfo="news" />
         </v-card>
       </div>
-      <news-preview :form="form"> </news-preview>
+      <news-preview v-model="form"/>
     </div>
   </div>
-  <v-modal v-if="isOpen" @closeModal="closeModal">
-    <news-add :typeTitle="typeTitle" :form="form" />
-  </v-modal>
+  <news-edit v-if="isOpen" :formData="form" :id="route.params.id" @closeModal="closeModal"/>
 </template>
 
 <script>
+import dayjs from "dayjs";
+import NewsEdit from "../../components/news/news-edit/news-edit.vue";
 import VCard from "../../components/ui/v-card/v-card.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import { GET_NEWS_BY_ID } from "../../api/queries/getNewsByID";
 import { useLazyQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import VLoader from "../../components/ui/v-loader/v-loader.vue";
 import computeDate from "../../helpers/dateFormat";
-import NewsPreview from "../../components/news-add/news-preview.vue";
-import arrowRightSvg from "../../assets/images/icons/arrow-right.svg";
-import editSvg from "../../assets/images/icons/edit.svg";
-import infoSvg from "../../assets/images/icons/info.svg";
-import VModal from "../../components/ui/v-modal/v-modal.vue";
+import NewsPreview from "../../components/news/news-preview/news-preview.vue";
 import useModal from "../../hooks/useModal";
-import NewsAdd from "../../components/news-add/news-add.vue";
+import NewsForm from "../../components/news/news-form/news-form.vue";
 import computePhone from "../../helpers/phoneFormat";
 import getSingular from "../../helpers/getSingular";
-import NewsForTable from "../../components/news-for/news-for-table.vue";
+import NewsForTable from "../../components/bind-rows/bind-rows-table.vue";
 
 export default {
   name: "news-detail",
   components: {
+    NewsEdit,
+    VLoader,
     VCard,
     VButton,
     NewsPreview,
-    VModal,
-    NewsAdd,
+    NewsForm,
     NewsForTable,
   },
   setup() {
-    const typeTitle = ref("Редактировать");
     const route = useRoute();
-
     const { isOpen, openModal, closeModal } = useModal();
-
-    const getComplexName = (name) => name.split(/[«»]/)[1];
-
-    const news = computed(() => result.value?.getNewsAt ?? []);
-
     const form = ref({
+      title: '',
+      icon: null,
+      desc: '',
+      imgLandscape: null,
+      imgLibrary: null,
+      fullDesc: '',
+      phone: '',
+      date: '',
+      type: {},
+      complex: '',
+      docs: [],
+      links: [],
+      button: [],
       houses: [],
       approaches: [],
       floors: [],
       premises: [],
     });
 
-    let filteredZhk = ref();
-
-    let newsInfo = ref({});
-    const { result, load, onResult } = useLazyQuery(GET_NEWS_BY_ID, {
-      newsID: parseInt(route.params.id),
+    const { result, load, onResult, loading } = useLazyQuery(GET_NEWS_BY_ID, {
+      newsID: Number(route.params.id),
     });
-
-    load();
-
     onResult((result) => {
-      if (result.data?.getNewsAt) {
-        newsInfo.value = result.data.getNewsAt;
-        form.value.date = newsInfo.value.UF_CREATED_AT;
-        form.value.type = getSingular(newsInfo.value.types[0]?.UF_TITLE);
-        form.value.complex = newsInfo.value.complexes[0]?.UF_NAME;
-        form.value.title = newsInfo.value.UF_NAME;
-        form.value.desc = newsInfo.value.UF_PREVIEW_TEXT;
-        form.value.fullDesc = newsInfo.value.UF_TEXT;
-        form.value.phone = computePhone(newsInfo.value.UF_PHONE);
-        form.value.docs = newsInfo.value.documents;
-        form.value.premises = newsInfo.value.premises;
-        form.value.houses = newsInfo.value.houses;
-        form.value.approaches = newsInfo.value.approaches;
-        form.value.floors = newsInfo.value.floors;
+      let data = result.data?.getNewsAt
+      if (data) {
+        form.value.date = dayjs(data.UF_CREATED_AT).format('YYYY-MM-DDTHH:mm');
+        form.value.type = data.types.length ? {id: data.types[0].ID, name: data.types[0].UF_TITLE} : []
+        form.value.complex = data.complexes.length ? data.complexes[0] : []
+        form.value.title = data.UF_NAME;
+        form.value.desc = data.UF_PREVIEW_TEXT;
+        form.value.fullDesc = data.UF_TEXT;
+        form.value.phone = computePhone(data.UF_PHONE);
+        form.value.docs = data.documents;
+        form.value.premises = data.premises;
+        form.value.houses = data.houses;
+        form.value.approaches = data.approaches;
+        form.value.floors = data.floors;
         // form.value.links = newsInfo
-        form.value.buttonText = newsInfo.value.UF_BTN_TEXT;
-        form.value.buttonLink = newsInfo.value.UF_BTN_LINK;
-        // form.value.imgLandscape = newsInfo.value.imgLandscape?.SRC;
-        // form.value.imgLibrary = newsInfo.value.imgLibrary?.SRC;
+        form.value.button = data.UF_BTN_TEXT ? [{
+            name: data.UF_BTN_TEXT,
+            link: data.UF_BTN_LINK
+          }]: []
+        // form.value.imgLandscape = data.imgLandscape?.SRC;
+        // form.value.imgLibrary = data.imgLibrary?.SRC;
         form.value.icon = {
-          name: newsInfo.value.icon?.file?.ORIGINAL_NAME,
-          src: newsInfo.value.icon?.file?.SRC,
+          name: data.icon?.file?.ORIGINAL_NAME,
+          src: data.icon?.file?.SRC,
         };
-
-        filteredZhk.value = form.value.complex;
-
-        if (newsInfo.value.houses?.length === 0) {
-          filteredZhk.value += " / Все";
-        }
       }
     });
+
+    const news = computed(() => result.value?.getNewsAt ?? []);
+
+    const getComplexName = (name) => name.split(/[«»]/)[1];
+    const computedZhk = computed(()=>{
+      let string = form.value.complex.UF_NAME
+      if (form.value.houses?.length === 0) {
+        string += " / Все";
+      }
+      return string
+    })
+
+    onMounted(()=>{
+      load();
+    })
+
     return {
       form,
       news,
       computeDate,
       computePhone,
       getComplexName,
-      arrowRightSvg,
-      editSvg,
-      infoSvg,
       openModal,
       closeModal,
       isOpen,
       getSingular,
-      filteredZhk,
-      typeTitle,
-      newsInfo,
+      computedZhk,
+      loading,
+      route
     };
   },
 

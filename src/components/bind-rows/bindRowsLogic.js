@@ -1,4 +1,4 @@
-const getNewsFor = (news) =>{
+const bindRowsLogic = (news) =>{
 	const rows = [];
 	const setHouses = new Set();
 	const setApproaches = new Set();
@@ -217,7 +217,6 @@ const getNewsFor = (news) =>{
 			}
 			else{
 				rowsPush(el)
-				return
 			}
 		});
 	}
@@ -245,7 +244,6 @@ const getNewsFor = (news) =>{
 			}
 			else{
 				rowsPush(el)
-				return
 			}
 		});
 	}
@@ -266,4 +264,4 @@ const getNewsFor = (news) =>{
 
 }
 
-export default getNewsFor
+export default bindRowsLogic

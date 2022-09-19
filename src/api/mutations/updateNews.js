@@ -1,18 +1,19 @@
 import gql from "graphql-tag";
 
-export const CREATE_NEWS = gql`
-  mutation createNews(
-    $title: String!
-    $UF_ORDER: Int! = 100
-    $UF_EXTERNAL_SYSTEM_ID: Int! = 1
-    $icon: Int!
+export const UPDATE_NEWS = gql`
+  mutation updateNews(
+    $id: Int!
+    $title: String
+    $UF_ORDER: Int
+    $UF_EXTERNAL_SYSTEM_ID: Int
+    $icon: Int
     $desc: String
     $imgLandscape: Int
     $imgLibrary: Int
     $fullDesc: String
     $phone: String
-    $btnText: String
-    $btnLink: String
+    $UF_BTN_TEXT: String
+    $UF_BTN_LINK: String
     $types: [Int]
     $complexes: [Int]
     $houses: [Int]
@@ -21,9 +22,10 @@ export const CREATE_NEWS = gql`
     $premises: [Int]
     $contacts: [Int]
     $images: [Int]
-    $documents: [Int]
+    $documents: [Int],
   ){
-    createNews(
+    updateNews(
+      id: $id
       UF_NAME: $title
       UF_ORDER: $UF_ORDER
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
@@ -34,8 +36,8 @@ export const CREATE_NEWS = gql`
       UF_IMG_LIBRARY: $imgLibrary
       UF_TEXT: $fullDesc
       UF_PHONE: $phone
-      UF_BTN_TEXT: $btnText
-      UF_BTN_LINK: $btnLink
+      UF_BTN_TEXT: $UF_BTN_TEXT
+      UF_BTN_LINK: $UF_BTN_LINK
       types: $types
       complexes: $complexes
       houses: $houses
@@ -45,8 +47,6 @@ export const CREATE_NEWS = gql`
       contacts: $contacts
       images: $images
       documents: $documents
-    ){
-      ID
-    }
+    )
   }
 `

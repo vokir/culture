@@ -1,6 +1,5 @@
 .table-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
   position: relative;
 }
 
@@ -21,7 +20,7 @@
   &__thead-th {
     font-weight: 400;
     color: var(--variable-13);
-    padding: 20px 10px;
+    padding: 20px 7.5px;
   }
 
   &__thead-cell {

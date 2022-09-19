@@ -1,10 +1,10 @@
 <template>
     <div class="for__titles">
       <p>Дом</p>
-      <p v-if="newsInfo.approaches.length | newsInfo.floors.length | newsInfo.premises.length">
+      <p v-if="newsInfo.approaches.length || newsInfo.floors.length || newsInfo.premises.length">
         Подъезд
       </p>
-      <p v-if="newsInfo.floors?.length | newsInfo.premises?.length">Этаж</p>
+      <p v-if="newsInfo.floors?.length || newsInfo.premises?.length">Этаж</p>
       <p v-if="newsInfo.premises?.length">Помещение</p>
     </div>
     <div class="for__row" v-for="row in rows" ref="rowsDiv">
@@ -18,16 +18,15 @@
 </template>
 <script>
 
-import getNewsFor from "../../helpers/getNewsFor";
+import bindRowsLogic from "./bindRowsLogic";
 
 export default {
   props: ["newsInfo"],
   name: "news-for-table",
-  setup(props) {
-    const rows = getNewsFor(props.newsInfo)
+  setup({ newsInfo }) {
+    const rows = bindRowsLogic(newsInfo)
     
     return {
-      props,
       rows,
     };
   },
