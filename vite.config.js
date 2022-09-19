@@ -8,7 +8,7 @@ export default defineConfig(env => {
    base: './',
    server: {
      proxy: {
-       '/api/management/': {
+       '/api/v2/': {
          target: 'https://bitrix-stage.culture-home.ru/',
          changeOrigin: true,
        },

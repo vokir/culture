@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <div class="contacts-btn">
     <v-dropdown class="contacts-vmenu" :triggers="[]" :popperTriggers="[]" :shown="isOpened" :autoHide="false" :placement="'bottom-start'" :delay="{
         show: 0,

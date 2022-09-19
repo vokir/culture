@@ -11,10 +11,12 @@ query news($newsID: Int) {
     UF_PHONE
     UF_CREATED_AT
     types {
-      UF_TITLE
+      UF_TITLE,
+      ID
     }
     complexes {
-      UF_NAME
+      UF_NAME,
+      ID
     }
     documents {
       ID
@@ -38,7 +40,7 @@ query news($newsID: Int) {
     floors {
       ID
       UF_NAME
-      approache {
+      approach {
         ID
         UF_NAME
         house {
@@ -54,7 +56,7 @@ query news($newsID: Int) {
       floor {
         ID
         UF_NAME
-        approache {
+        approach {
           ID
           UF_NAME
           house {
@@ -66,6 +68,7 @@ query news($newsID: Int) {
     }
     icon {
       file {
+        ID
         ORIGINAL_NAME
         SRC
       }

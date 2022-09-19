@@ -14,48 +14,48 @@ export const GET_NEWS = gql`
           UF_NAME
         }
         contacts {
-          NAME
-          LAST_NAME
+          NAME,
+          LAST_NAME,
           SECOND_NAME
         },
         houses {
-          ID
+          ID,
           UF_NAME,
         },
         approaches {
-          ID
+          ID,
           UF_NAME,
           house {
-            ID
+            ID,
             UF_NAME
           }
         },
         floors {
-          ID
+          ID,
           UF_NAME,
           UF_NUMBER,
-          approache {
-            ID
+          approach {
+            ID,
             UF_NAME,
             house {
-              ID
+              ID,
               UF_NAME
             }
           }
         },
         premises {
-          ID
+          ID,
           UF_NUMBER,
           UF_NAME,
           floor {
-            ID
+            ID,
             UF_NAME,
             UF_NUMBER,
-            approache {
-              ID
+            approach {
+              ID,
               UF_NAME,
               house {
-                ID
+                ID,
                 UF_NAME,
               }
             }
@@ -68,6 +68,10 @@ export const GET_NEWS = gql`
             ID
           }
         }
+      },
+      paginatorInfo {
+        total,
+        perPage,
       }
     }
   }`
