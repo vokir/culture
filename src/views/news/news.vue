@@ -97,6 +97,11 @@
                 >
                   <v-badge
                     :key="'contact-' + index"
+<<<<<<< HEAD
+                    :text="
+                      getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"/>
+                  <v-popup-contacts :class="{ 'visibility-hidden': popupIsOpened }" :filterList="'a'" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
+=======
                     :class="{ 'transparent-background': contactsPopup }"
                     :text="getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"
                     variant="lightblue"/>
@@ -105,6 +110,7 @@
                     :class="{ 'visibility-hidden': contactsPopup }"
                     :contacts="row.contacts"
                     @togglePopup="contactsPopup = !contactsPopup"
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
                   />
                 </div>
               </div>
@@ -141,7 +147,11 @@
 </template>
 
 <script>
+<<<<<<< HEAD
+import { useQuery} from "@vue/apollo-composable";
+=======
 import { useMutation, useQuery, useSubscription } from "@vue/apollo-composable";
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -164,6 +174,20 @@ import VSelect from "../../components/ui/v-select/v-select.vue";
 import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import getFullFio from "../../helpers/getFullFio";
+<<<<<<< HEAD
+import VPopupContacts from "../../components/v-popup-contacts/v-popup-contacts.vue";
+import getNewsFor from "../../components/news-for/getNewsFor";
+import NewsForColumn from "../../components/news-for/news-for-column.vue";
+import NewsSearch from "../../components/news-search/news-search.vue";
+import { GET_TYPES_OF_NEWS } from "../../api/queries/getTypesOfNews";
+
+export default {
+  setup() {
+    const popupIsOpened = ref(false);
+    const togglePopup = () => {
+      popupIsOpened.value = !popupIsOpened.value;
+    };
+=======
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
 
@@ -188,21 +212,37 @@ export default {
   },
   setup() {
     const toast = useToast();
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
     const route = useRoute();
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
 
+<<<<<<< HEAD
+    const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+      currentPage: 1,
+      perPage: 20,
+    });
+=======
     const { result, loading, variables } = useSubscription(GET_NEWS, {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
 
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
     const news = computed(() => {
       return result.value?.getNews.data ?? [];
     });
 
+<<<<<<< HEAD
+    // const {result:resultTypes} = useQuery(GET_TYPES_OF_NEWS);
+
+    // const typesOfNews = computed(() => {
+    //   return resultTypes.value.getNewsTypes;
+    // });
+
+=======
     const pageInfo = computed(() => {
       return result.value?.getNews.paginatorInfo ?? []
     })
@@ -224,6 +264,7 @@ export default {
       let e = JSON.parse(JSON.stringify(error))
       toast.error(e.message)
     })
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
 
     const selectAll = computed({
       get() {
@@ -258,7 +299,13 @@ export default {
     }
 
     const filterTable = (str) => {
+<<<<<<< HEAD
       refetch({str:str.value})
+=======
+      const { result2, onResult: onRes } = useQuery(GET_NEWS, {
+        str: str,
+      });
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
     }
 
     return {
@@ -283,6 +330,23 @@ export default {
       perPage
     };
   },
+<<<<<<< HEAD
+
+  components: {
+    VCropImage,
+    NewsAdd,
+    VBadge,
+    VTable,
+    VCheckbox,
+    VTableColumn,
+    VButton,
+    VModal,
+    VPopupContacts,
+    NewsForColumn,
+    NewsSearch,
+  },
+=======
+>>>>>>> 29f3cda86fdf3ca2df4fba215cd35b4237c5bd24
 };
 </script>
 
