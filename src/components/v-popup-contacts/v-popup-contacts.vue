@@ -41,14 +41,13 @@
       </svg>
         </template>
       </v-dropdown>
-
   </div>
 </template>
 <script>
-import VButton from "../v-button/v-button.vue";
-import VCard from "../v-card/v-card.vue";
-import VBadge from "../v-badge/v-badge.vue";
-import getFullFio from "../../../helpers/getFullFio";
+import VButton from "../ui/v-button/v-button.vue";
+import VCard from "../ui/v-card/v-card.vue";
+import VBadge from "../ui/v-badge/v-badge.vue";
+import getFullFio from "../../helpers/getFullFio";
 import { ref } from "vue";
 
 export default {

@@ -1,10 +1,31 @@
 <template>
   <div class="search">
-    <div class="search-filter">
-      <input v-model="str" class="search-input" type="text">
+    <div v-if="filter.length" class="search-cell">
+      <div  class="search-cell-text">{{filter}}</div>
+      <button @click="clearFilter" class="search-cell-btn">
+        <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.71094 2.7915L2.2943 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M2.28906 2.7915L8.7057 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
+    <div class="search-placeholder" v-else>Фильтр</div>
+
+    <div class="search-filter-container" @click="togglePopup" ref="searchFilterContainer">
+      <v-dropdown class="search-filter" @focusout="popupOff" :delay="{show: 0,hide: 140}" :triggers="[]" :popperTriggers="[]" :shown="isOpened"  :autoHide="false" >
+        <template #popper class="search-popup">
+            <div v-close-popper class="search-choice" data-filter="фильтр 1" @click.stop="setFilter">фильтр 1</div>
+            <div v-close-popper class="search-choice" data-filter="фильтр 2" @click.stop="setFilter">фильтр 2</div>
+            <div v-close-popper class="search-choice" data-filter="фильтр 3" @click.stop="setFilter">фильтр 3</div>
+        </template>
+        <input @keyup.enter="filterTable" @keyup.esc="clearFilter" v-model="search" class="search-input" type="text" 
+          placeholder=" + поиск" >
+      </v-dropdown>
+    </div>
+
+   
     <div class="search-btns">
-      <button @click="filterTable" class="search-searchBtn">
+      <button @click="filterTable"  class="search-searchBtn" >
         <svg
           width="16"
           height="16"
@@ -20,7 +41,7 @@
           />
         </svg>
       </button>
-      <button class="search-clearBtn">
+      <button class="search-clearBtn" @click="clearFilter">
         <svg
           width="18"
           height="18"
@@ -49,21 +70,56 @@
 
 </template>
 <script>
-  import { ref } from 'vue';
+import { ref } from 'vue';
   export default {
     setup(props,context){
-      let str = ref('')
+      let search = ref('')
+      const isOpened = ref(false)
+      const filter = ref('')
+      const searchFilterContainer = ref()
+      const setTimeoutRef = ref()
 
       const filterTable = () => {
-        if(str.value.length > 0){
+        context.emit('filterTable', filter)
+      }
 
-          context.emit('filterTable', str)
-
+      const clearFilter = () =>{
+        if(search.value || filter.value){
+          search.value = ''
+          filter.value = ''
+          filterTable()
         }
       }
+
+      const togglePopup = () => {
+        // search.value += 'togglePopup '
+        isOpened.value = !isOpened.value
+      }
+
+      const popupOff = (e) => {
+        console.log(e);
+        // search.value += ('popupOff ')
+        isOpened.value = false
+      }
+
+      const setFilter = (str)=> {
+        // search.value += (str.srcElement.dataset.filter)
+        filter.value = str.srcElement.dataset.filter
+        isOpened.value = false
+        filterTable()
+      }
+
+
       return{
-        str,
-        filterTable
+        search,
+        filterTable,
+        clearFilter,
+        isOpened,
+        popupOff,
+        setFilter,
+        togglePopup,
+        filter,
+        searchFilterContainer,
       }
     }
   };

@@ -131,7 +131,7 @@
                     :key="'contact-' + index"
                     :text="
                       getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"/>
-                  <v-popup :class="{ 'visibility-hidden': popupIsOpened }" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
+                  <v-popup-contacts :class="{ 'visibility-hidden': popupIsOpened }" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
                   />
                 </div>
               </div>
@@ -162,13 +162,13 @@ import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import useModal from "../../hooks/useModal";
 import getFullFio from "../../helpers/getFullFio";
-import VPopup from "../../components/ui/v-popup/v-popup.vue";
-import getNewsFor from "../../helpers/getNewsFor";
+import VPopupContacts from "../../components/v-popup-contacts/v-popup-contacts.vue";
+import getNewsFor from "../../components/news-for/getNewsFor";
 import NewsForColumn from "../../components/news-for/news-for-column.vue";
 import NewsSearch from "../../components/news-search/news-search.vue";
 
 export default {
-  setup(props, context) {
+  setup() {
     const popupIsOpened = ref(false);
     const togglePopup = () => {
       popupIsOpened.value = !popupIsOpened.value;
@@ -177,7 +177,7 @@ export default {
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
 
-    let { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+    const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
       currentPage: 1,
       perPage: 20,
     });
@@ -202,12 +202,7 @@ export default {
     });
 
     const filterTable = (str) => {
-      const { result2, onResult:onRes } = useQuery(GET_NEWS, {
-      str:str,
-    });
-
-
-
+      refetch({str:str.value})
     }
 
     return {
@@ -239,7 +234,7 @@ export default {
     VTableColumn,
     VButton,
     VModal,
-    VPopup,
+    VPopupContacts,
     NewsForColumn,
     NewsSearch,
   },
