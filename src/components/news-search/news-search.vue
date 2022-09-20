@@ -4,8 +4,8 @@
       <div  class="search-cell-text">{{filter}}</div>
       <button @click="clearFilter" class="search-cell-btn">
         <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.71094 2.7915L2.2943 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M2.28906 2.7915L8.7057 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8.71094 2.7915L2.2943 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M2.28906 2.7915L8.7057 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
     </div>
@@ -22,7 +22,6 @@
           placeholder=" + поиск" >
       </v-dropdown>
     </div>
-
    
     <div class="search-btns">
       <button @click="filterTable"  class="search-searchBtn" >
