@@ -1,0 +1,17 @@
+.news-preview {
+  height: min-content;
+  display: grid;
+  gap: 20px;
+  &__card {
+    padding: 0;
+  }
+
+  &__inner-tabs {
+    padding: 20px;
+
+    .tabs-list__content {
+      margin-top: 20px;
+    }
+  }
+}
+

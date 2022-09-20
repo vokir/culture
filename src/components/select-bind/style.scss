@@ -123,6 +123,10 @@
   color: var(--variable-7);
   padding: 5.5px 0 5.5px 10px;
 
+  &--active {
+    color: var(--variable-13);
+  }
+
   &--title {
     padding: 1px 0 1px 10px;
   }

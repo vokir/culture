@@ -37,8 +37,8 @@
   </div>
 </template>
 <script>
-import getNewsFor from "./getNewsFor";
-import VBadge from "../ui/v-badge/v-badge.vue";
+import bindRowsLogic from "./bindRowsLogic";
+import VBadge from "../../ui/v-badge/v-badge.vue";
 
 export default {
   props: ["newsInfo"],
@@ -46,7 +46,7 @@ export default {
     VBadge,
   },
   setup(props) {
-    const newsInfo = getNewsFor(props.newsInfo);
+    const newsInfo = bindRowsLogic(props.newsInfo);
     return {
       newsInfo,
     };

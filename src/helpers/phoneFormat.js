@@ -1,4 +1,5 @@
 const computePhone = (s) => {
+  if (!s) return
   let phone = s.replace(/[^0-9]/g, "");
   if (phone.length === 11) {
     phone = phone.substr(1);

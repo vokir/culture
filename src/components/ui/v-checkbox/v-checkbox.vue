@@ -1,5 +1,5 @@
 <template>
-  <label :for="uid" class="checkbox">
+  <label :for="uid" class="checkbox" @click.stop>
     <input
       class="checkbox__input"
       type="checkbox"

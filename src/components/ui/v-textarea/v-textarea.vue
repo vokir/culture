@@ -1,8 +1,8 @@
 <template>
   <div class="input-wrapper">
-    <label class="input-wrapper__label" v-if="label" :for="name">{{
-      label
-    }}</label>
+    <label class="input-wrapper__label" v-if="label" :for="name">
+      {{ label }}
+    </label>
     <textarea
       :id="name"
       :name="name"
@@ -12,9 +12,9 @@
       :maxlength="maxLength"
       @input="updateValue"
     />
-    <span class="input-wrapper__count" v-if="maxLength"
-      >{{ modelValue.length }} / {{ maxLength }}</span
-    >
+    <span class="input-wrapper__count" v-if="maxLength">
+      {{ modelValue.length }} / {{ maxLength }}
+    </span>
   </div>
 </template>
 

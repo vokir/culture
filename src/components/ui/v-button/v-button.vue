@@ -4,6 +4,7 @@
     :class="['btn', `btn--${variant}`, {
       'btn--disabled': disabled,
     }]"
+    :to="href"
     :disabled="disabled"
   >
     <slot></slot>

@@ -1,4 +1,4 @@
-.news-add {
+.news-form {
   display: grid;
   grid-template-columns: 1fr 406px;
   grid-gap: 20px;
@@ -14,24 +14,6 @@
     color: var(--variable-13);
   }
 
-  &__preview {
-    height: min-content;
-    display: grid;
-    gap: 20px;
-  }
-
-  &__preview-card {
-    padding: 0;
-  }
-
-  &__preview-inner-tabs {
-    padding: 20px;
-
-    .tabs-list__content {
-      margin-top: 20px;
-    }
-  }
-
   &__actions {
     box-shadow: 0px -4px 1px rgba(140, 140, 140, 0.15);
     position: absolute;
@@ -44,12 +26,10 @@
     background: var(--variable-17);
     padding: 15px 40px;
   }
-}
-
-.news-add-form {
-  display: grid;
-  gap: 20px;
-
+  &__form {
+    display: grid;
+    gap: 20px;
+  }
   &__card-first {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -78,6 +58,7 @@
     }
   }
 }
+
 
 .show-for {
   display: grid;

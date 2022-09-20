@@ -38,7 +38,7 @@ export default {
       required: true
     },
   },
-  setup({ total, perPage }, { emit }) {
+  setup(props, { emit }) {
     const pageNumber = ref(1)
 
     const nextPage = () => {
@@ -54,10 +54,15 @@ export default {
     }
 
     const pageCount = computed(() => {
-      return Math.ceil(total / perPage);
+      return Math.ceil(props.total / props.perPage);
     })
 
     watch(pageNumber, () => emit('update:modelValue', pageNumber.value))
+    watch(pageCount, (value) => {
+      if (value < pageNumber.value) {
+        pageNumber.value = 1
+      }
+    })
 
     return {
       pageNumber,
