@@ -14,7 +14,6 @@ const getNewsFor = (news) =>{
 
 
 	const checkForSelected = () => {
-		console.log(rows.flat(2));
 		rows.forEach((row) => {
 			row.forEach((cell, i) => {
 				if (i === 0) {

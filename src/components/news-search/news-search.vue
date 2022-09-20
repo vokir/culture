@@ -1,9 +1,9 @@
 <template>
-  <div class="search">
-    <div v-if="filter.length" class="search-cell">
-      <div  class="search-cell-text">{{filter}}</div>
-      <button @click="clearFilter" class="search-cell-btn">
-        <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <div class="search" ref="searchFilterContainer">
+    <div v-if="filter.length" class="search-cell" v-for="cell in filter">
+      <div  class="search-cell-text">{{cell}}</div>
+      <button class="search-cell-btn search-btn" >
+        <svg @click.stop="setFilter" :data-filter="cell" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M8.71094 2.7915L2.2943 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           <path d="M2.28906 2.7915L8.7057 9.20814" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -11,12 +11,56 @@
     </div>
     <div class="search-placeholder" v-else>Фильтр</div>
 
-    <div class="search-filter-container" @click="togglePopup" ref="searchFilterContainer">
-      <v-dropdown class="search-filter" @focusout="popupOff" :delay="{show: 0,hide: 140}" :triggers="[]" :popperTriggers="[]" :shown="isOpened"  :autoHide="false" >
-        <template #popper class="search-popup">
-            <div v-close-popper class="search-choice" data-filter="фильтр 1" @click.stop="setFilter">фильтр 1</div>
-            <div v-close-popper class="search-choice" data-filter="фильтр 2" @click.stop="setFilter">фильтр 2</div>
-            <div v-close-popper class="search-choice" data-filter="фильтр 3" @click.stop="setFilter">фильтр 3</div>
+    <div class="search-filter-container" @click="togglePopup" @focusout="popupOff" >
+      <v-dropdown class="search-filter" 
+      :delay="{show: 0,hide: 140}" 
+      :triggers="[]" 
+      :popperTriggers="[]" 
+      :shown="isOpened"  
+      :autoHide="false" 
+      :container="searchFilterContainer"
+      :boundary="searchFilterContainer"
+      :distance="12"
+      >
+        <template #popper>
+          <div class="search-popup">
+            <div class="search-left">
+              <ul class="search-left__filter-list">
+              <div class="search-left__title">Фильтры</div>
+                <li class="search-left__filter-item" :class="{active:filter.includes(filterItem)}" v-for="filterItem in filterList" :data-filter="filterItem" @click.stop="setFilter">
+                  {{filterItem}}
+                </li>
+              </ul>
+              <div class="search-left__bottom">
+                <button class="search-btn search-left__save-btn">
+                  <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6 4.5V0.5H4V4.5H0V6.5H4V10.5H6V6.5H10V4.5H6Z" fill="#868D95"/>
+                  </svg>
+                  <span>Сохранить фильтр</span></button>
+                <button class="search-btn search-left__settings-btn">
+                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M10.238 5.754V4.48399H8.885C8.8 3.89199 8.545 3.384 8.208 2.877L8.968 2.11501L8.123 1.269L7.277 2.02901C6.854 1.69101 6.347 1.437 5.754 1.353V0H4.484V1.354C3.892 1.438 3.384 1.69201 2.877 2.03101L2.115 1.271L1.269 2.116L2.029 2.87801C1.691 3.38601 1.437 3.89299 1.353 4.48599H0V5.756H1.354C1.438 6.346 1.692 6.856 2.031 7.278L1.271 8.12399L2.201 9.054L2.963 8.29401C3.386 8.63201 3.978 8.886 4.57 8.97V10.323H5.838V8.96899C6.431 8.88399 6.938 8.629 7.446 8.291L8.208 9.05299L9.138 8.123L8.208 7.276C8.546 6.853 8.715 6.261 8.885 5.668H10.238V5.752V5.754ZM2.792 5.162C2.792 3.892 3.808 2.79201 5.162 2.79201C6.432 2.79201 7.532 3.808 7.532 5.162C7.532 6.432 6.515 7.532 5.162 7.532C3.808 7.446 2.792 6.432 2.792 5.162Z" fill="#868D95"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="search-right">
+              <div class="search-right__items">
+                <div class="search-right__item">
+                  <div class="search-right__item-title">Дата</div>
+                  <input class="search-right__item-input-date" type="date"/>
+                </div>
+              </div>
+              <div class="search-right__btns">
+                <button class="search-right__btn search-right__search-btn" @click="filterTable">
+                  <svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                   <path d="M14.2408 13.9616L11.5622 11.2385C12.561 10.1 13.1815 8.59231 13.1815 6.94616C13.1815 3.39231 10.3365 0.5 6.84075 0.5C3.34501 0.5 0.5 3.39231 0.5 6.94616C0.5 10.5 3.34501 13.3923 6.84075 13.3923C8.08171 13.3923 9.23177 13.0231 10.2003 12.4077L12.9848 15.2385C13.1512 15.4077 13.3782 15.5 13.6052 15.5C13.8322 15.5 14.0593 15.4077 14.2257 15.2385C14.5889 14.8847 14.5889 14.3153 14.2408 13.9616L14.2408 13.9616ZM2.27054 6.94619C2.27054 4.39231 4.31355 2.30003 6.84072 2.30003C9.36788 2.30003 11.3958 4.39234 11.3958 6.94619C11.3958 9.50006 9.35275 11.5923 6.84072 11.5923C4.32869 11.5923 2.27054 9.51537 2.27054 6.94619Z" fill="white"/>
+                  </svg>
+                  <span>Найти</span></button>
+                <button class="search-right__btn search-right__reset-btn" @click="clearFilter">Сбросить</button>
+              </div>
+            </div>
+          </div>
         </template>
         <input @keyup.enter="filterTable" @keyup.esc="clearFilter" v-model="search" class="search-input" type="text" 
           placeholder=" + поиск" >
@@ -24,7 +68,7 @@
     </div>
    
     <div class="search-btns">
-      <button @click="filterTable"  class="search-searchBtn" >
+      <button @click="filterTable"  class="search-btn search-searchBtn" >
         <svg
           width="16"
           height="16"
@@ -40,7 +84,7 @@
           />
         </svg>
       </button>
-      <button class="search-clearBtn" @click="clearFilter">
+      <button class="search-btn search-clearBtn" @click="clearFilter">
         <svg
           width="18"
           height="18"
@@ -74,38 +118,41 @@ import { ref } from 'vue';
     setup(props,context){
       let search = ref('')
       const isOpened = ref(false)
-      const filter = ref('')
+      const filter = ref([])
       const searchFilterContainer = ref()
       const setTimeoutRef = ref()
+      const filterList = ref(['фильтр 1', 'фильтр 2', 'фильтр 3'])
+      
 
       const filterTable = () => {
+        isOpened.value = false
         context.emit('filterTable', filter)
       }
 
       const clearFilter = () =>{
         if(search.value || filter.value){
           search.value = ''
-          filter.value = ''
+          filter.value = []
           filterTable()
         }
       }
 
       const togglePopup = () => {
-        // search.value += 'togglePopup '
         isOpened.value = !isOpened.value
       }
 
       const popupOff = (e) => {
-        console.log(e);
-        // search.value += ('popupOff ')
-        isOpened.value = false
+        // console.log(e);
+        // isOpened.value = false
       }
 
       const setFilter = (str)=> {
-        // search.value += (str.srcElement.dataset.filter)
-        filter.value = str.srcElement.dataset.filter
-        isOpened.value = false
-        filterTable()
+        if(!filter.value.includes(str.srcElement.dataset.filter)){
+          filter.value.push(str.srcElement.dataset.filter)
+        }
+        else{
+          filter.value.splice(filter.value.indexOf(str.srcElement.dataset.filter),1)
+        }
       }
 
 
@@ -119,6 +166,7 @@ import { ref } from 'vue';
         togglePopup,
         filter,
         searchFilterContainer,
+        filterList,
       }
     }
   };

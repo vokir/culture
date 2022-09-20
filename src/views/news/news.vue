@@ -131,7 +131,7 @@
                     :key="'contact-' + index"
                     :text="
                       getFullFio(contact.NAME, contact.LAST_NAME, contact.SECOND_NAME)"/>
-                  <v-popup-contacts :class="{ 'visibility-hidden': popupIsOpened }" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
+                  <v-popup-contacts :class="{ 'visibility-hidden': popupIsOpened }" :filterList="'a'" @togglePopup="togglePopup" v-if="row.contacts.slice(0, 3).length - 1 === index" :contacts="row.contacts"
                   />
                 </div>
               </div>
@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { useQuery, useLazyQuery } from "@vue/apollo-composable";
+import { useQuery} from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -166,6 +166,7 @@ import VPopupContacts from "../../components/v-popup-contacts/v-popup-contacts.v
 import getNewsFor from "../../components/news-for/getNewsFor";
 import NewsForColumn from "../../components/news-for/news-for-column.vue";
 import NewsSearch from "../../components/news-search/news-search.vue";
+import { GET_TYPES_OF_NEWS } from "../../api/queries/getTypesOfNews";
 
 export default {
   setup() {
@@ -181,10 +182,16 @@ export default {
       currentPage: 1,
       perPage: 20,
     });
-
     const news = computed(() => {
       return result.value.getNews.data;
     });
+
+    // const {result:resultTypes} = useQuery(GET_TYPES_OF_NEWS);
+
+    // const typesOfNews = computed(() => {
+    //   return resultTypes.value.getNewsTypes;
+    // });
+
 
     const selectAll = computed({
       get() {
