@@ -11,7 +11,7 @@
             :tooltip-text="'Дом ' + cell.name"
           />
 					<v-badge
-            v-if="cell.isSelected > 0 && cell.type === 'approache'"
+            v-if="cell.isSelected > 0 && cell.type === 'approach'"
             variant="purple"
             :text="cell.name"
             tooltip

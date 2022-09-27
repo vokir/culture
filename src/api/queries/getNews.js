@@ -1,77 +1,88 @@
 import gql from "graphql-tag";
 
 export const GET_NEWS = gql`
-  query news ($str: String, $currentPage: Int! = 1, $perPage: Int! = 20){
-    getNews (search: $str, currentPage: $currentPage, perPage: $perPage) {
-      data {
-        ID,
-        UF_NAME,
-        UF_CREATED_AT,
-        types {
-         UF_TITLE
-        },
-        complexes {
+query news(
+  $currentPage: Int! = 1
+  $perPage: Int! = 20
+  $searchStr: String = ""
+  $filterStr: [String] = []
+) {
+  getNews(
+    search: $searchStr
+    currentPage: $currentPage
+    perPage: $perPage
+    filterInn: { column: "UF_TITLE", value: $filterStr, relation: "types" }
+  ) {
+    data {
+      ID
+      UF_NAME
+      UF_CREATED_AT
+      types {
+        UF_TITLE
+      }
+      complexes {
+        UF_NAME
+      }
+      contacts {
+        NAME
+        LAST_NAME
+        SECOND_NAME
+      }
+      houses {
+        ID
+        UF_NAME
+      }
+      approaches {
+        ID
+        UF_NAME
+        house {
+          ID
           UF_NAME
         }
-        contacts {
-          NAME,
-          LAST_NAME,
-          SECOND_NAME
-        },
-        houses {
-          ID,
-          UF_NAME,
-        },
-        approaches {
-          ID,
-          UF_NAME,
+      }
+      floors {
+        ID
+        UF_NAME
+        UF_NUMBER
+        approach {
+          ID
+          UF_NAME
           house {
-            ID,
+            ID
             UF_NAME
           }
-        },
-        floors {
-          ID,
-          UF_NAME,
-          UF_NUMBER,
+        }
+      }
+      premises {
+        ID
+        UF_NUMBER
+        UF_NAME
+        floor {
+          ID
+          UF_NAME
+          UF_NUMBER
           approach {
-            ID,
-            UF_NAME,
+            ID
+            UF_NAME
             house {
-              ID,
+              ID
               UF_NAME
             }
           }
-        },
-        premises {
-          ID,
-          UF_NUMBER,
-          UF_NAME,
-          floor {
-            ID,
-            UF_NAME,
-            UF_NUMBER,
-            approach {
-              ID,
-              UF_NAME,
-              house {
-                ID,
-                UF_NAME,
-              }
-            }
-          }
         }
-        icon {
-          file {
-            ORIGINAL_NAME,
-            SRC,
-            ID
-          }
+      }
+      icon {
+        file {
+          ORIGINAL_NAME
+          SRC
+          ID
         }
-      },
-      paginatorInfo {
-        total,
-        perPage,
       }
     }
-  }`
+    paginatorInfo {
+      total
+      perPage
+    }
+  }
+}
+`

@@ -1,5 +1,5 @@
 <template>
-  <div class="search" ref="searchFilterContainer">
+  <div ref="searchFilterContainer" :class="['search', {'search--transparent':variant === 'transparent'}]" >
     <div v-if="filter.length" class="search-cell" v-for="cell in filter">
       <div  class="search-cell-text">{{cell}}</div>
       <button @click.stop="setFilter" :data-filter="cell" class="search-cell-btn search-btn" >
@@ -27,7 +27,7 @@
             <div class="search-left">
               <ul class="search-left__filter-list">
               <div class="search-left__title">Фильтры</div>
-                <li class="search-left__filter-item" :class="{active:filter.includes(filterItem.UF_TITLE)}" v-for="filterItem in props.filterList" :data-filter="filterItem.UF_TITLE" @click.stop="setFilter(filterItem)">
+                <li class="search-left__filter-item" :class="{active:filter.includes(filterItem.UF_TITLE)}" v-for="filterItem in filterList" :data-filter="filterItem.UF_TITLE" @click.stop="setFilter(filterItem)">
                   {{filterItem.UF_TITLE}}
                 </li>
               </ul>
@@ -62,13 +62,13 @@
             </div>
           </div>
         </template>
-        <input @keyup.enter="filterTable" @keyup.esc="clearFilter" v-model="search" class="search-input" type="text" 
-          placeholder="Фильтр + поиск" >
+        <input @keyup.enter="filterTable" @keyup.esc="clearFilter" v-model="search" :class="['search-input', {'search-input--transparent':variant === 'transparent'}]" type="text" 
+          placeholder="Фильтр + поиск" @click="popupListener">
       </v-dropdown>
     </div>
    
-    <div class="search-btns">
-      <button class="search-btn search-searchBtn" @click.stop="filterTable">
+    <div :class="['search-btns', {'search-btns--transparent':variant === 'transparent'}]">
+      <button class="search-btn search-btn__search" @click.stop="filterTable">
         <svg
           width="16"
           height="16"
@@ -84,7 +84,7 @@
           />
         </svg>
       </button>
-      <button class="search-btn search-clearBtn" @click.stop="clearFilter">
+      <button class="search-btn search-btn__clear" @click.stop="clearFilter">
         <svg
           width="18"
           height="18"
@@ -115,22 +115,34 @@
 
 </template>
 <script>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import useModal from '../../../hooks/useModal';
+import { useEventListener } from '../../../hooks/useEventListeners';
+import useClickOutside from '../../../hooks/useClickOutside';
+
   export default {
     props: {
-      filterList : Array
+      filterList : Array,
+      variant: {
+        type: String,
+        required: false,
+        default: '',
+        validator(value) {
+          return ['primary','transparent'].includes(value)
+        }
+        },
+      filterOpened: Boolean,
     },
     setup(props,context){
       let search = ref('')
-      const isOpened = ref(false)
+      const { isOpen:isOpened, openModal, closeModal } = useModal()
       const filter = ref([])
       const searchFilterContainer = ref()
-      const filterList = ref(props.filterList)
       
 
       const filterTable = () => {
         isOpened.value = false
-        context.emit('filterTable', filter, search)
+        context.emit('filterTable', JSON.parse(JSON.stringify(filter.value)), search.value)
       }
 
       const clearFilter = () =>{
@@ -154,22 +166,19 @@ import { ref } from 'vue';
         }
         else{
           filter.value.splice(filter.value.indexOf(str),1)
-
         }
       }
 
       const popupListener = () => {
-        document.addEventListener('click',(e)=>{
-          if(e.target.closest('.search') && !e.target.closest('.search-popup')){
-            isOpened.value = !isOpened.value
-          }
-          else if(!e.target.closest('.search')){
-            isOpened.value = false
-          }
-        })
+        if(isOpened.value){
+          closeModal()
+        }
+        else{
+          openModal()
+        }
       }
 
-      popupListener()
+      useClickOutside(searchFilterContainer, closeModal)
 
       return{
         search,
@@ -179,8 +188,7 @@ import { ref } from 'vue';
         setFilter,
         filter,
         searchFilterContainer,
-        filterList,
-        props
+        popupListener
       }
     },
   };

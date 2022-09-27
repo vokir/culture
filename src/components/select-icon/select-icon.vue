@@ -24,6 +24,8 @@
   <v-modal v-if="isOpen" class="modal-select-icon" centered @closeModal="closeModal">
     <div class="modal-title">Выберите изображение</div>
     <div class="select-icon-container">
+      <v-filter-and-search class="select-image-filter" :variant="'primary'" @filterTable="filterTable" :filterList="imgCategories"></v-filter-and-search>
+
       <v-loader v-if="loading"/>
       <div v-else class="select-icon-images">
         <div :class="['icon-item', { 'icon-item--active': active.id ===  icon.file.ID }]" v-for="icon of icons"
@@ -46,10 +48,11 @@
 </template>
 
 <script>
-import { useLazyQuery } from "@vue/apollo-composable";
+import { useQuery, useLazyQuery } from "@vue/apollo-composable";
 import { computed, ref, watch } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
+import { GET_IMAGES_CATEGORIES } from "../../api/queries/getImagesCategories";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
 import VButton from "../ui/v-button/v-button.vue";
@@ -58,10 +61,11 @@ import VLoader from "../ui/v-loader/v-loader.vue";
 import VModal from "../ui/v-modal/v-modal.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VTagsList from "../ui/v-tags-list/v-tags-list.vue";
+import vFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue";
 
 export default {
   name: "select-icon",
-  components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
+  components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal, vFilterAndSearch },
   emits: ['saveIcon'],
   inheritAttrs: false,
   props: {
@@ -124,6 +128,12 @@ export default {
       return result.value?.getIcons.paginatorInfo ?? []
     })
 
+    const {result:resultImgCategories} = useQuery(GET_IMAGES_CATEGORIES)
+
+    const imgCategories = computed(() => {
+      return resultImgCategories.value?.getImageCategories ?? [];
+    });
+
     watch(isOpen, ()=> {
       if (!icons.value.length) {
         load()
@@ -134,6 +144,16 @@ export default {
       active.value = value
       icon.value = value.src
     })
+
+    
+    const filterTable = (filter, search) => {
+      refetch({
+      currentPage: currentPage.value,
+      perPage: perPage.value,
+      filterStr: filter,
+      searchStr: search
+    })
+    }
 
     return {
       isOpen,
@@ -148,6 +168,8 @@ export default {
       selectIcon,
       deleteIcon,
       submit,
+      imgCategories,
+      filterTable
     }
   }
 }
