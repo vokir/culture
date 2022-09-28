@@ -46,21 +46,11 @@ export default {
       required: false,
       default: "blue",
       validator(value) {
-        return ["blue", "purple", "orange", "teal", "lightblue"].includes(
+        return ["blue", "purple", "orange", "teal", "lightblue", "gray"].includes(
           value
         );
       },
     },
-    // transparentBg: {
-    //   type: String,
-    //   required: false,
-    //   default: "transparentBg",
-    //   validator(value) {
-    //     return ["transparent"].includes(
-    //       value
-    //     );
-    //   },
-    // },
   },
   setup() {
     const tooltipRef = ref(null);

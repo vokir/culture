@@ -4,7 +4,6 @@
 
 <script>
 import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
@@ -18,16 +17,21 @@ export default {
     const toast = useToast();
     const closeModalProp = ref(false)
     const { mutate: createNews, onDone: onDoneCreateNews, onError: onErrorCreateNews } = useMutation(CREATE_NEWS, {
-      // update: (cache, { data: { createNews } }) => {
-      //   try {
-      //     const data = cache.readQuery({ query: GET_NEWS });
-      //     data.getNews.push(createNews);
-      //     cache.writeQuery({ query: GET_NEWS, data });
-      //   }
-      //   catch(error) {
-      //     console.error(error);
-      //   }
-      // }
+      update: (store, { data: { addNews } }) => {
+        // Add to All tasks list
+        const data = store.readQuery({ query: GET_NEWS })
+        console.log(data)
+        data.getNews.data.push(addNews)
+        store.writeQuery({ query: GET_NEWS, data })
+        // Add to Todo tasks list
+        const todoQuery = {
+          query: GET_NEWS,
+          variables: { filter: { done: false } },
+        }
+        const todoData = store.readQuery(todoQuery)
+        todoData.getNews.push(addNews)
+        store.writeQuery({ ...todoQuery, data: todoData })
+      },
     })
 
     onDoneCreateNews(() => {
@@ -55,7 +59,8 @@ export default {
         houses: data.houses.map(el => el.ID),
         approaches: data.approaches.map(el => el.ID),
         floors: data.floors.map(el => el.ID),
-        premises: data.premises.map(el => el.ID)
+        premises: data.premises.map(el => el.ID),
+        priority: Object.keys(data.priority).length ? data.priority.ID : 1,
       }
       createNews(news).then(() => {
         if (closeModal) {

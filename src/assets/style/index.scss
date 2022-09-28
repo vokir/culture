@@ -27,6 +27,12 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
 }
+.container-only-dev {
+  width: 100%;
+  max-width: 1252px;
+  margin-left: 52px;
+  margin-right: auto;
+}
 .pick-image {
   position: absolute;
   top: 29px;

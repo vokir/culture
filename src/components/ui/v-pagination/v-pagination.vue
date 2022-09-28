@@ -3,17 +3,17 @@
     <ul class="pagination-list">
       <li class="pagination-list__item">
         <button class="pagination-list__button pagination-list__item--prev" @click="prevPage"
-                :disabled="pageNumber === 1">
+                :disabled="modelValue === 1">
           &lt;
         </button>
       </li>
       <li class="pagination-list__item" v-for="page of pageCount" @click="toPage(page)" :key="page">
-        <button :class="['pagination-list__button', {'pagination-list__button--active': page === pageNumber}]">
+        <button :class="['pagination-list__button', {'pagination-list__button--active': page === modelValue}]">
           {{ page }}
         </button>
       </li>
       <li class="pagination-list__item pagination-list__item--next" @click="nextPage">
-        <button class="pagination-list__button" :disabled="pageNumber >= pageCount">
+        <button class="pagination-list__button" :disabled="modelValue >= pageCount">
           &gt;
         </button>
       </li>
@@ -22,13 +22,16 @@
 </template>
 
 <script>
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 
 export default {
   name: "v-pagination",
   emits: ['update:modelValue'],
   props: {
-    modelValue: Number,
+    modelValue: {
+      type: Number,
+      default: 1
+    },
     total: {
       type: Number,
       required: true
@@ -39,33 +42,30 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const pageNumber = ref(1)
 
     const nextPage = () => {
-      pageNumber.value++;
+      emit('update:modelValue', props.modelValue + 1)
     }
 
     const prevPage = () => {
-      pageNumber.value--;
+      emit('update:modelValue', props.modelValue - 1)
     }
 
     const toPage = (page) => {
-      pageNumber.value = page
+      emit('update:modelValue', page)
     }
 
     const pageCount = computed(() => {
       return Math.ceil(props.total / props.perPage);
     })
 
-    watch(pageNumber, () => emit('update:modelValue', pageNumber.value))
     watch(pageCount, (value) => {
-      if (value < pageNumber.value) {
-        pageNumber.value = 1
+      if (value < props.modelValue) {
+        emit('update:modelValue', 1)
       }
     })
 
     return {
-      pageNumber,
       pageCount,
       nextPage,
       prevPage,

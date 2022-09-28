@@ -19,11 +19,14 @@
             </v-tab>
           </v-tabs>
         </v-tab>
-        <v-tab title="Alphaopen">
+        <v-tab title="Web-ЛК">
           <v-tabs link-title class="news-preview__inner-tabs">
-            <v-tab title="Превью"> Alphaopen Превью </v-tab>
-            <v-tab title="Подробная"> Alphaopen Подробная </v-tab>
-            <v-tab title="Сторис"> Alphaopen Сторис </v-tab>
+            <v-tab title="Превью">
+              <web-lk-news v-bind="{ ...modelValue }" @openModal="openModal"/>
+            </v-tab>
+            <v-tab title="Подробная">
+              <web-lk-news v-bind="{ ...modelValue }" @openModal="openModal" detail/>
+            </v-tab>
           </v-tabs>
         </v-tab>
       </v-tabs>
@@ -36,6 +39,7 @@
     v-if="isOpen"
     @closeModal="closeModal"
     @onLoadFiles="onLoadFiles"
+    no-landscape
   />
 </template>
 
@@ -50,10 +54,12 @@
 	import VCard from "../../ui/v-card/v-card.vue";
 	import VTab from "../../ui/v-tabs/v-tab/v-tab.vue";
 	import VTabs from "../../ui/v-tabs/v-tabs.vue";
+  import WebLkNews from "../../web-lk-news/web-lk-news.vue";
 	
 	export default {
 		name: "news-preview",
 		components: {
+      WebLkNews,
 			SelectIcon,
 			SelectImage,
 			AmioDetail,

@@ -13,6 +13,16 @@
             labelSelect="Тип новости"
             placeholder="Выберите тип новости"
           />
+          <div class="select-priority">
+            <v-select
+              v-model="form.priority"
+              name="priority"
+              label="UF_TITLE"
+              labelSelect="Степень важности"
+              placeholder="Выберите степень важности"
+              :options="priority"
+            />
+          </div>
           <v-select
             v-model="form.complex"
             name="home"
@@ -55,12 +65,12 @@
             rows="4"
             max-length="280"
           />
-          <v-input
+          <v-textarea
             v-model="form.fullDesc"
             name="previewText"
             label="Текст новости*"
             rows="4"
-            max-length="280"
+            max-length="380"
           />
         </v-card>
         <v-card class="news-form__card-third">
@@ -120,6 +130,7 @@ import { computed, ref } from "vue";
 import { mask } from 'vue-the-mask'
 import { GET_COMPLEXES } from "../../../api/queries/getComplexes";
 import { GET_CONTACTS } from "../../../api/queries/getContacts";
+import { GET_NEWS_DEGREES } from "../../../api/queries/getNewsDegrees";
 import { GET_NEWS_TYPES } from "../../../api/queries/getNewsTypes";
 import useModal from "../../../hooks/useModal";
 import AmioDetail from "../../amio-news/amio-detail/amio-detail.vue";
@@ -186,7 +197,8 @@ export default {
         phone: '',
         date: '',
         type: {},
-        complex: '',
+        complex: {},
+        priority: {},
         docs: [],
         links: [],
         button: [],
@@ -225,6 +237,10 @@ export default {
     const { result: contactsData } = useQuery(GET_CONTACTS)
     const contacts = computed(() => {
       return contactsData.value?.getContacts ?? []
+    })
+    const { result: priorityData } = useQuery(GET_NEWS_DEGREES)
+    const priority = computed(() => {
+      return priorityData.value?.getNewsDegrees ?? []
     })
 
     const form = ref(formData)
@@ -284,7 +300,8 @@ export default {
         phone: '',
         date: '',
         type: {},
-        complex: '',
+        complex: {},
+        priority: {},
         docs: [],
         links: [],
         button: [],
@@ -304,6 +321,7 @@ export default {
       complexes,
       currentTab,
       isOpen,
+      priority,
       openModal,
       closeModal,
       onLoadFiles,

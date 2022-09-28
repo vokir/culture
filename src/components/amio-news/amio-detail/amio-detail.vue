@@ -45,9 +45,9 @@
         </div>
       </div>
       <div class="detail__content-links" v-if="links.length">
-        <a class="detail__content-links-link" v-for="(item, index) of links" :href="item.link" :key="item.name + index">{{
-            item.name
-          }}</a>
+        <a class="detail__content-links-link" v-for="(item, index) of links" :href="item.link" :key="item.name + index">
+          {{ item.name }}
+        </a>
       </div>
       <div class="detail__content-docs" v-if="docs.length">
 

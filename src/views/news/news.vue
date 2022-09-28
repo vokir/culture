@@ -53,7 +53,7 @@
         </v-table-column>
         <v-table-column id="icon" title="icon" width="30px">
           <template v-slot="{ row }">
-            <img v-if="row.icon" :alt="row.icon" :src="row.icon.file.SRC">
+            <img v-if="row.icon" :alt="row.icon.file.ORIGINAL_NAME" :src="row.icon.file.SRC">
           </template>
         </v-table-column>
         <v-table-column id="UF_NAME" title="Заголовок" width="190px">
@@ -214,9 +214,10 @@ export default {
       }
     })
 
-    const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews } = useMutation(DELETE_NEWS)
+    const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews,  } = useMutation(DELETE_NEWS)
 
     onDoneDeleteNews(() => {
+      currentPage.value = 1
       variables.value.currentPage = 1
     })
 

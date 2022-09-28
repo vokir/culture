@@ -4,9 +4,11 @@
   --main-black: #535C69;
   --gray-light: #9E9E9E;
   --gray-hover: #f6f8f9;
+  --gray: #F3F3F3;
   --red: #FF3B30;
   --blue: #018AE4;
   --yellow: rgba(205, 220, 57, 0.2);
+  --orange: #FFB680;
   --variable-1: #7BD500;
   --variable-2: #66AFE9;
   --variable-3: #FF5752;
@@ -35,5 +37,5 @@
   --transparency-3: rgba(0, 0, 0, 0.1);
   --transparency-4: rgba(255, 255, 255, 0.15);
   --shadow-1: 0px 8px 20px rgba(157, 191, 214, 0.25);
-  --z-index-modal: 10;
+  --z-index-modal: 1000;
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="container-content">
     <div class="container-header">
-      <v-button href="/news" variant="transparent" transparent>
+      <v-button href="/master-system/news/" variant="transparent" transparent>
         <svg
           class="btn--transparent__svg"
           width="6"
@@ -141,7 +141,7 @@ export default {
       phone: '',
       date: '',
       type: {},
-      complex: '',
+      complex: {},
       docs: [],
       links: [],
       button: [],
@@ -149,7 +149,8 @@ export default {
       approaches: [],
       floors: [],
       premises: [],
-      contacts: []
+      contacts: [],
+      priority: {}
     });
 
     const { result, load, onResult, loading } = useLazyQuery(GET_NEWS_BY_ID, {
@@ -160,12 +161,12 @@ export default {
       if (data) {
         form.value.date = dayjs(data.UF_CREATED_AT).format('YYYY-MM-DDTHH:mm');
         form.value.type = data.types.length ? data.types[0] : []
-        form.value.complex = data.complexes.length ? data.complexes[0] : []
+        form.value.complex = data.complexes.length ? data.complexes[0] : {}
         form.value.title = data.UF_NAME ? data.UF_NAME : '';
         form.value.desc = data.UF_PREVIEW_TEXT ? data.UF_PREVIEW_TEXT : '';
         form.value.fullDesc = data.UF_TEXT ? data.UF_TEXT : '';
         form.value.phone = computePhone(data.UF_PHONE);
-        form.value.docs = data.documents;
+        form.value.docs = data.documents.filter(el => el.file);
         form.value.premises = data.premises;
         form.value.houses = data.houses;
         form.value.approaches = data.approaches;
@@ -177,6 +178,7 @@ export default {
           }]: []
         // form.value.imgLandscape = data.imgLandscape?.SRC;
         // form.value.imgLibrary = data.imgLibrary?.SRC;
+        form.value.priority = data.degree
         form.value.icon = {
           id: data.icon?.file?.ID,
           name: data.icon?.file?.ORIGINAL_NAME,

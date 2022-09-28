@@ -1,12 +1,12 @@
 import gql from "graphql-tag";
 
 export const CREATE_NEWS = gql`
-    mutation createNews(
+  mutation createNews(
     $title: String!
     $UF_ORDER: Int! = 100
     $UF_EXTERNAL_SYSTEM_ID: Int! = 1
     $active: Boolean! = true
-    $UF_DEGREE_ID: Int! = 1
+    $priority: Int!
     $icon: Int!
     $desc: String
     $imgLandscape: Int
@@ -27,7 +27,7 @@ export const CREATE_NEWS = gql`
   ){
     createNews(
       UF_NAME: $title
-      UF_DEGREE_ID: $UF_DEGREE_ID
+      UF_DEGREE_ID: $priority
       UF_ACTIVE: $active
       UF_ORDER: $UF_ORDER
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
