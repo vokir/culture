@@ -21,8 +21,7 @@
       </div>
     </div>
   </div>
-  <v-modal v-if="isOpen" class="modal-select-icon" centered @closeModal="closeModal">
-    <div class="modal-title">Выберите изображение</div>
+  <v-modal v-if="isOpen" class="modal-select-icon" :title="'Выберите изображение'" centered @closeModal="closeModal">
     <div class="select-icon-container">
       <v-filter-and-search class="select-image-filter" :variant="'primary'" @filterTable="filterTable" :filterList="imgCategories"></v-filter-and-search>
 

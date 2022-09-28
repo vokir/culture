@@ -45,7 +45,8 @@ export default {
         phone: data.phone,
         btnLink: data.button.length ? data.button[0].link : '',
         btnText: data.button.length ? data.button[0].name : '',
-        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : []
+        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : [],
+        contacts: data.contacts.map(contact => contact.ID),
       }
       updateNews(news)
     }

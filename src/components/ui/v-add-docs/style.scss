@@ -1,4 +1,5 @@
 .docs-wrapper {
+  max-height: 420px;
   &__actions {
     display: flex;
     justify-content: center;
@@ -11,5 +12,11 @@
       padding-left: 0;
       padding-right: 0;
     }
+  }
+
+  &__title{
+    color:var(--variable-7);
+    font-size: 14px;
+    line-height: 150%;
   }
 }

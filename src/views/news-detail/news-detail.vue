@@ -182,6 +182,7 @@ export default {
           name: data.icon?.file?.ORIGINAL_NAME,
           src: data.icon?.file?.SRC,
         };
+        form.value.contacts = data.contacts
       }
     });
 

@@ -39,7 +39,7 @@
   }
 
   &__input{
-    position: absolute;
+    // position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -70,9 +70,10 @@
   }
 
   &__list{
+    overflow-y: scroll;
     box-shadow: 0 7px 21px rgb(83 92 105 / 12%), 0 -1px 6px 0 rgb(83 92 105 / 6%);
     margin: 0;
-    padding: 38px 0 10px;
+    padding: 0;
     flex: 1 1 auto;
     list-style: none;
     font-size: 12px;
@@ -129,6 +130,9 @@
 
 :global(.select .v-popper__popper){
 	width: 100%;
+}
+:global(.v-popper__inner){
+  overflow: hidden;
 }
 
 

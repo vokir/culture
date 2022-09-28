@@ -73,6 +73,19 @@ query news($newsID: Int) {
         SRC
       }
     }
+	contacts{
+    ID
+    LAST_NAME
+    NAME
+    SECOND_NAME
+    FULL_NAME
+    fields{
+      TYPE_ID
+      VALUE
+      __typename
+    }
+    __typename
+  }
     UF_BTN_TEXT
     UF_BTN_LINK
   }

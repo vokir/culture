@@ -55,7 +55,8 @@ export default {
         houses: data.houses.map(el => el.ID),
         approaches: data.approaches.map(el => el.ID),
         floors: data.floors.map(el => el.ID),
-        premises: data.premises.map(el => el.ID)
+        premises: data.premises.map(el => el.ID),
+        contacts: data.contacts.map(contact => contact.ID),
       }
       createNews(news).then(() => {
         if (closeModal) {

@@ -22,6 +22,7 @@
             </svg>
           </div>
           <div class="modal__content">
+            <div :class="['modal-title', {'modal-title--grey':titleGrey}]">{{title}}</div>
             <slot></slot>
           </div>
         </div>
@@ -41,6 +42,12 @@ export default {
   emits: ['closeModal'],
   inheritAttrs: false,
   props: {
+    title:{
+      type:String,
+      required:false,
+      default:''
+    },
+    titleGrey:Boolean,
     centered: Boolean,
     border: Boolean,
     small: Boolean,
