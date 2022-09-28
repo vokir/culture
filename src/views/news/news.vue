@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="container-header__search">
-        <news-search @filterTable="filterTable"/>
+        <v-filter-and-search  @filterTable="filterTable" :filterList="newsTypes" :variant="'transparent'"></v-filter-and-search>
       </div>
       <div class="container-header__action">
         <v-button class="btn--w100" @click="openModal">Добавить новость</v-button>
@@ -84,7 +84,8 @@
         </v-table-column>
         <v-table-column id="visibility" title="Отображается для" width="220px">
           <template v-slot="{ row }">
-            <bind-rows-column :newsInfo="row"/>
+            <span v-if="!row.houses.length && !row.approaches.length && !row.floors.length && !row.premises.length">Весь ЖК</span>
+            <bind-rows-column v-else :newsInfo="row"/>
           </template>
         </v-table-column>
         <v-table-column id="visibility" title="Контакты">
@@ -136,6 +137,7 @@
         <v-select v-model="perPage" :options="[5, 10, 20, 50, 100]"/>
       </div>
     </div>
+    
   </div>
   <news-add v-if="isOpen" @closeModal="closeModal"/>
 </template>
@@ -148,6 +150,7 @@ import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { DELETE_NEWS } from "../../api/mutations/deleteNews";
 import { GET_NEWS } from "../../api/queries/getNews";
+import { GET_NEWS_TYPES } from "../../api/queries/getNewsTypes";
 import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
 import NewsAdd from "../../components/news/news-add/news-add.vue";
 import NewsForm from "../../components/news/news-form/news-form.vue";
@@ -166,6 +169,7 @@ import VTable from "../../components/ui/v-table/v-table.vue";
 import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
+import VFilterAndSearch from "../../components/ui/v-filter-and-search/v-filter-and-search.vue";
 
 export default {
   name: 'news',
@@ -185,6 +189,14 @@ export default {
     BindRowsColumn,
     NewsSearch,
     VLoader,
+    VFilterAndSearch,
+  },
+  props:{
+    newsFilterOpened: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
   },
   setup() {
     const toast = useToast();
@@ -192,11 +204,12 @@ export default {
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
+    const { isOpen: filterPopup, openModal: openFilterPopup, closeModal: closeFilterPopup } = useModal();
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
 
-    const { result, loading, variables } = useSubscription(GET_NEWS, {
+    const { result, loading, variables} = useSubscription(GET_NEWS, {
       currentPage: currentPage.value,
-      perPage: perPage.value
+      perPage: perPage.value,
     })
 
     const news = computed(() => {
@@ -206,6 +219,12 @@ export default {
     const pageInfo = computed(() => {
       return result.value?.getNews.paginatorInfo ?? []
     })
+
+    const {result:resultTypes} = useQuery(GET_NEWS_TYPES)
+
+    const newsTypes = computed(() => {
+      return resultTypes.value?.getNewsTypes ?? [];
+    });
 
     updatePage(() => {
       variables.value = {
@@ -258,10 +277,14 @@ export default {
       })
     }
 
-    const filterTable = (str) => {
-      const { result2, onResult: onRes } = useQuery(GET_NEWS, {
-        str: str,
-      });
+    const filterTable = (filter, search) => {
+      variables.value.searchStr = search
+      if(filter.length){
+        variables.value.filterStr = filter
+      }
+      else{
+        variables.value.filterStr = undefined
+      }
     }
 
     return {
@@ -283,7 +306,11 @@ export default {
       deleteNewsArray,
       pageInfo,
       currentPage,
-      perPage
+      perPage,
+      newsTypes,
+      filterPopup,
+      openFilterPopup,
+      closeFilterPopup,
     };
   },
 };

@@ -1,9 +1,8 @@
 <template>
   <v-tags-list :label="label" @openModal="openModal">
-    <v-modal v-if="isOpen" @closeModal="closeModal" centered class="modal-tags">
+    <v-modal v-if="isOpen" @closeModal="closeModal" :title="'Выберите один или несколько документов'" titleGrey centered class="modal-tags">
       <div class="docs-wrapper">
-        <div class="docs-wrapper__title">Выберите один или несколько документов</div>
-        <div class="input">search</div>
+        <v-filter-and-search :clearBtn="false"/>
         <div v-if="docsLoading">Загрзука...</div>
         <v-table v-else :rows="docs">
           <v-table-column id="UF_TITLE" title="Название" width="190">
@@ -46,10 +45,11 @@ import VModal from "../v-modal/v-modal.vue";
 import VTableColumn from "../v-table/v-table-column.vue";
 import VTable from "../v-table/v-table.vue";
 import VTagsList from "../v-tags-list/v-tags-list.vue";
+import VFilterAndSearch from "../v-filter-and-search/v-filter-and-search.vue";
 
 export default {
   name: "v-add-docs",
-  components: { VButton, VTableColumn, VTable, VModal, VTagsList },
+  components: { VButton, VTableColumn, VTable, VModal, VTagsList, VFilterAndSearch },
   props: {
     label: String,
     tags: [Array, Object],

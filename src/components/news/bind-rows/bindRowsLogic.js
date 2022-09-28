@@ -75,7 +75,7 @@ const bindRowsLogic = (news) =>{
 					},
 				],
 			]);
-		} else if (el.__typename === "Approache") {
+		} else if (el.__typename === "Approach") {
 			arrHouses.push(el.house.ID);
 			arrApproaches.push(el.ID);
 			approach = el.UF_NAME;
@@ -229,8 +229,9 @@ const bindRowsLogic = (news) =>{
 				name: el.UF_NAME,
 				type: "approach",
 				house: el.house.UF_NAME
-			});
-			arrApproaches.push(el.ID);
+				});
+				arrApproaches.push(el.ID);
+
 			}
 			else{
 				rowsPush(el)
@@ -249,7 +250,6 @@ const bindRowsLogic = (news) =>{
 	}
 
 	checkForSelected();
-
 	return rows
 
 }

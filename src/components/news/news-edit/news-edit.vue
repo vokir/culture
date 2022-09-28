@@ -1,5 +1,5 @@
 <template>
-  <news-form edit title="Редактатировать новость" @onSave="update"/>
+  <news-form edit title="Редактировать новость" @onSave="update"/>
 </template>
 
 <script>
@@ -46,6 +46,7 @@ export default {
         btnLink: data.button.length ? data.button[0].link : '',
         btnText: data.button.length ? data.button[0].name : '',
         complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : [],
+        contacts: data.contacts.map(contact => contact.ID),
         houses: data.houses.map(el => el.ID),
         approaches: data.approaches.map(el => el.ID),
         floors: data.floors.map(el => el.ID),

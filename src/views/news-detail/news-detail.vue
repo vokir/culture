@@ -33,7 +33,7 @@
           <p class="news-detail__subtitle">{{ form.desc }}</p>
           <p v-html="form.fullDesc" class="news-detail__text"></p>
           <div class="news-detail__links">
-            <div class="news-detail__row" v-if="form.complex">
+            <div class="news-detail__row" v-if="form.complex.length">
               <span class="news-detail__name news-detail__name-zhk">ЖК</span>
               <span class="news-detail__value news-detail__value-zhk">
                 {{ computedZhk }}
@@ -81,7 +81,7 @@
             <span>Редактировать</span>
           </div>
         </v-card>
-        <v-card
+        <v-card 
           v-if="form.houses.length || form.approaches.length || form.floors.length || form.premises.length"
           class="news-detail__bottom"
         >
@@ -184,6 +184,7 @@ export default {
           name: data.icon?.file?.ORIGINAL_NAME,
           src: data.icon?.file?.SRC,
         };
+        form.value.contacts = data.contacts
       }
     });
 

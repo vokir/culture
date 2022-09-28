@@ -2,24 +2,29 @@
 	position: relative;
 	height: 38px;
 	border-radius: 3px;
-	border: 1px solid #F2F4F5;
-	background-color: rgba(255,255,255,0.5);
+	border: 1px solid var(--variable-5);
 	display: flex;
+	background-color: #fff;
 	justify-content: space-between;
 	align-items: center;
 	padding: 0px 12px;
-
+	color: var(--variable-15);
+	&--transparent{
+		background-color: rgba(255,255,255,0.5);
+		color: var(--variable-17);
+		border: 1px solid #F2F4F5;
+	}
 	&-cell{
 		font-size: 14px;
 		line-height: 150%;
-		color: #333;
+		color: #fff;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 11px;
 		padding: 2px 8px;
 		border-radius: 2px;
-		background-color: #bcedfc;;
+		background-color: var(--variable-12);
 		margin-right: 6px;
 		&-btn{
 			& svg{
@@ -45,11 +50,14 @@
 		flex: 1 1 auto;
 		.search-input{
 			font-size: 14px;
-			color: var(--variable-17);
-			background: transparent;
 			width: 100%;
 			border: none;
-
+			background-color: inherit;
+			color: inherit;
+			color: var(--variable-15);
+			&--transparent{
+				color: var(--variable-17);
+			}
 			&:focus-visible{
 				outline: none;
 			}
@@ -58,10 +66,10 @@
 
 	&-input{
 		&::placeholder{
-			color: var(--variable-17);
+			color: inherit;
 		}
 		&:hover::placeholder{
-			color:white;
+			// color:white;
 		}
 	}
 
@@ -123,8 +131,8 @@
 				color: black;
 			}
 			&.active{
-				color:#333;
-				background-color: #bcedfc;
+				color:#fff;
+				background-color: var(--variable-12);;
 			}
 		}
 		&__bottom {
@@ -239,18 +247,22 @@
 	}
 }
 
+.search-btns:not(.search-btns--transparent) svg path{
+	fill:var(--variable-5);
+	stroke: var(--variable-5);
+}
+
 .search-btn{
-	// display: inline-block;
 	margin: 0;
 	padding: 0;
 	background-color: transparent;
 	border: none;
 	cursor: pointer;
-	&.search-searchBtn{
+	&.search-btn__search{
 		height: 16px;
 		width: 16px;
 	}
-	&.search-clearBtn{
+	&.search-btn__clear{
 		width: 18px;
 		height: 18px;
 	}

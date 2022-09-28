@@ -57,33 +57,32 @@
   height: 250px;
 }
 
-.modal-title {
-  position: absolute;
-  top: 30px;
-  font-family: 'Helvetica', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 150%;
-  display: flex;
-  align-items: center;
-  color: var(--variable-13);
-}
-
 .select-icon-container {
   display: grid;
   grid-template-columns: 1fr 250px;
+  grid-template-rows: 40px 1fr;
+  grid-template-areas:
+    'filter crop'
+    'images crop'
+    'actions crop';    
   gap: 15px;
   margin-top: 20px;
 }
 
+.select-image-filter {
+  grid-area: filter;
+}
+
 .select-icon-crop {
+  grid-area: crop;
+
   display: grid;
   gap: 15px;
   overflow: hidden;
 }
 
 .select-icon-images {
+  grid-area: images;
   display: grid;
   grid-template-columns: repeat(7, 100px);
   grid-auto-rows: max-content;

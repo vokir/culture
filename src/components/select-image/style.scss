@@ -23,17 +23,28 @@
 .select-image-container {
   display: grid;
   grid-template-columns: 1fr 250px;
+  grid-template-rows: 40px 1fr;
+  grid-template-areas:
+    'filter crop'
+    'images crop'
+    'actions crop';                        
   gap: 15px;
   margin-top: 20px;
 }
 
+.select-image-filter {
+  grid-area: filter;
+}
+
 .select-image-crop {
+  grid-area: crop;
   display: grid;
   gap: 15px;
   overflow: hidden;
 }
 
 .select-image-images {
+  grid-area: images;
   display: grid;
   grid-template-columns: repeat(7, 100px);
   grid-auto-rows: max-content;

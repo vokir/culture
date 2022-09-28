@@ -2,6 +2,7 @@
   <v-modal class="modal-select-image" centered @closeModal="$emit('closeModal')">
     <div class="modal-title">Выберите изображение</div>
     <div class="select-image-container">
+      <v-filter-and-search class="select-image-filter" :variant="'primary'" @filterTable="filterTable" :filterList="imgCategories"></v-filter-and-search>
       <v-loader v-if="loading"/>
       <div v-else class="select-image-images">
         <div
@@ -36,17 +37,27 @@ import axios from "axios";
 import { computed, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
+import { GET_IMAGES_CATEGORIES } from "../../api/queries/getImagesCategories";
 import usePaginate from "../../hooks/usePaginate";
 import VButton from "../ui/v-button/v-button.vue";
 import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
 import VLoader from "../ui/v-loader/v-loader.vue";
 import VModal from "../ui/v-modal/v-modal.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
+import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue";
+import useModal from "../../hooks/useModal";
 
 export default {
   name: "select-image",
-  components: { VLoader, VButton, VCropImage, VPagination, VModal },
+  components: { VLoader, VButton, VCropImage, VPagination, VModal, VFilterAndSearch },
   emits: ['onLoadFiles', 'closeModal'],
+  props:{
+    imgFilterOpened: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+  },
   setup(_, { emit }) {
     const image = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
@@ -59,15 +70,24 @@ export default {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
+    const { isOpen: filterPopupImg, openModal: openFilterPopupImg, closeModal: closeFilterPopupImg } = useModal();
     const images = computed(() => {
       return result.value?.getImages.data ?? []
     })
     const pageInfo = computed(() => {
       return result.value?.getImages.paginatorInfo ?? []
     })
+
+    const {result:resultImgCategories} = useQuery(GET_IMAGES_CATEGORIES)
+
+    const imgCategories = computed(() => {
+      return resultImgCategories.value?.getImageCategories ?? [];
+    });
+
     updatePage(() => refetch({
       currentPage: currentPage.value,
       perPage: perPage.value
+
     }))
 
     const selectImage = (src, idx) => {
@@ -108,6 +128,15 @@ export default {
       }
     }
 
+    const filterTable = (filter, search) => {
+      refetch({
+      currentPage: currentPage.value,
+      perPage: perPage.value,
+      filterStr: filter,
+      searchStr: search
+    })
+    }
+    
     return {
       currentPage,
       images,
@@ -119,7 +148,12 @@ export default {
       active,
       isDirty,
       selectImage,
-      submit
+      submit,
+      imgCategories,
+      filterTable,
+      filterPopupImg,
+      openFilterPopupImg,
+      closeFilterPopupImg,
     }
   }
 }

@@ -19,6 +19,21 @@
       overflow: hidden auto;
       background: var(--white);
 
+      &-title {
+        position: absolute;
+        top: 30px;
+        font-family: "Helvetica", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 150%;
+        display: flex;
+        align-items: center;
+        color: var(--variable-13);
+        &--grey{
+          color: var(--variable-7);
+        }
+      }
       &__close {
         position: initial;
         background: none;
@@ -63,7 +78,6 @@
         padding: 20px 15px 0 0;
       }
     }
-
   }
 }
 
@@ -109,7 +123,8 @@
   }
 }
 
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: all 0.3s ease-in-out;
 }
 
@@ -138,7 +153,6 @@
   transform: translateX(0);
   opacity: 1;
 }
-
 
 .fade-in-enter-active,
 .fade-in-leave-active {

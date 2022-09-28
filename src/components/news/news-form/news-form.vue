@@ -41,7 +41,7 @@
             <span class="show-for__desc">Дома / Подъезда / Этажа / Помещения</span>
           </div>
           <div class="select-contacts">
-            <v-select
+            <v-multi-select
               v-model="form.contacts"
               name="contacts"
               :options="contacts"
@@ -150,6 +150,7 @@ import VSelect from "../../ui/v-select/v-select.vue";
 import VTab from "../../ui/v-tabs/v-tab/v-tab.vue";
 import VTabs from "../../ui/v-tabs/v-tabs.vue";
 import VTextarea from "../../ui/v-textarea/v-textarea.vue";
+import VMultiSelect from "../../ui/v-multi-select/v-multi-select.vue";
 
 export default {
   name: "news-form",
@@ -171,7 +172,8 @@ export default {
     VSelect,
     VInput,
     VCard,
-    NewsPreview
+    NewsPreview,
+    VMultiSelect
   },
   emits: ['onSave', 'onCopy', 'onCancel'],
   props: {
@@ -220,7 +222,7 @@ export default {
       default: false
     }
   },
-  setup({ formData }, { emit }) {
+  setup({ formData, closeModalProp }, { emit }) {
     const currentTab = ref('Превью')
     const { isOpen, openModal, closeModal } = useModal()
 
