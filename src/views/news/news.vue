@@ -44,7 +44,7 @@
         </v-table-column>
         <v-table-column id="icon" title="icon" width="30px">
           <template v-slot="{ row }">
-            <img v-if="row.icon" :alt="row.icon" :src="row.icon.file.SRC">
+            <img v-if="row.icon" :alt="row.icon.file.ORIGINAL_NAME" :src="row.icon.file.SRC">
           </template>
         </v-table-column>
         <v-table-column id="UF_NAME" title="Заголовок" width="190px">
@@ -66,6 +66,11 @@
             </span>
           </template>
         </v-table-column>
+        <v-table-column id="priority" title="Степень важности" width="95px">
+          <template v-slot="{ row }">
+            <v-badge v-if="row.degree" :text="row.degree.UF_TITLE" big :variant="priorityMap[row.degree.ID]"/>
+          </template>
+        </v-table-column>
         <v-table-column id="complexes" title="ЖК" width="150px">
           <template v-slot="{ row }">
             <div v-for="(complex, index) in row.complexes" :key="index">
@@ -79,7 +84,7 @@
             <bind-rows-column v-else :newsInfo="row" />
           </template>
         </v-table-column>
-        <v-table-column id="visibility" title="Контакты">
+        <v-table-column id="visibility" title="Контакты" width="260px">
           <template v-slot="{ row }">
             <div class="badges-list-contacts">
               <div v-if="row.contacts.length" class="badges-list__column">
@@ -173,6 +178,12 @@ export default {
     },
   },
   setup() {
+    const priorityMap = {
+      1: 'gray-dark',
+      2: 'warning',
+      3: 'danger',
+    }
+
     const toast = useToast();
     const route = useRoute();
     const selected = ref([]);
@@ -209,9 +220,10 @@ export default {
       }
     })
 
-    const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews } = useMutation(DELETE_NEWS)
+    const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews,  } = useMutation(DELETE_NEWS)
 
     onDoneDeleteNews(() => {
+      currentPage.value = 1
       variables.value.currentPage = 1
     })
 
@@ -310,6 +322,7 @@ export default {
       filterPopup,
       openFilterPopup,
       closeFilterPopup,
+      priorityMap,
       setFilter,
       filter,
       clearFilter,

@@ -7,6 +7,7 @@ body {
 }
 ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
   opacity: 0;
   background: transparent;
 }
@@ -26,6 +27,12 @@ body {
   background-image: url("../images/mountain-air 1.jpg");
   background-size: cover;
   background-repeat: no-repeat;
+}
+.container-only-dev {
+  width: 100%;
+  max-width: 1252px;
+  margin-left: 52px;
+  margin-right: auto;
 }
 .pick-image {
   position: absolute;

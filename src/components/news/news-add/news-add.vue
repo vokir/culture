@@ -4,12 +4,11 @@
 
 <script>
 import { useMutation } from "@vue/apollo-composable";
-import gql from "graphql-tag";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
 import NewsForm from "../news-form/news-form.vue";
-import { GET_NEWS } from "../../../api/queries/getNews";
+
 
 export default {
   name: "news-add",
@@ -57,6 +56,7 @@ export default {
         floors: data.floors.map(el => el.ID),
         premises: data.premises.map(el => el.ID),
         contacts: data.contacts.map(contact => contact.ID),
+        priority: Object.keys(data.priority).length ? data.priority.ID : 1,
       }
       createNews(news).then(() => {
         if (closeModal) {

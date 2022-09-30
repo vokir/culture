@@ -14,7 +14,7 @@ export default {
       default: false
     }
   },
-  setup({ rows }, { slots }) {
+  setup({ rows }, { slots, emit }) {
     const columns = slots.default(rows)
 
     return () => h('div', { class: 'table-wrapper' }, [
@@ -42,7 +42,7 @@ export default {
         ]),
         h('tbody', { class: 'table__tbody' }, [
           Array.from(rows).map((row, index) => {
-            return h('tr', { class: 'table__tbody-tr', key: index }, [
+            return h('tr', { class: 'table__tbody-tr', key: index, onClick(event) {emit('click', event)} }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [
                   h('div', { class: 'table__thead-cell' }, [

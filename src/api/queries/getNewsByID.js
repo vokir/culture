@@ -10,6 +10,10 @@ query news($newsID: Int) {
     UF_TEXT
     UF_PHONE
     UF_CREATED_AT
+    degree {
+      ID,
+      UF_TITLE
+    }
     types {
       UF_TITLE,
       ID
@@ -20,9 +24,11 @@ query news($newsID: Int) {
     }
     documents {
       ID
+      UF_TITLE
       file {
         ORIGINAL_NAME
         SRC
+        FILE_SIZE
       }
     }
     houses {

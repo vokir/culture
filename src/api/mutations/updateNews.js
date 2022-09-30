@@ -4,6 +4,7 @@ export const UPDATE_NEWS = gql`
   mutation updateNews(
     $id: Int!
     $title: String
+    $priority: Int
     $UF_ORDER: Int
     $UF_EXTERNAL_SYSTEM_ID: Int
     $icon: Int
@@ -28,6 +29,7 @@ export const UPDATE_NEWS = gql`
       id: $id
       UF_NAME: $title
       UF_ORDER: $UF_ORDER
+      UF_DEGREE_ID: $priority
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
       UF_ICON_ID: $icon
       UF_TITLE: $title

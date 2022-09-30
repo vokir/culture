@@ -47,7 +47,7 @@ export default {
     variant: {
       type: String,
       required: false,
-      default: '',
+      default: 'primary',
       validator(value) {
         return ['primary', 'transparent'].includes(value)
       }
@@ -89,7 +89,7 @@ export default {
 
     const removeOption = (option) => {
       selectedList.value = selectedList.value.filter(item => {
-        if (item.ID != option.target.dataset.id) return true
+        if (item.ID !== option.target.dataset.id) return true
       })
       emit("update:modelValue", selectedList.value);
     }
