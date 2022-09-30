@@ -75,6 +75,11 @@
             </span>
           </template>
         </v-table-column>
+        <v-table-column id="priority" title="Степень важности" width="95px">
+          <template v-slot="{ row }">
+            <v-badge v-if="row.degree" :text="row.degree.UF_TITLE" big :variant="priorityMap[row.degree.ID]"/>
+          </template>
+        </v-table-column>
         <v-table-column id="complexes" title="ЖК" width="150px">
           <template v-slot="{ row }">
             <div v-for="(complex, index) in row.complexes" :key="index">
@@ -88,7 +93,7 @@
             <bind-rows-column v-else :newsInfo="row"/>
           </template>
         </v-table-column>
-        <v-table-column id="visibility" title="Контакты">
+        <v-table-column id="visibility" title="Контакты" width="260px">
           <template v-slot="{ row }">
             <div class="badges-list-contacts">
               <div v-if="row.contacts.length" class="badges-list__column">
@@ -199,6 +204,12 @@ export default {
     },
   },
   setup() {
+    const priorityMap = {
+      1: 'gray-dark',
+      2: 'warning',
+      3: 'danger',
+    }
+
     const toast = useToast();
     const route = useRoute();
     const selected = ref([]);
@@ -311,6 +322,7 @@ export default {
       filterPopup,
       openFilterPopup,
       closeFilterPopup,
+      priorityMap,
     };
   },
 };

@@ -9,6 +9,8 @@
             v-model="currentTab"
           >
             <v-tab title="Превью">
+              <v-radio v-model="radio" value="icon">Иконка</v-radio>
+              <v-radio v-model="radio" value="image">Изображение</v-radio>
               <amio-preview v-bind="{ ...modelValue }" />
             </v-tab>
             <v-tab title="Подробная">
@@ -52,6 +54,7 @@
 	import SelectIcon from "../../select-icon/select-icon.vue";
 	import SelectImage from "../../select-image/select-image.vue";
 	import VCard from "../../ui/v-card/v-card.vue";
+  import VRadio from "../../ui/v-radio/v-radio.vue";
 	import VTab from "../../ui/v-tabs/v-tab/v-tab.vue";
 	import VTabs from "../../ui/v-tabs/v-tabs.vue";
   import WebLkNews from "../../web-lk-news/web-lk-news.vue";
@@ -59,6 +62,7 @@
 	export default {
 		name: "news-preview",
 		components: {
+      VRadio,
       WebLkNews,
 			SelectIcon,
 			SelectImage,
@@ -77,7 +81,7 @@
 		setup({ modelValue }, { emit }) {
 			const { isOpen, openModal, closeModal } = useModal()
 			const currentTab = ref('Превью')
-
+      const radio = ref('icon')
 			const onLoadFiles = (value) => {
         emit('update:modelValue', {
           ...modelValue,
@@ -106,6 +110,7 @@
 			return {
 				isOpen,
 				currentTab,
+        radio,
 				openModal,
 				closeModal,
         onLoadFiles,

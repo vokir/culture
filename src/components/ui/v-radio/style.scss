@@ -1,0 +1,43 @@
+.radio {
+  position: relative;
+  padding: 3.5px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-family: 'Helvetica', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--variable-13);
+
+  &__input {
+    visibility: hidden;
+    position: absolute;
+
+    &:checked ~ .radio__checkmark:after {
+      display: block;
+    }
+  }
+  &__checkmark {
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    border: 1px solid var(--gray-light);
+    &:after {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--material-10);
+      content: "";
+      position: absolute;
+      display: none;
+    }
+  }
+}

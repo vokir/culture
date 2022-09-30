@@ -10,6 +10,7 @@ export const GET_APPROACHES_BY_HOUSE_ID = gql`
       ID,
       house {
         ID
+        UF_NAME
       }
     }
   }

@@ -24,9 +24,11 @@ query news($newsID: Int) {
     }
     documents {
       ID
+      UF_TITLE
       file {
         ORIGINAL_NAME
         SRC
+        FILE_SIZE
       }
     }
     houses {

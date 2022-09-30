@@ -17,6 +17,10 @@ query news(
       ID
       UF_NAME
       UF_CREATED_AT
+      degree {
+        ID,
+        UF_TITLE
+      }
       types {
         UF_TITLE
       }

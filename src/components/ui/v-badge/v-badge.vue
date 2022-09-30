@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['badge', 'badge--' + variant]"
+    :class="['badge', 'badge--' + variant, { 'badge--big': big }]"
     @mouseenter="showTooltip"
     @mouseleave="hideTooltip"
     v-bind="$attrs"
@@ -28,6 +28,7 @@ import { useEventListener } from "../../../hooks/useEventListeners";
 
 export default {
   name: "v-badge",
+  inheritAttrs: false,
   props: {
     text: {
       type: String,
@@ -41,12 +42,16 @@ export default {
       type: String,
       default: "",
     },
+    big: {
+      type: Boolean,
+      default: false
+    },
     variant: {
       type: String,
       required: false,
       default: "blue",
       validator(value) {
-        return ["blue", "purple", "orange", "teal", "lightblue", "gray"].includes(
+        return ["blue", "purple", "orange", "teal", "lightblue", "gray", "danger", "warning", "gray-dark"].includes(
           value
         );
       },
@@ -87,7 +92,6 @@ export default {
       mouseCoords,
     };
   },
-  inheritattributes: false,
 };
 </script>
 

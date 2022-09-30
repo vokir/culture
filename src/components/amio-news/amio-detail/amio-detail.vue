@@ -50,7 +50,25 @@
         </a>
       </div>
       <div class="detail__content-docs" v-if="docs.length">
-
+        <div class="dosc-title">
+          Документы
+        </div>
+        <ul class="docs-list">
+          <li class="docs-list__item" v-for="doc of docs" :key="doc.ID">
+            <div class="docs-list__image">
+              <svg width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18.5455 5.49746L13.394 0.290039H3.5625V3.66504H0.1875V23.7105H15.1705V20.3355H18.5455V5.49746ZM13.8409 2.92315L15.9407 5.04572H13.8409V2.92315ZM13.6364 22.1764H1.72159V5.19913H3.5625V20.3355H13.6364V22.1764ZM5.09659 18.8014V1.82413H12.3068V6.57981H17.0114V18.8014H5.09659Z" fill="#018AE4"/>
+                <path d="M7.14062 8.4209H15.0156V9.95499H7.14062V8.4209Z" fill="#018AE4"/>
+                <path d="M7.14062 11.4883H15.0156V13.0224H7.14062V11.4883Z" fill="#018AE4"/>
+                <path d="M11.7422 14.5566H15.0149V16.0907H11.7422V14.5566Z" fill="#018AE4"/>
+              </svg>
+            </div>
+            <div class="docs-list__info">
+              <span class="docs-list__info-name">{{ doc.UF_TITLE }}</span>
+              <span class="docs-list__info-ext">{{ doc.file.ORIGINAL_NAME.split('.').pop() }}, {{ humanFileSize(doc.file.FILE_SIZE) }}</span>
+            </div>
+          </li>
+        </ul>
       </div>
       <div class="detail__content-phone" v-if="phone">
         Подробная информация по телефону
@@ -65,6 +83,7 @@
 
 <script>
 import computeDate from "../../../helpers/dateFormat";
+import humanFileSize from "../../../helpers/humanFileSize"
 
 export default {
   name: "amio-detail",
@@ -116,7 +135,8 @@ export default {
   },
   setup() {
     return {
-      computeDate
+      computeDate,
+      humanFileSize
     }
   }
 }

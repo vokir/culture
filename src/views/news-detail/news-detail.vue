@@ -178,7 +178,7 @@ export default {
           }]: []
         // form.value.imgLandscape = data.imgLandscape?.SRC;
         // form.value.imgLibrary = data.imgLibrary?.SRC;
-        form.value.priority = data.degree
+        form.value.priority = data.degree ?? {}
         form.value.icon = {
           id: data.icon?.file?.ID,
           name: data.icon?.file?.ORIGINAL_NAME,
