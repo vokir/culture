@@ -15,7 +15,7 @@
         <div v-if="docsLoading">Загрзука...</div>
         <v-table  v-else :rows="docs" :canChoose="true">
           <v-table-column id="UF_TITLE" title="Название" width="190">
-            <template v-slot="{ row }" @click="console.log('Ы')">
+            <template v-slot="{ row }">
               {{ row.file.ORIGINAL_NAME }}
             </template>
           </v-table-column>
