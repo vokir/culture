@@ -5,7 +5,7 @@ const NewsDetail = () => import('../views/news-detail/news-detail.vue')
 
 const routes = [
   {
-    path: "/",
+    path: "/:pathMatch(.*)*",
     redirect: '/master-system/news/'
   },
   {
