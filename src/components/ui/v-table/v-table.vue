@@ -7,6 +7,11 @@ export default {
     rows: {
       type: Array,
       required: true
+    },
+    canChoose:{
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   setup({ rows }, { slots }) {

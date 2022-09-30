@@ -32,6 +32,7 @@
           </div>
           <div class="select-contacts">
             <v-multi-select
+              :variant="'primary'"
               v-model="form.contacts"
               name="contacts"
               :options="contacts"

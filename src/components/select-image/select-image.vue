@@ -1,21 +1,49 @@
 <template>
-  <v-modal class="modal-select-image" centered @closeModal="$emit('closeModal')">
+  <v-modal
+    class="modal-select-image"
+    centered
+    @closeModal="$emit('closeModal')"
+  >
     <div class="modal-title">Выберите изображение</div>
     <div class="select-image-container">
-      <v-filter-and-search class="select-image-filter" :variant="'primary'" @filterTable="filterTable" :filterList="imgCategories"></v-filter-and-search>
-      <v-loader v-if="loading"/>
-      <div v-else class="select-image-images">
+      <v-filter-and-search
+        class="select-image-filter"
+        v-model="filter"
+        :placeholder="'Фильтр + поиск'"
+        :variant="'primary'"
+        :filterList="imgCategories"
+        @filterTable="filterTable"
+        @setFilter="setFilter"
+        @clearFilter="clearFilter"
+        @setSearch="setSearch"
+      ></v-filter-and-search>
+      <v-loader v-if="loading" />
+      <div
+        v-else
+        class="select-image-images"
+      >
         <div
           :class="['image-item', { 'image-item--active': active === index }]"
           v-for="(image, index) of images"
         >
-          <img :src="image.file.SRC" :alt="image.UF_TITLE" @click="selectImage(image.file.SRC, index)">
+          <img
+            :src="image.file.SRC"
+            :alt="image.UF_TITLE"
+            @click="selectImage(image.file.SRC, index)"
+          >
           <span>{{ image.UF_TITLE }}</span>
         </div>
       </div>
       <div class="select-image-crop">
-        <v-crop-image ref="cropperSmall" :img="image"/>
-        <v-crop-image ref="cropperBig" size="big" :img="image"/>
+        <v-crop-image
+          ref="cropperSmall"
+          :img="image"
+        />
+        <v-crop-image
+          ref="cropperBig"
+          size="big"
+          :img="image"
+        />
       </div>
       <div class="select-image-actions">
         <v-pagination
@@ -24,8 +52,16 @@
           :perPage="pageInfo.perPage"
           :total="pageInfo.total"
         />
-        <v-button variant="link" @click="$emit('closeModal')">Отменить</v-button>
-        <v-button variant="success" @click="submit" :disabled="!isDirty" loading>ВЫБРАТЬ ИЗОБРАЖЕНИЕ</v-button>
+        <v-button
+          variant="link"
+          @click="$emit('closeModal')"
+        >Отменить</v-button>
+        <v-button
+          variant="success"
+          @click="submit"
+          :disabled="!isDirty"
+          loading
+        >ВЫБРАТЬ ИЗОБРАЖЕНИЕ</v-button>
       </div>
     </div>
   </v-modal>
@@ -51,7 +87,7 @@ export default {
   name: "select-image",
   components: { VLoader, VButton, VCropImage, VPagination, VModal, VFilterAndSearch },
   emits: ['onLoadFiles', 'closeModal'],
-  props:{
+  props: {
     imgFilterOpened: {
       type: Boolean,
       required: false,
@@ -65,6 +101,9 @@ export default {
     const cropperSmall = ref(null)
     const active = ref(null)
     const toast = useToast();
+    const filter = ref([])
+    const search = ref("")
+
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
     const { result, loading, refetch } = useQuery(GET_IMAGES, {
       currentPage: currentPage.value,
@@ -78,11 +117,12 @@ export default {
       return result.value?.getImages.paginatorInfo ?? []
     })
 
-    const {result:resultImgCategories} = useQuery(GET_IMAGES_CATEGORIES)
+    const { result: resultImgCategories } = useQuery(GET_IMAGES_CATEGORIES)
 
     const imgCategories = computed(() => {
       return resultImgCategories.value?.getImageCategories ?? [];
     });
+
 
     updatePage(() => refetch({
       currentPage: currentPage.value,
@@ -128,15 +168,44 @@ export default {
       }
     }
 
-    const filterTable = (filter, search) => {
+    const filterTable = () => {
+      let filterArr = filter.value.map(option => option.UF_TITLE)
       refetch({
-      currentPage: currentPage.value,
-      perPage: perPage.value,
-      filterStr: filter,
-      searchStr: search
-    })
+        currentPage: currentPage.value,
+        perPage: perPage.value,
+        filterStr: filterArr,
+        searchStr: search.value
+      })
     }
-    
+
+    const clearFilter = () => {
+      filter.value = []
+      search.value = ""
+    }
+
+    const setSearch = (str) => {
+      search.value = str
+    }
+
+    const setFilter = (str) => {
+      if (str.target?.tagName === 'BUTTON') {
+        str = Number(str.target.dataset.filter)
+        filter.value = filter.value.filter(option => {
+          return option.ID !== str
+        })
+      }
+      else {
+        let isExists = filter.value.find(option => option.ID === str.ID) !== undefined
+        if (!(isExists)) {
+          filter.value.push(str)
+        }
+        else {
+          filter.value = filter.value.filter(option => option !== str)
+        }
+      }
+    }
+
+
     return {
       currentPage,
       images,
@@ -154,9 +223,41 @@ export default {
       filterPopupImg,
       openFilterPopupImg,
       closeFilterPopupImg,
+      setSearch,
+      clearFilter,
+      setFilter,
+      filter
     }
   }
 }
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style lang="scss" src="./style.scss" scoped/>

@@ -1,21 +1,35 @@
 import gql from "graphql-tag";
 
 export const GET_DOCUMENTS = gql`
-  query documents {
-    getDocuments(currentPage: 1, perPage:10){
+  query documents(
+    $filterType: [String]
+    $filterCategories: [String]
+    $search: String
+  ) {
+    getDocuments(
+      currentPage: 1
+      perPage: 10
+      filterInn: [
+        { column: "UF_TITLE", value: $filterCategories, relation: "category" }
+        { column: "UF_TITLE", value: $filterType, relation: "type" }
+      ]
+      search: $search
+    ) {
       data {
-        UF_TITLE,
+        UF_TITLE
         category {
           UF_TITLE
         }
         type {
           UF_TITLE
-        },
-        file{
-          SRC,
-          ORIGINAL_NAME,
-          ID,
+        }
+        file {
+          SRC
+          ORIGINAL_NAME
+          ID
+          FILE_SIZE
         }
       }
     }
-  }`
+  }
+`;
