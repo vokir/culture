@@ -5,15 +5,12 @@
         {{ route.meta.pageTitle }}
         <div class="container-header__title-favorite">
           <svg fill="none" height="22" viewBox="0 0 23 22" width="23" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M11.5 2L14.4358 8.25387L21 9.25718L16.25 14.1256L17.3711 21L11.5 17.7539L5.62893 21L6.75 14.1256L2 9.25718L8.5642 8.25387L11.5 2Z"
-              stroke="white" stroke-opacity="0.5"
-            />
+            <path d="M11.5 2L14.4358 8.25387L21 9.25718L16.25 14.1256L17.3711 21L11.5 17.7539L5.62893 21L6.75 14.1256L2 9.25718L8.5642 8.25387L11.5 2Z" stroke="white" stroke-opacity="0.5" />
           </svg>
         </div>
       </div>
       <div class="container-header__search">
-        <v-filter-and-search  @filterTable="filterTable" :filterList="newsTypes" :variant="'transparent'"></v-filter-and-search>
+        <v-filter-and-search v-model="filter" @setFilter="setFilter" @filterTable="filterTable" @setSearch="setSearch" :filterList="newsTypes" @clearFilter="clearFilter" :placeholder="'Фильтр + поиск'" :variant="'transparent'"></v-filter-and-search>
       </div>
       <div class="container-header__action">
         <v-button class="btn--w100" @click="openModal">Добавить новость</v-button>
@@ -172,7 +169,7 @@
 <script>
 import { useMutation, useQuery, useSubscription } from "@vue/apollo-composable";
 import dayjs from "dayjs";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { DELETE_NEWS } from "../../api/mutations/deleteNews";
@@ -218,7 +215,7 @@ export default {
     VLoader,
     VFilterAndSearch,
   },
-  props:{
+  props: {
     newsFilterOpened: {
       type: Boolean,
       required: false,
@@ -239,8 +236,10 @@ export default {
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
     const { isOpen: filterPopup, openModal: openFilterPopup, closeModal: closeFilterPopup } = useModal();
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
+    const filter = ref([])
+    const search = ref("")
 
-    const { result, loading, variables} = useSubscription(GET_NEWS, {
+    const { result, loading, variables } = useSubscription(GET_NEWS, {
       currentPage: currentPage.value,
       perPage: perPage.value,
     })
@@ -253,7 +252,7 @@ export default {
       return result.value?.getNews.paginatorInfo ?? []
     })
 
-    const {result:resultTypes} = useQuery(GET_NEWS_TYPES)
+    const { result: resultTypes } = useQuery(GET_NEWS_TYPES)
 
     const newsTypes = computed(() => {
       return resultTypes.value?.getNewsTypes ?? [];
@@ -310,13 +309,37 @@ export default {
       })
     }
 
-    const filterTable = (filter, search) => {
-      variables.value.searchStr = search
-      if(filter.length){
-        variables.value.filterStr = filter
+    const filterTable = () => {
+      console.log(search.value);
+      variables.value.searchStr = search.value
+      let filterArr = filter.value.map(option => option.UF_TITLE)
+      variables.value.filterStr = filterArr
+    }
+
+    const clearFilter = () => {
+      filter.value = []
+      search.value = ""
+    }
+
+    const setSearch = (str) => {
+      search.value = str
+    }
+
+    const setFilter = (str) => {
+      if (str.target?.tagName === 'BUTTON') {
+        str = Number(str.target.dataset.filter)
+        filter.value = filter.value.filter(option => {
+          return option.ID !== str
+        })
       }
-      else{
-        variables.value.filterStr = undefined
+      else {
+        let isExists = filter.value.find(option => option.ID === str.ID) !== undefined
+        if (!(isExists)) {
+          filter.value.push(str)
+        }
+        else {
+          filter.value = filter.value.filter(option => option !== str)
+        }
       }
     }
 
@@ -345,6 +368,10 @@ export default {
       openFilterPopup,
       closeFilterPopup,
       priorityMap,
+      setFilter,
+      filter,
+      clearFilter,
+      setSearch
     };
   },
 };

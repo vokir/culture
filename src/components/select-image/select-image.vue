@@ -10,10 +10,15 @@
   >
     <template #filter>
       <v-filter-and-search
-        :filterList="imgCategories"
         class="select-image-filter"
-        variant="primary"
+        v-model="filter"
+        :placeholder="'Фильтр + поиск'"
+        :variant="'primary'"
+        :filterList="imgCategories"
         @filterTable="filterTable"
+        @setFilter="setFilter"
+        @clearFilter="clearFilter"
+        @setSearch="setSearch"
       />
     </template>
     <template #cropper>
@@ -61,6 +66,9 @@ export default {
       name: null
     })
     const toast = useToast();
+    const filter = ref([])
+    const search = ref("")
+
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
     const { result, loading, refetch } = useQuery(GET_IMAGES, {
       currentPage: currentPage.value,
@@ -121,15 +129,43 @@ export default {
       }
     }
 
-    const filterTable = (filter, search) => {
+    const filterTable = () => {
+      let filterArr = filter.value.map(option => option.UF_TITLE)
       refetch({
         currentPage: currentPage.value,
         perPage: perPage.value,
-        filterStr: filter,
-        searchStr: search
+        filterStr: filterArr,
+        searchStr: search.value
       })
     }
 
+    const clearFilter = () => {
+      filter.value = []
+      search.value = ""
+    }
+
+    const setSearch = (str) => {
+      search.value = str
+    }
+
+    const setFilter = (str) => {
+      if (str.target?.tagName === 'BUTTON') {
+        str = Number(str.target.dataset.filter)
+        filter.value = filter.value.filter(option => {
+          return option.ID !== str
+        })
+      }
+      else {
+        let isExists = filter.value.find(option => option.ID === str.ID) !== undefined
+        if (!(isExists)) {
+          filter.value.push(str)
+        }
+        else {
+          filter.value = filter.value.filter(option => option !== str)
+        }
+      }
+    }
+    
     return {
       currentPage,
       images,
@@ -144,9 +180,13 @@ export default {
       submit,
       imgCategories,
       filterTable,
+      setSearch,
+      clearFilter,
+      setFilter,
+      filter
     }
   }
 }
 </script>
 
-<style lang="scss" scoped src="./style.scss"/>
+<style lang="scss" src="./style.scss" scoped/>

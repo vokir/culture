@@ -14,9 +14,15 @@
   >
     <template #filter>
       <v-filter-and-search
-        :filterList="imgCategories"
+        v-model="filter"
+        class="select-image-filter"
+        :placeholder="'Фильтр + поиск'"
         :variant="'primary'"
+        :filterList="imgCategories"
         @filterTable="filterTable"
+        @setFilter="setFilter"
+        @clearFilter="clearFilter"
+        @setSearch="setSearch"
       />
     </template>
     <template #cropper>
@@ -67,6 +73,8 @@ export default {
     const toast = useToast();
     const defaultImage = ref('/src/assets/images/storyPreview.png')
     const active = ref(props.icon)
+    const filter = ref([])
+    const search = ref("")
     const { isOpen, openModal, closeModal } = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 28)
     const { result, loading, refetch, load } = useLazyQuery(GET_ICONS, {
@@ -125,13 +133,41 @@ export default {
       defaultImage.value = value.src ?? '/src/assets/images/storyPreview.png'
     })
 
-    const filterTable = (filter, search) => {
+    const filterTable = () => {
+      let filterArr = filter.value.map(option => option.UF_TITLE)
       refetch({
         currentPage: currentPage.value,
         perPage: perPage.value,
-        filterStr: filter,
-        searchStr: search
+        filterStr: filterArr,
+        searchStr: search.value
       })
+    }
+
+    const clearFilter = () => {
+      filter.value = []
+      search.value = ""
+    }
+
+    const setSearch = (str) => {
+      search.value = str
+    }
+
+    const setFilter = (str) => {
+      if (str.target?.tagName === 'BUTTON') {
+        str = Number(str.target.dataset.filter)
+        filter.value = filter.value.filter(option => {
+          return option.ID !== str
+        })
+      }
+      else {
+        let isExists = filter.value.find(option => option.ID === str.ID) !== undefined
+        if (!(isExists)) {
+          filter.value.push(str)
+        }
+        else {
+          filter.value = filter.value.filter(option => option !== str)
+        }
+      }
     }
 
     return {
@@ -148,10 +184,14 @@ export default {
       deleteIcon,
       submit,
       imgCategories,
-      filterTable
+      filterTable,
+      clearFilter,
+      setSearch,
+      setFilter,
+      filter,
     }
   }
 }
 </script>
 
-<style lang="scss" scoped src="./style.scss"/>
+<style lang="scss" src="./style.scss" scoped/>

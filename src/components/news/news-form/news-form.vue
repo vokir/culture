@@ -42,6 +42,7 @@
           </div>
           <div class="select-contacts">
             <v-multi-select
+              :variant="'primary'"
               v-model="form.contacts"
               name="contacts"
               :options="contacts"
@@ -86,6 +87,7 @@
               label="Документы"
               :max-tags="3"
               v-model="form.docs"
+              
             />
           </div>
           <v-input-tags

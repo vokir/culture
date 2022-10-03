@@ -1,34 +1,102 @@
 <template>
-  <v-tags-list :label="label" @openModal="openModal">
-    <v-modal v-if="isOpen" @closeModal="closeModal" :title="'Выберите один или несколько документов'" titleGrey centered class="modal-tags">
+  <v-tags-list
+    :label="label"
+    @openModal="openModal"
+    :tags="modelValue"
+    @removeTag="removeTag"
+  >
+    <v-modal
+      v-if="isOpen"
+      @closeModal="closeModal"
+      :title="'Выберите один или несколько документов'"
+      titleGrey
+      centered
+      class="modal-add-doc"
+    >
       <div class="docs-wrapper">
-        <v-filter-and-search :clearBtn="false"/>
+        <v-filter-and-search
+          class="docs-wrapper__input"
+          v-model="filter"
+          :search="search"
+          :placeholder="'Поиск'"
+          :clearBtn="false"
+          @setSearch="setSearch"
+          @setFilter="setFilter"
+          @clearFilter="clearFilter"
+          @filterTable="filterTable"
+        >
+          <div class="search-right__item">
+            <v-select
+              :optionAll="true"
+              v-model="typeSelect"
+              name="type"
+              :options="types"
+              label="UF_TITLE"
+              labelSelect="Тип документа"
+            />
+          </div>
+
+          <div class="search-right__item">
+            <v-select
+              :optionAll="true"
+              v-model="categorySelect"
+              name="type"
+              :options="categories"
+              label="UF_TITLE"
+              labelSelect="Категория документа"
+            />
+          </div>
+
+        </v-filter-and-search>
         <div v-if="docsLoading">Загрзука...</div>
-        <v-table v-else :rows="docs">
-          <v-table-column id="UF_TITLE" title="Название" width="190">
+        <v-table
+          v-else
+          :rows="docs"
+          @click="setSelectedDocs"
+        >
+          <v-table-column
+            id="UF_TITLE"
+            title="Название"
+            width="190"
+          >
             <template v-slot="{ row }">
+              <!-- {{ row.file.ORIGINAL_NAME }} -->
               {{ row.UF_TITLE }}
             </template>
           </v-table-column>
-          <v-table-column id="type" title="Тип" width="140">
+          <v-table-column
+            id="type"
+            title="Тип"
+            width="140"
+          >
             <template v-slot="{ row }">
               {{ row.type ? row.type.UF_TITLE : '' }}
             </template>
           </v-table-column>
-          <v-table-column id="category" title="Категория" width="140">
+          <v-table-column
+            id="category"
+            title="Категория"
+            width="140"
+          >
             <template v-slot="{ row }">
               {{ row.category ? row.category.UF_TITLE : '' }}
             </template>
           </v-table-column>
-          <v-table-column id="size" title="размер">
+          <v-table-column
+            id="size"
+            title="Размер"
+          >
             <template v-slot="{ row }">
-              фига
+              {{ Math.round(row.file.FILE_SIZE * 100 / 1024) / 100 + ' КБ' }}
             </template>
           </v-table-column>
         </v-table>
         <div class="docs-wrapper__actions">
-          <v-button variant="gray">Выбрать документ</v-button>
-          <v-button variant="link" @click="closeModal">Отменить</v-button>
+          <v-button @click="closeModal" variant="gray">Выбрать документ</v-button>
+          <v-button
+            variant="link"
+            @click="closeModal"
+          >Отменить</v-button>
         </div>
       </div>
     </v-modal>
@@ -37,7 +105,7 @@
 
 <script>
 import { useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { GET_DOCUMENTS } from "../../../api/queries/getDocuments";
 import useModal from "../../../hooks/useModal";
 import VButton from "../v-button/v-button.vue";
@@ -46,31 +114,139 @@ import VTableColumn from "../v-table/v-table-column.vue";
 import VTable from "../v-table/v-table.vue";
 import VTagsList from "../v-tags-list/v-tags-list.vue";
 import VFilterAndSearch from "../v-filter-and-search/v-filter-and-search.vue";
+import { GET_DOCUMENT_CATEGORIES } from "../../../api/queries/getDocumentCategories";
+import { GET_DOCUMENT_TYPES } from "../../../api/queries/getDocumentTypes";
+import VSelect from "../v-select/v-select.vue";
 
 export default {
   name: "v-add-docs",
-  components: { VButton, VTableColumn, VTable, VModal, VTagsList, VFilterAndSearch },
+  components: { VButton, VTableColumn, VTable, VModal, VTagsList, VFilterAndSearch, VSelect },
+  emits: ['update:modelValue'],
   props: {
     label: String,
     tags: [Array, Object],
-    maxTags: Number
+    maxTags: Number,
+    modelValue:{
+      type: Array,
+      required:false,
+      default:[]
+    }
   },
-  setup() {
+  setup({modelValue},{emit}) {
     const { isOpen, openModal, closeModal } = useModal()
-    const { result: docsData, loading: docsLoading } = useQuery(GET_DOCUMENTS)
-    const docs = computed(() => {
-      return docsData.value.getDocuments.data
+    const { result: docsData, loading: docsLoading, refetch } = useQuery(GET_DOCUMENTS)
+    const { result: docsTypes, loading: docsTypesLoading } = useQuery(GET_DOCUMENT_TYPES)
+    const { result: docsCategories, loading: docsCategoriesLoading } = useQuery(GET_DOCUMENT_CATEGORIES)
+
+    const typeSelect = ref({})
+    const categorySelect = ref({})
+    const search = ref("")
+    const selectedDocs = ref([])
+    const tags = ref(modelValue)
+    
+    const filter = computed(() => {
+
+      if (Object.keys(typeSelect.value).length || Object.keys(categorySelect.value).length) {
+        return [].concat(typeSelect.value, categorySelect.value)
+      }
+
+      return []
     })
+    const docs = computed(() => {
+      return docsData.value.getDocuments.data.map(doc => ({ ...doc, selected: selectedDocs.value.find(sDoc => doc.file.ID === sDoc.file.ID) }))
+    })
+    const types = computed(() => {
+      return docsTypes.value.getDocumentTypes
+    })
+    const categories = computed(() => {
+      return docsCategories.value.getDocumentCategories
+    })
+
+    const clearFilter = () => {
+      search.value = ""
+      typeSelect.value = {}
+      categorySelect.value = {}
+    }
+
+    const filterTable = () => {
+      refetch({
+        filterType: typeSelect.value.UF_TITLE !== undefined ? [typeSelect.value.UF_TITLE] : [],
+        filterCategories: categorySelect.value.UF_TITLE !== undefined ? [categorySelect.value.UF_TITLE] : [],
+        search: search.value
+      })
+    }
+
+    const setSearch = (str) => {
+      search.value = str
+    }
+
+    const setFilter = (str) => {
+      let type = str.target.dataset.type
+
+      if (type === "DocumentType") {
+        typeSelect.value = {}
+      }
+      else if (type === "DocumentCategory") {
+        categorySelect.value = {}
+      }
+    }
+
+    const setSelectedDocs = (e) => {
+      let data = JSON.parse(e.target.closest('.table__tbody-tr').dataset.row)
+      let isExists = selectedDocs.value.find(doc => doc.file.ID === data.file.ID) !== undefined
+      if (!(isExists)) {
+        selectedDocs.value.push(data)
+      }
+      else {
+        selectedDocs.value = selectedDocs.value.filter(doc => doc.file.ID !== data.file.ID)
+      }
+    }
+
+    const removeTag = (index) => {
+      tags.value.splice(index, 1)
+      emit('update:modelValue', tags)
+    }
 
     return {
       isOpen,
       openModal,
       closeModal,
       docs,
-      docsLoading
+      docsLoading,
+      types,
+      categories,
+      filterTable,
+      typeSelect,
+      categorySelect,
+      filter,
+      clearFilter,
+      search,
+      setSearch,
+      setFilter,
+      selectedDocs,
+      setSelectedDocs,
+      removeTag
     }
-  }
+  },
 }
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <style lang="scss" src="./style.scss" scoped/>
