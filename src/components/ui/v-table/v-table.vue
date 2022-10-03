@@ -8,14 +8,14 @@ export default {
       type: Array,
       required: true
     },
-    canChoose:{
-      type: Boolean,
+    activeRowClass: {
+      type: String,
       required: false,
-      default: false
+      default: "table__tbody-tr--selected"
     }
   },
-  setup({ rows }, { slots, emit }) {
-    const columns = slots.default(rows)
+  setup(props, { slots, emit }) {
+    const columns = slots.default(props.rows)
 
     return () => h('div', { class: 'table-wrapper' }, [
       h('table', { class: 'table' }, [
@@ -41,12 +41,16 @@ export default {
           ])
         ]),
         h('tbody', { class: 'table__tbody' }, [
-          Array.from(rows).map((row, index) => {
-            return h('tr', { class: 'table__tbody-tr', key: index, onClick(event) {emit('click', event)} }, [
+          Array.from(props.rows).map((row, index) => {
+            return h('tr', {
+              class: ['table__tbody-tr',
+                { [props.activeRowClass]: row.selected }],
+              key: index, "data-row": JSON.stringify(row), onClick(event) { emit('click.stop', event) }
+            }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [
                   h('div', { class: 'table__thead-cell' }, [
-                    column.children ? column.children.default({ row, items: rows }) : row[column.props.id]
+                    column.children ? column.children.default({ row, items: props.rows }) : row[column.props.id]
                   ])
                 ])
               })
@@ -58,4 +62,10 @@ export default {
   }
 };
 </script>
+
+
+
+
+
+
 <style lang="scss" src="./style.scss" scoped/>

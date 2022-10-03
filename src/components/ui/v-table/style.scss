@@ -44,6 +44,10 @@
     }
   }
 
+  &__tbody-tr.selected {
+    background-color: var(--variable-12);
+  }
+
   &__tbody-tr:hover {
     background: var(--yellow);
   }

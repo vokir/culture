@@ -38,6 +38,10 @@
 :global(.docs-wrapper .table__thead-tr){
   background-color: #fff;
 }
+:global(.modal .modal__content .docs-wrapper .table__tbody-tr--selected){
+  background-color: var(--variable-12);
+
+}
 :global(.docs-wrapper .table__thead-tr .table__thead-th){
   color: var(--variable-7);
   padding: 13.5px 0 3.5px 10px;

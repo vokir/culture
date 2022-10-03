@@ -87,6 +87,7 @@
               label="Документы"
               :max-tags="3"
               v-model="form.docs"
+              
             />
           </div>
           <v-input-tags
