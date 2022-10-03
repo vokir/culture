@@ -45,7 +45,7 @@ export default {
             return h('tr', {
               class: ['table__tbody-tr',
                 { [props.activeRowClass]: row.selected }],
-              key: index, "data-row": JSON.stringify(row), onClick(event) { emit('click.stop', event) }
+              key: index, "data-row": JSON.stringify(row), onClick(event,row) { emit('click.stop', event) }
             }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [

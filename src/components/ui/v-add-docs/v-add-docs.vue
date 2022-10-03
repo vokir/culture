@@ -129,7 +129,7 @@ export default {
     modelValue:{
       type: Array,
       required:false,
-      default:[]
+      default: () => ([])
     }
   },
   setup({modelValue},{emit}) {
@@ -141,8 +141,7 @@ export default {
     const typeSelect = ref({})
     const categorySelect = ref({})
     const search = ref("")
-    const selectedDocs = ref([])
-    const tags = ref(modelValue)
+    const selectedDocs = ref(modelValue)
     
     const filter = computed(() => {
 
@@ -202,9 +201,9 @@ export default {
       }
     }
 
-    const removeTag = (index) => {
-      tags.value.splice(index, 1)
-      emit('update:modelValue', tags)
+    const removeDocument = (index) => {
+      selectedDocs.value.splice(index, 1)
+      emit('update:modelValue', selectedDocs)
     }
 
     return {
