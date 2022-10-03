@@ -42,7 +42,7 @@ export default {
         ]),
         h('tbody', { class: 'table__tbody' }, [
           Array.from(props.rows).map((row, index) => {
-            return h('tr', { class: ['table__tbody-tr', {[props.activeRowClass]: row.selected}], key: index, onClick(event) {emit('click', event)} }, [
+            return h('tr', { class: ['table__tbody-tr', {[props.activeRowClass]: row.selected}], key: index, onClick(event) {emit('click.stop', { event, row })} }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [
                   h('div', { class: 'table__thead-cell' }, [

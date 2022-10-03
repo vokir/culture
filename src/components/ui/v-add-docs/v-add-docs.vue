@@ -129,7 +129,7 @@ export default {
     modelValue:{
       type: Array,
       required:false,
-      default:[]
+      default: () => ([])
     }
   },
   setup({modelValue},{emit}) {
