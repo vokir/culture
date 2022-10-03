@@ -1,9 +1,14 @@
 import { ApolloClient, ApolloLink, concat, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import axios from "axios";
 
-let sessid = 'b3755b7c7a87d99cb8f3e368ed29b5c2'
+let sessid = 'd7a0d89faf1977c72ab08842ec935cf2'
 
 if (process.env.NODE_ENV === 'production') {
   sessid = BX.bitrix_sessid()
+}
+
+axios.defaults.params = {
+  sessid
 }
 
 // HTTP connection to the API

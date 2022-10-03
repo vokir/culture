@@ -11,7 +11,7 @@ export default {
     activeRowClass: {
       type: String,
       required: false,
-      default: "table__tbody-tr--selected"
+      default: 'table__tbody-tr--selected'
     }
   },
   setup(props, { slots, emit }) {
@@ -42,11 +42,7 @@ export default {
         ]),
         h('tbody', { class: 'table__tbody' }, [
           Array.from(props.rows).map((row, index) => {
-            return h('tr', {
-              class: ['table__tbody-tr',
-                { [props.activeRowClass]: row.selected }],
-              key: index, "data-row": JSON.stringify(row), onClick(event,row) { emit('click.stop', event) }
-            }, [
+            return h('tr', { class: ['table__tbody-tr', {[props.activeRowClass]: row.selected}], key: index, onClick(event) {emit('click.stop', { event, row })} }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [
                   h('div', { class: 'table__thead-cell' }, [
@@ -62,10 +58,5 @@ export default {
   }
 };
 </script>
-
-
-
-
-
 
 <style lang="scss" src="./style.scss" scoped/>

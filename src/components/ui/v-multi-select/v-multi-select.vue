@@ -118,7 +118,7 @@ export default {
     },
     modelValue: {
       type: null,
-      default: () => [],
+      default: () => ([]),
     },
   },
   setup(props, { emit }) {

@@ -44,7 +44,7 @@ export default {
     },
     modelValue: {
       type: null,
-      default: () => [],
+      default: () => ([]),
     },
     optionAll: Boolean
   },

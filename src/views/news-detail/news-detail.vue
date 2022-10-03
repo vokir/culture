@@ -29,7 +29,7 @@
             {{ form.type.UF_TITLE }}
           </p>
           <p class="news-detail__title">{{ form.title }}</p>
-          <p class="news-detail__date">{{ computeDate(form.date) }}</p>
+          <p class="news-detail__date">{{ computedDate(form.date) }}</p>
           <p class="news-detail__subtitle">{{ form.desc }}</p>
           <p v-html="form.fullDesc" class="news-detail__text"></p>
           <div class="news-detail__links">
@@ -105,7 +105,7 @@ import { useLazyQuery } from "@vue/apollo-composable";
 import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import VLoader from "../../components/ui/v-loader/v-loader.vue";
-import computeDate from "../../helpers/dateFormat";
+import computedDate from "../../helpers/dateFormat";
 import NewsPreview from "../../components/news/news-preview/news-preview.vue";
 import useModal from "../../hooks/useModal";
 import NewsForm from "../../components/news/news-form/news-form.vue";
@@ -206,7 +206,7 @@ export default {
     return {
       form,
       news,
-      computeDate,
+      computedDate,
       computePhone,
       getComplexName,
       openModal,

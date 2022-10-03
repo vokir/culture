@@ -17,7 +17,7 @@
     </div>
     <div class="preview__date">
       <template v-if="date.length">
-        {{ computeDate(date, 'DD MMMM YYYY в hh:mm', 'Сегодня в hh:mm') }}
+        {{ computedDate(date, 'DD MMMM YYYY в hh:mm', 'Сегодня в hh:mm') }}
       </template>
       <template v-else>
         20 ноября 2021 в 15:18
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import computeDate from "../../helpers/dateFormat";
+import computedDate from "../../helpers/dateFormat";
 import VBadge from "../ui/v-badge/v-badge.vue";
 
 export default {
@@ -107,7 +107,7 @@ export default {
   },
   setup () {
     return {
-      computeDate
+      computedDate
     }
   }
 }

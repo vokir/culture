@@ -4,7 +4,7 @@ import isToday from 'dayjs/plugin/isToday.js'
 
 dayjs.extend(isToday)
 
-const computeDate = (date, format = 'DD.MM.YYYY HH:mm', formatToday = 'Сегодня HH:mm') => {
+const computedDate = (date, format = 'DD.MM.YYYY HH:mm', formatToday = 'Сегодня HH:mm') => {
   if (!date?.length) return '';
   const dateProp = new Date(date)
   if (dayjs(dateProp).isToday()) {
@@ -14,4 +14,4 @@ const computeDate = (date, format = 'DD.MM.YYYY HH:mm', formatToday = 'Сего�
   }
 }
 
-export default computeDate
+export default computedDate

@@ -6,12 +6,18 @@
           <v-tabs
             link-title
             class="news-preview__inner-tabs"
-            v-model="currentTab"
           >
             <v-tab title="Превью">
-              <v-radio v-model="radio" value="icon">Иконка</v-radio>
-              <v-radio v-model="radio" value="image">Изображение</v-radio>
-              <amio-preview v-bind="{ ...modelValue }" />
+              <template v-if="!hideIcon">
+                <div class="news-preview__choice-title">Вид</div>
+                <div class="news-preview__choice">
+                  <v-radio v-model="radio" value="icon">Иконка</v-radio>
+                  <v-radio v-model="radio" value="image">Изображение</v-radio>
+                </div>
+                <select-icon v-if="radio === 'icon'" @saveIcon="saveIcon" v-bind="{ ...modelValue }"/>
+                <select-background-image v-if="radio === 'image'" @onLoadFiles="saveBackground" v-bind="{ ...modelValue }"/>
+              </template>
+              <amio-preview v-bind="{ ...modelValue }" :variant="radio"/>
             </v-tab>
             <v-tab title="Подробная">
               <amio-detail v-bind="{ ...modelValue }" @openModal="openModal" />
@@ -33,15 +39,11 @@
         </v-tab>
       </v-tabs>
     </v-card>
-    <v-card class="news-preview__icon" v-if="currentTab === 'Превью' && !hideIcon">
-      <select-icon @saveIcon="saveIcon" v-bind="{ ...modelValue }"/>
-    </v-card>
   </div>
   <select-image
     v-if="isOpen"
     @closeModal="closeModal"
     @onLoadFiles="onLoadFiles"
-    no-landscape
   />
 </template>
 
@@ -51,6 +53,7 @@
 	import AmioDetail from "../../amio-news/amio-detail/amio-detail.vue";
 	import AmioPreview from "../../amio-news/amio-preview/amio-preview.vue";
 	import AmioStories from "../../amio-news/amio-stories/amio-stories.vue";
+  import SelectBackgroundImage from "../../select-background-image/select-background-image.vue";
 	import SelectIcon from "../../select-icon/select-icon.vue";
 	import SelectImage from "../../select-image/select-image.vue";
 	import VCard from "../../ui/v-card/v-card.vue";
@@ -62,6 +65,7 @@
 	export default {
 		name: "news-preview",
 		components: {
+      SelectBackgroundImage,
       VRadio,
       WebLkNews,
 			SelectIcon,
@@ -80,7 +84,6 @@
     },
 		setup({ modelValue }, { emit }) {
 			const { isOpen, openModal, closeModal } = useModal()
-			const currentTab = ref('Превью')
       const radio = ref('icon')
 			const onLoadFiles = (value) => {
         emit('update:modelValue', {
@@ -95,10 +98,29 @@
           },
         })
 			}
-	
+	    const saveBackground = (value) => {
+        emit('update:modelValue', {
+          ...modelValue,
+          image: {
+            id: value.id[0],
+            src: value.files.image.SRC,
+            name: value.files.image.name
+          },
+          icon: {
+            id: null,
+            src: null,
+            name: null
+          }
+        })
+      }
 			const saveIcon = (value) => {
         emit('update:modelValue', {
           ...modelValue,
+          image: {
+            id: null,
+            src: null,
+            name: null
+          },
           icon: {
             id: value.id,
             src: value.src,
@@ -109,12 +131,12 @@
 
 			return {
 				isOpen,
-				currentTab,
         radio,
 				openModal,
 				closeModal,
         onLoadFiles,
-        saveIcon
+        saveIcon,
+        saveBackground
 			}
 		}
 	}

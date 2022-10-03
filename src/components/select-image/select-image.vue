@@ -1,11 +1,14 @@
 <template>
-  <v-modal
-    class="modal-select-image"
-    centered
+  <v-select-image
+    v-model="active"
+    :items="images"
+    :loading="loading"
+    title="Выберите изображение"
     @closeModal="$emit('closeModal')"
+    @onSelect="selectImage"
+    @onSubmit="submit"
   >
-    <div class="modal-title">Выберите изображение</div>
-    <div class="select-image-container">
+    <template #filter>
       <v-filter-and-search
         class="select-image-filter"
         v-model="filter"
@@ -16,55 +19,21 @@
         @setFilter="setFilter"
         @clearFilter="clearFilter"
         @setSearch="setSearch"
-      ></v-filter-and-search>
-      <v-loader v-if="loading" />
-      <div
-        v-else
-        class="select-image-images"
-      >
-        <div
-          :class="['image-item', { 'image-item--active': active === index }]"
-          v-for="(image, index) of images"
-        >
-          <img
-            :src="image.file.SRC"
-            :alt="image.UF_TITLE"
-            @click="selectImage(image.file.SRC, index)"
-          >
-          <span>{{ image.UF_TITLE }}</span>
-        </div>
-      </div>
-      <div class="select-image-crop">
-        <v-crop-image
-          ref="cropperSmall"
-          :img="image"
-        />
-        <v-crop-image
-          ref="cropperBig"
-          size="big"
-          :img="image"
-        />
-      </div>
-      <div class="select-image-actions">
-        <v-pagination
-          v-if="pageInfo.perPage < pageInfo.total"
-          v-model="currentPage"
-          :perPage="pageInfo.perPage"
-          :total="pageInfo.total"
-        />
-        <v-button
-          variant="link"
-          @click="$emit('closeModal')"
-        >Отменить</v-button>
-        <v-button
-          variant="success"
-          @click="submit"
-          :disabled="!isDirty"
-          loading
-        >ВЫБРАТЬ ИЗОБРАЖЕНИЕ</v-button>
-      </div>
-    </div>
-  </v-modal>
+      />
+    </template>
+    <template #cropper>
+      <v-crop-image ref="cropperSmall" :img="image"/>
+      <v-crop-image ref="cropperBig" :img="image" size="big"/>
+    </template>
+    <template #pagination>
+      <v-pagination
+        v-if="pageInfo.perPage < pageInfo.total"
+        v-model="currentPage"
+        :perPage="pageInfo.perPage"
+        :total="pageInfo.total"
+      />
+    </template>
+  </v-select-image>
 </template>
 
 <script>
@@ -74,32 +43,28 @@ import { computed, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
 import { GET_IMAGES_CATEGORIES } from "../../api/queries/getImagesCategories";
-import usePaginate from "../../hooks/usePaginate";
-import VButton from "../ui/v-button/v-button.vue";
-import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
-import VLoader from "../ui/v-loader/v-loader.vue";
-import VModal from "../ui/v-modal/v-modal.vue";
-import VPagination from "../ui/v-pagination/v-pagination.vue";
-import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue";
 import useModal from "../../hooks/useModal";
+import usePaginate from "../../hooks/usePaginate";
+import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
+import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue";
+import VLoader from "../ui/v-loader/v-loader.vue";
+import VPagination from "../ui/v-pagination/v-pagination.vue";
+import VSelectImage from "../ui/v-select-image/v-select-image.vue";
 
 export default {
   name: "select-image",
-  components: { VLoader, VButton, VCropImage, VPagination, VModal, VFilterAndSearch },
+  components: { VSelectImage, VLoader, VCropImage, VPagination, VFilterAndSearch },
   emits: ['onLoadFiles', 'closeModal'],
-  props: {
-    imgFilterOpened: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-  },
   setup(_, { emit }) {
     const image = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
     const cropperBig = ref(null)
     const cropperSmall = ref(null)
-    const active = ref(null)
+    const active = ref({
+      id: null,
+      src: null,
+      name: null
+    })
     const toast = useToast();
     const filter = ref([])
     const search = ref("")
@@ -109,7 +74,6 @@ export default {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
-    const { isOpen: filterPopupImg, openModal: openFilterPopupImg, closeModal: closeFilterPopupImg } = useModal();
     const images = computed(() => {
       return result.value?.getImages.data ?? []
     })
@@ -123,16 +87,13 @@ export default {
       return resultImgCategories.value?.getImageCategories ?? [];
     });
 
-
     updatePage(() => refetch({
       currentPage: currentPage.value,
       perPage: perPage.value
-
     }))
 
-    const selectImage = (src, idx) => {
+    const selectImage = (src) => {
       if (!isDirty.value) isDirty.value = true
-      active.value = idx
       image.value = src
     }
     const submit = () => {
@@ -204,8 +165,7 @@ export default {
         }
       }
     }
-
-
+    
     return {
       currentPage,
       images,
@@ -220,9 +180,6 @@ export default {
       submit,
       imgCategories,
       filterTable,
-      filterPopupImg,
-      openFilterPopupImg,
-      closeFilterPopupImg,
       setSearch,
       clearFilter,
       setFilter,
@@ -231,33 +188,5 @@ export default {
   }
 }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style lang="scss" src="./style.scss" scoped/>

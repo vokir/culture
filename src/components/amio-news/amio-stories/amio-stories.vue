@@ -26,7 +26,7 @@
       </div>
       <div class="stories__content-date">
         <template v-if="date.length">
-          {{ computeDate(date) }}
+          {{ computedDate(date) }}
         </template>
         <template v-else>
           Сегодня  14:30
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import computeDate from "../../../helpers/dateFormat";
+import computedDate from "../../../helpers/dateFormat";
 
 export default {
   name: "amio-stories",
@@ -69,7 +69,7 @@ export default {
   },
   setup() {
     return {
-      computeDate,
+      computedDate,
     }
   }
 }
