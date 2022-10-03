@@ -42,13 +42,35 @@
             </svg>
           </template>
           <template v-slot="{ row }">
-            <svg fill="none" height="10" viewBox="0 0 14 10" width="14" xmlns="http://www.w3.org/2000/svg">
-              <path
-                clip-rule="evenodd" d="M14 0.0195312V2.00954H0V0.0195312H14ZM7.425 3.99953H14V5.98953H0V3.99953H7.425ZM14 7.98953V9.97954H0V7.98953H14Z"
-                fill="#9E9E9E"
-                fill-rule="evenodd"
-              />
-            </svg>
+            <VDropdown
+              placement="right-start"
+              :skidding="-10"
+              :distance="10"
+            >
+              <svg fill="none" height="10" viewBox="0 0 14 10" width="14" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  clip-rule="evenodd" d="M14 0.0195312V2.00954H0V0.0195312H14ZM7.425 3.99953H14V5.98953H0V3.99953H7.425ZM14 7.98953V9.97954H0V7.98953H14Z"
+                  fill="#9E9E9E"
+                  fill-rule="evenodd"
+                />
+              </svg>
+
+              <template #popper>
+                <div class="settings">
+                  <ul class="settings__list">
+                    <li class="settings__item">
+                      Редактировать
+                    </li>
+                    <li class="settings__item">
+                      Копировать
+                    </li>
+                    <li class="settings__item">
+                      Удалить
+                    </li>
+                  </ul>
+                </div>
+              </template>
+            </VDropdown>
           </template>
         </v-table-column>
         <v-table-column id="icon" title="icon" width="30px">

@@ -1,7 +1,7 @@
 <template>
-  <div class="preview">
+  <div class="preview" :style="computedStyle">
     <div class="preview-header">
-      <div class="preview-header__icon">
+      <div class="preview-header__icon" v-if="!(image && image.src)">
         <template v-if="icon && icon.src">
           <img :src="icon.src" alt="title">
         </template>
@@ -47,7 +47,7 @@
     <div class="preview-footer">
       <div class="preview-footer__date">
         <template v-if="date.length">
-          {{ computeDate(date) }}
+          {{ computedDate(date) }}
         </template>
         <template v-else>
           Сегодня 14:30
@@ -66,13 +66,23 @@
 </template>
 
 <script>
-import computeDate from "@/helpers/dateFormat";
+import computedDate from "../../../helpers/dateFormat";
+import { computed } from "vue";
 
 export default {
   name: "amio-preview",
   inheritAttrs: false,
   props: {
     icon: {
+      type: Object,
+      required: false,
+      default: () => ({
+        src: null,
+        name: null,
+        id: null
+      })
+    },
+    image: {
       type: Object,
       required: false,
       default: () => ({
@@ -102,9 +112,14 @@ export default {
       default: () => ([])
     }
   },
-  setup() {
+  setup(props) {
+    const computedStyle = computed(() => ({
+      backgroundImage: props.image && props.image.src ? 'url(' + props.image.src + ')' : ''
+    }))
+
     return {
-      computeDate
+      computedDate,
+      computedStyle
     }
   }
 }

@@ -31,7 +31,7 @@
             label="UF_NAME"
             placeholder="Выберите ЖК"
           />
-          <div class="show-for" v-if="form.complex" @click="openModal">
+          <div class="show-for" v-if="form.complex && form.complex.ID" @click="openModal">
             <div class="show-for__title">
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M6 4V0H4V4H0V6H4V10H6V6H10V4H6Z" fill="#333333"/>
@@ -133,13 +133,8 @@ import { GET_CONTACTS } from "../../../api/queries/getContacts";
 import { GET_NEWS_DEGREES } from "../../../api/queries/getNewsDegrees";
 import { GET_NEWS_TYPES } from "../../../api/queries/getNewsTypes";
 import useModal from "../../../hooks/useModal";
-import AmioDetail from "../../amio-news/amio-detail/amio-detail.vue";
-import AmioPreview from "../../amio-news/amio-preview/amio-preview.vue";
-import AmioStories from "../../amio-news/amio-stories/amio-stories.vue";
 import NewsPreview from "../news-preview/news-preview.vue";
 import SelectBind from "../../select-bind/select-bind.vue";
-import SelectIcon from "../../select-icon/select-icon.vue";
-import SelectImage from "../../select-image/select-image.vue";
 import VAddDocs from "../../ui/v-add-docs/v-add-docs.vue";
 import VButton from "../../ui/v-button/v-button.vue";
 import VCard from "../../ui/v-card/v-card.vue";
@@ -147,8 +142,6 @@ import VInputTags from "../../ui/v-input-tags/v-input-tags.vue";
 import VInput from "../../ui/v-input/v-input.vue";
 import VModal from "../../ui/v-modal/v-modal.vue";
 import VSelect from "../../ui/v-select/v-select.vue";
-import VTab from "../../ui/v-tabs/v-tab/v-tab.vue";
-import VTabs from "../../ui/v-tabs/v-tabs.vue";
 import VTextarea from "../../ui/v-textarea/v-textarea.vue";
 import VMultiSelect from "../../ui/v-multi-select/v-multi-select.vue";
 
@@ -156,19 +149,12 @@ export default {
   name: "news-form",
   directives: { mask },
   components: {
-    SelectIcon,
     SelectBind,
-    SelectImage,
     VAddDocs,
     VButton,
     VModal,
     VInputTags,
     VTextarea,
-    AmioDetail,
-    AmioStories,
-    AmioPreview,
-    VTab,
-    VTabs,
     VSelect,
     VInput,
     VCard,
@@ -193,8 +179,16 @@ export default {
           name: null
         },
         desc: '',
-        imgLandscape: null,
-        imgLibrary: null,
+        imgLandscape: {
+          id: null,
+          src: null,
+          name: null
+        },
+        imgLibrary: {
+          id: null,
+          src: null,
+          name: null
+        },
         fullDesc: '',
         phone: '',
         date: '',
@@ -208,7 +202,12 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
-        contacts: []
+        contacts: [],
+        image: {
+          id: null,
+          src: null,
+          name: null
+        }
       })
     },
     closeModalProp: {
@@ -223,7 +222,6 @@ export default {
     }
   },
   setup({ formData, closeModalProp }, { emit }) {
-    const currentTab = ref('Превью')
     const { isOpen, openModal, closeModal } = useModal()
 
     const { result: complexesData } = useQuery(GET_COMPLEXES)
@@ -246,25 +244,6 @@ export default {
     })
 
     const form = ref(formData)
-
-    const onLoadFiles = (value) => {
-      form.value.imgLandscape = {
-        id: value.id[0],
-        file: value.files.imgLandscape
-      }
-      form.value.imgLibrary = {
-        id: value.id[1],
-        file: value.files.imgLibrary
-      }
-    }
-
-    const saveIcon = (value) => {
-      form.value.icon = {
-        id: value.id,
-        src: value.icon,
-        name: value.name
-      }
-    }
 
     const setBind = (value) => {
       form.value.houses = value.houses
@@ -296,8 +275,16 @@ export default {
           name: null
         },
         desc: '',
-        imgLandscape: null,
-        imgLibrary: null,
+        imgLandscape: {
+          id: null,
+          src: null,
+          name: null
+        },
+        imgLibrary: {
+          id: null,
+          src: null,
+          name: null
+        },
         fullDesc: '',
         phone: '',
         date: '',
@@ -311,9 +298,13 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
-        contacts: []
+        contacts: [],
+        image: {
+          id: null,
+          src: null,
+          name: null
+        }
       }
-
     }
 
     return {
@@ -321,13 +312,10 @@ export default {
       types,
       contacts,
       complexes,
-      currentTab,
       isOpen,
       priority,
       openModal,
       closeModal,
-      onLoadFiles,
-      saveIcon,
       onSave,
       onCopy,
       onCancel,
