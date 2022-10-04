@@ -1,0 +1,9 @@
+.select-image {
+  &__crop {
+    .cropper--small {
+      :deep(.vue-rectangle-stencil__preview) {
+        border-radius: 30px;
+      }
+    }
+  }
+}

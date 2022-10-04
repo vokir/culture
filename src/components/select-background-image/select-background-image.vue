@@ -21,7 +21,9 @@
       </template>
 
       <template #cropper>
-        <v-crop-image ref="cropperSmall" :img="image"/>
+        <div class="select-image__crop">
+          <v-crop-image ref="cropperSmall" :img="image"/>
+        </div>
       </template>
 
       <template #pagination>

@@ -103,8 +103,7 @@
           ...modelValue,
           image: {
             id: value.id[0],
-            src: value.files.image.SRC,
-            name: value.files.image.name
+            src: value.files.image,
           },
           icon: {
             id: null,
@@ -119,7 +118,6 @@
           image: {
             id: null,
             src: null,
-            name: null
           },
           icon: {
             id: value.id,

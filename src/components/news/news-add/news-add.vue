@@ -1,5 +1,5 @@
 <template>
-  <news-form :closeModalProp="closeModalProp" @onSave="(event) => create(event, true)" @onCopy="create"/>
+  <news-form :closeModalProp="closeModalProp" @onSave="create($event, true)" @onCopy="create"/>
 </template>
 
 <script>
