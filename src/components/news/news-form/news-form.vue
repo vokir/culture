@@ -248,25 +248,6 @@ export default {
 
     const form = ref(formData)
 
-    const onLoadFiles = (value) => {
-      form.value.imgLandscape = {
-        id: value.id[0],
-        file: value.files.imgLandscape
-      }
-      form.value.imgLibrary = {
-        id: value.id[1],
-        file: value.files.imgLibrary
-      }
-    }
-
-    const saveIcon = (value) => {
-      form.value.icon = {
-        id: value.id,
-        src: value.icon,
-        name: value.name
-      }
-    }
-
     const setBind = (value) => {
       form.value.houses = value.houses
       form.value.approaches = value.approaches
@@ -327,8 +308,6 @@ export default {
       priority,
       openModal,
       closeModal,
-      onLoadFiles,
-      saveIcon,
       onSave,
       onCopy,
       onCancel,

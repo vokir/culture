@@ -15,6 +15,7 @@ query images(
   ) {
     data {
       UF_TITLE
+      ID
       file {
         SRC
         ORIGINAL_NAME

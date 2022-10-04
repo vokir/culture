@@ -19,7 +19,8 @@ import NewsForm from "../news-form/news-form.vue";
 export default {
   name: "news-add",
   components: { NewsForm },
-  setup() {
+  emits: ['onCreate'],
+  setup(_, { emit }) {
     const toast = useToast();
     const closeModalProp = ref(false)
     const store = useNewsStore()
@@ -32,6 +33,7 @@ export default {
 
     onDoneCreateNews(() => {
       toast.success('Новость успешно создана')
+      emit('onCreate')
     })
 
     onErrorCreateNews(response => {
@@ -40,11 +42,9 @@ export default {
     })
 
     const create = (data, closeModal = false) => {
-
-
       const news = {
         title: data.title,
-        icon: data.icon?.id ?? 1996,
+        icon: data.icon?.id ?? 1,
         types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,

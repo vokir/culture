@@ -160,6 +160,7 @@ import NewsForm from "../../components/news/news-form/news-form.vue";
 import computePhone from "../../helpers/phoneFormat";
 import getSingular from "../../helpers/getSingular";
 import NewsForTable from "../../components/news/bind-rows/bind-rows-table.vue";
+import { useNewsStore } from "../../store/newsStore";
 
 export default {
   name: "news-detail",
@@ -174,6 +175,10 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const store = useNewsStore()
+    const{
+      createFormData
+    } = store
     const { isOpen, openModal, closeModal } = useModal();
     const form = ref({
       title: '',
@@ -207,32 +212,7 @@ export default {
     onResult((result) => {
       let data = result.data?.getNewsAt
       if (data) {
-        form.value.date = dayjs(data.UF_CREATED_AT).format('YYYY-MM-DDTHH:mm');
-        form.value.type = data.types.length ? data.types[0] : []
-        form.value.complex = data.complexes.length ? data.complexes[0] : {}
-        form.value.title = data.UF_NAME ? data.UF_NAME : '';
-        form.value.desc = data.UF_PREVIEW_TEXT ? data.UF_PREVIEW_TEXT : '';
-        form.value.fullDesc = data.UF_TEXT ? data.UF_TEXT : '';
-        form.value.phone = computePhone(data.UF_PHONE);
-        form.value.docs = data.documents.filter(el => el.file);
-        form.value.premises = data.premises;
-        form.value.houses = data.houses;
-        form.value.approaches = data.approaches;
-        form.value.floors = data.floors;
-        form.value.links = data.links ? data.links.map((link => {return {name:link.UF_TITLE, link:link.UF_LINK}})): [],
-        form.value.button = data.UF_BTN_TEXT ? [{
-          name: data.UF_BTN_TEXT,
-          link: data.UF_BTN_LINK
-        }] : []
-        // form.value.imgLandscape = data.imgLandscape?.SRC;
-        // form.value.imgLibrary = data.imgLibrary?.SRC;
-        form.value.priority = data.degree ?? {}
-        form.value.icon = {
-          id: data.icon?.file?.ID,
-          name: data.icon?.file?.ORIGINAL_NAME,
-          src: data.icon?.file?.SRC,
-        };
-        form.value.contacts = data.contacts
+       form.value = createFormData(data)
       }
     });
 

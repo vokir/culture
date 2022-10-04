@@ -20,20 +20,20 @@
               <amio-preview v-bind="{ ...modelValue }" :variant="radio"/>
             </v-tab>
             <v-tab title="Подробная">
-              <amio-detail v-bind="{ ...modelValue }" @openModal="openModal" />
+              <amio-detail v-bind="{ ...modelValue }" :hideIcon="hideIcon" @openModal="openModal" />
             </v-tab>
             <v-tab title="Сторис">
-              <amio-stories v-bind="{ ...modelValue }" @openModal="openModal" />
+              <amio-stories v-bind="{ ...modelValue }" :hideIcon="hideIcon" @openModal="openModal" />
             </v-tab>
           </v-tabs>
         </v-tab>
         <v-tab title="Web-ЛК">
           <v-tabs link-title class="news-preview__inner-tabs">
             <v-tab title="Превью">
-              <web-lk-news v-bind="{ ...modelValue }" @openModal="openModal"/>
+              <web-lk-news v-bind="{ ...modelValue }" :hideIcon="hideIcon" @openModal="openModal"/>
             </v-tab>
             <v-tab title="Подробная">
-              <web-lk-news v-bind="{ ...modelValue }" @openModal="openModal" detail/>
+              <web-lk-news v-bind="{ ...modelValue }" :hideIcon="hideIcon" @openModal="openModal" detail/>
             </v-tab>
           </v-tabs>
         </v-tab>

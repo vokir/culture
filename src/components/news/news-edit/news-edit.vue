@@ -23,13 +23,14 @@ export default {
     const {
       updateNews,
       onDoneUpdateNews,
-      onErrorUpdateNews
+      onErrorUpdateNews,
+      refetch
     } = store
 
     onDoneUpdateNews(() => {
       toast.success('Новость успешно обновлена')
       emit('onDone')
-      store.refetch()
+      refetch()
     })
 
     onErrorUpdateNews(response => {

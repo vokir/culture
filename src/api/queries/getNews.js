@@ -16,7 +16,21 @@ query news(
     data {
       ID
       UF_NAME
+      UF_TITLE
+      UF_PREVIEW_TEXT
+      UF_TEXT
+      UF_PHONE
       UF_CREATED_AT
+      imgLandscape {
+        SRC,
+        ID,
+        ORIGINAL_NAME,
+      }
+      imgLibrary {
+        SRC,
+        ID,
+        ORIGINAL_NAME,
+      }
       links{
         ID
         UF_TITLE
@@ -27,15 +41,28 @@ query news(
         UF_TITLE
       }
       types {
-        UF_TITLE
+        UF_TITLE,
+        ID
       }
       complexes {
-        UF_NAME
+        UF_NAME,
+        ID
       }
-      contacts {
-        NAME
-        LAST_NAME
-        SECOND_NAME
+      documents {
+        ID
+        UF_TITLE
+        category {
+          UF_TITLE
+        }
+        type {
+          UF_TITLE
+        }
+        file {
+          SRC
+          ORIGINAL_NAME
+          ID
+          FILE_SIZE
+        }
       }
       houses {
         ID
@@ -52,7 +79,6 @@ query news(
       floors {
         ID
         UF_NAME
-        UF_NUMBER
         approach {
           ID
           UF_NAME
@@ -69,7 +95,6 @@ query news(
         floor {
           ID
           UF_NAME
-          UF_NUMBER
           approach {
             ID
             UF_NAME
@@ -82,11 +107,24 @@ query news(
       }
       icon {
         file {
+          ID
           ORIGINAL_NAME
           SRC
-          ID
         }
       }
+      contacts{
+        ID
+        LAST_NAME
+        NAME
+        SECOND_NAME
+        FULL_NAME
+        fields{
+          TYPE_ID
+          VALUE
+        }
+      }
+        UF_BTN_TEXT
+        UF_BTN_LINK
     }
     paginatorInfo {
       total

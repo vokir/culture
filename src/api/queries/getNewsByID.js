@@ -10,6 +10,16 @@ query getNewsAt($newsID: Int) {
     UF_TEXT
     UF_PHONE
     UF_CREATED_AT
+    imgLandscape {
+      SRC,
+      ID,
+      ORIGINAL_NAME,
+    }
+    imgLibrary {
+      SRC,
+      ID,
+      ORIGINAL_NAME,
+    }
     links{
       ID
       UF_TITLE

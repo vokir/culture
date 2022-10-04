@@ -10,9 +10,9 @@
         <div
           v-for="item of items"
           :key="item.file.ID"
-          :class="['modal-images__item', { 'modal-images__item--active': modelValue.id ===  item.file.ID }]"
+          :class="['modal-images__item', { 'modal-images__item--active': modelValue.id ===  item.ID }]"
         >
-          <img :alt="item.UF_TITLE" :src="item.file.SRC" @click="selectImage(item.file)">
+          <img :alt="item.UF_TITLE" :src="item.file.SRC" @click="selectImage(item)">
           <span>{{ item.UF_TITLE }}</span>
         </div>
       </div>
@@ -72,13 +72,13 @@ export default {
       closeModalProp.value = true
     }
 
-    const selectImage = (file) => {
+    const selectImage = (item) => {
       emit('update:modelValue', {
-        id: file.ID,
-        src: file.SRC,
-        name: file.ORIGINAL_NAME
+        id: item.ID,
+        src: item.file.SRC,
+        name: item.file.ORIGINAL_NAME
       })
-      emit('onSelect', file.SRC)
+      emit('onSelect', item.file.SRC)
     }
 
     return {

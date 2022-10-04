@@ -93,10 +93,10 @@
               <template #popper>
                 <div class="settings">
                   <ul class="settings__list">
-                    <li v-close-popper class="settings__item">
+                    <li v-close-popper class="settings__item" @click="editNews(row)">
                       Редактировать
                     </li>
-                    <li v-close-popper class="settings__item">
+                    <li v-close-popper class="settings__item" @click="copyNews(row)">
                       Копировать
                     </li>
                     <li v-close-popper class="settings__item" @click="deleteSingleNews(row.ID)">
@@ -268,21 +268,26 @@
   </div>
   <news-add
     v-if="isOpen"
+    :formData="formData"
     @closeModal="closeModal"
+    @onCreate="formData = clearFormData()"
+  />
+  <news-edit
+    v-if="editModal"
+    :formData="formData"
+    :id="formData.id"
+    @closeModal="closeEditModal"
   />
 </template>
 
 <script>
-import { useMutation, useQuery, useSubscription } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
-import { DELETE_NEWS } from "../../api/mutations/deleteNews";
-import { GET_NEWS } from "../../api/queries/getNews";
-import { GET_NEWS_TYPES } from "../../api/queries/getNewsTypes";
 import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
 import NewsAdd from "../../components/news/news-add/news-add.vue";
+import NewsEdit from "../../components/news/news-edit/news-edit.vue";
 import NewsForm from "../../components/news/news-form/news-form.vue";
 import NewsSearch from "../../components/news/news-search/news-search.vue";
 import VBadge from "../../components/ui/v-badge/v-badge.vue";
@@ -299,12 +304,12 @@ import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
 import VTable from "../../components/ui/v-table/v-table.vue";
 import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
-import usePaginate from "../../hooks/usePaginate";
 import { useNewsStore } from "../../store/newsStore";
 
 export default {
   name: 'news',
   components: {
+    NewsEdit,
     NewsAdd,
     VSelect,
     VPagination,
@@ -331,17 +336,20 @@ export default {
     const store = useNewsStore()
     const {
       deleteNews,
-      onDoneDeleteNews,
-      onErrorDeleteNews
+      onErrorDeleteNews,
+      createFormData,
+      clearFormData
     } = store
 
     const toast = useToast();
     const route = useRoute();
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
+    const { isOpen: editModal, openModal: openEditModal, closeModal: closeEditModal } = useModal();
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
     const filter = ref([])
     const search = ref("")
+    const formData = ref({ })
 
     onErrorDeleteNews(error => {
       let e = JSON.parse(JSON.stringify(error))
@@ -382,6 +390,15 @@ export default {
         toast.success('Новости удалены')
         selected.value = []
       })
+    }
+
+    const copyNews = (row) => {
+      formData.value = createFormData(row)
+      openModal()
+    }
+    const editNews = (row) => {
+      formData.value = createFormData(row)
+      openEditModal()
     }
 
     const filterTable = () => {
@@ -437,7 +454,13 @@ export default {
       filter,
       clearFilter,
       setSearch,
-      deleteSingleNews
+      deleteSingleNews,
+      editModal,
+      closeEditModal,
+      editNews,
+      copyNews,
+      clearFormData,
+      formData
     };
   },
 };
