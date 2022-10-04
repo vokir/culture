@@ -276,7 +276,7 @@
     v-if="editModal"
     :formData="formData"
     :id="formData.id"
-    @closeModal="closeEditModal"
+    @closeModal="closeEditNews"
   />
 </template>
 
@@ -391,7 +391,10 @@ export default {
         selected.value = []
       })
     }
-
+    const closeEditNews = () => {
+      closeEditModal()
+      formData.value = clearFormData()
+    }
     const copyNews = (row) => {
       formData.value = createFormData(row)
       openModal()
@@ -456,7 +459,7 @@ export default {
       setSearch,
       deleteSingleNews,
       editModal,
-      closeEditModal,
+      closeEditNews,
       editNews,
       copyNews,
       clearFormData,

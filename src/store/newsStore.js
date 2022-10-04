@@ -6,7 +6,7 @@ import { DELETE_NEWS } from "../api/mutations/deleteNews";
 import { UPDATE_NEWS } from "../api/mutations/updateNews";
 import { GET_NEWS } from "../api/queries/getNews";
 import { defineStore } from 'pinia'
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { GET_NEWS_BY_ID } from "../api/queries/getNewsByID";
 import { GET_NEWS_TYPES } from "../api/queries/getNewsTypes";
 import computePhone from "../helpers/phoneFormat";
@@ -20,7 +20,7 @@ export const useNewsStore = defineStore('news', () => {
   const { currentPage, perPage, updatePage } = usePaginate(1, 20)
   const route = useRoute()
 
-  const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
+  const { result, loading, variables, refetch, query, start } = useQuery(GET_NEWS, {
     currentPage: currentPage.value,
     perPage: perPage.value,
   })
@@ -34,6 +34,12 @@ export const useNewsStore = defineStore('news', () => {
   });
   const pageInfo = computed(() => {
     return result.value?.getNews.paginatorInfo ?? []
+  })
+
+  watch(query, (val)=>{
+    if (!val) {
+      start()
+    }
   })
 
   updatePage(() => {
