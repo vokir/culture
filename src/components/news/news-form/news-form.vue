@@ -94,6 +94,8 @@
             input-label="Текст ссылки"
             inputLabelLink="Ссылка"
             v-model="form.links"
+            @onRemove="removeLinks"
+            @onAdd="addLinks"
           />
           <v-input-tags
             label="Кнопка"
@@ -176,7 +178,7 @@ export default {
     NewsPreview,
     VMultiSelect
   },
-  emits: ['onSave', 'onCopy', 'onCancel'],
+  emits: ['onSave', 'onCopy', 'onCancel','onAddLinks', 'onRemoveLinks'],
   props: {
     title: {
       type: String,
@@ -246,6 +248,9 @@ export default {
       return priorityData.value?.getNewsDegrees ?? []
     })
 
+    const removedLinks = ref([])
+    const addedLinks = ref([])
+
     const form = ref(formData)
 
     const onLoadFiles = (value) => {
@@ -275,7 +280,9 @@ export default {
     }
 
     const onSave = () => {
-      emit('onSave', form.value)
+      // emit('onAddLinks', addedLinks.value)
+      // emit('onRemoveLinks', removedLinks.value)
+      emit('onSave', form.value,addedLinks.value, removedLinks.value)
     }
 
     const onCopy = () => {
@@ -317,6 +324,14 @@ export default {
 
     }
 
+    const removeLinks = (links)=>{
+      removedLinks.value = links
+    }
+
+    const addLinks = (links)=>{
+      addedLinks.value = links
+    }
+
     return {
       form,
       types,
@@ -333,6 +348,8 @@ export default {
       onCopy,
       onCancel,
       setBind,
+      removeLinks,
+      addLinks
     }
   }
 }

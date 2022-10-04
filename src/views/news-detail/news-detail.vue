@@ -219,7 +219,7 @@ export default {
         form.value.houses = data.houses;
         form.value.approaches = data.approaches;
         form.value.floors = data.floors;
-        form.value.links = data.links ? data.links.map((link => {return {name:link.UF_TITLE, link:link.UF_LINK}})): [],
+        form.value.links = data.links ? data.links.map((link => {return {id:link.ID,name:link.UF_TITLE, link:link.UF_LINK}})): [],
         form.value.button = data.UF_BTN_TEXT ? [{
           name: data.UF_BTN_TEXT,
           link: data.UF_BTN_LINK

@@ -9,6 +9,8 @@ import { computed } from "vue";
 import { GET_NEWS_BY_ID } from "../api/queries/getNewsByID";
 import { GET_NEWS_TYPES } from "../api/queries/getNewsTypes";
 import usePaginate from "../hooks/usePaginate";
+import { CREATE_NEWS_LINK } from "../api/mutations/createNewsLink";
+import { DELETE_NEWS_LINK } from "../api/mutations/deleteNewsLink";
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -72,6 +74,9 @@ export const useNewsStore = defineStore('news', () => {
     ]
   })
 
+  const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
+  const { mutate: deleteNewsLink, onDone: onDoneDeleteNewsLink, onError: onErrorDeleteNewsLink } = useMutation(DELETE_NEWS_LINK)
+
   return {
     news,
     loading,
@@ -89,7 +94,9 @@ export const useNewsStore = defineStore('news', () => {
     updateNews,
     onDoneUpdateNews,
     onErrorUpdateNews,
-    refetch
+    refetch,
+    createNewsLink,
+    deleteNewsLink
   }
 
 })

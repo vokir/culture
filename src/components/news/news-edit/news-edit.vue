@@ -23,7 +23,9 @@ export default {
     const {
       updateNews,
       onDoneUpdateNews,
-      onErrorUpdateNews
+      onErrorUpdateNews,
+      createNewsLink,
+      deleteNewsLink
     } = store
 
     onDoneUpdateNews(() => {
@@ -37,7 +39,23 @@ export default {
       toast.error(error.message)
     })
 
-    const update = (data) => {
+    const update = (data, addedLinks, removedLinks) => {
+      addedLinks.forEach((link) => {
+        const newLink = {
+          title: link.name,
+          link: link.link,
+          newsID: Number(id)
+        }
+        createNewsLink(newLink)
+      })
+
+      removedLinks.forEach((link) => {
+        const newLink = {
+          id:link.id
+        }
+        deleteNewsLink(newLink)
+      })
+
       const news = {
         id: Number(id),
         title: data.title,
@@ -63,7 +81,7 @@ export default {
     }
 
     return {
-      update
+      update,
     }
   }
 }
