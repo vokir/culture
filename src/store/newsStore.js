@@ -11,6 +11,8 @@ import { GET_NEWS_BY_ID } from "../api/queries/getNewsByID";
 import { GET_NEWS_TYPES } from "../api/queries/getNewsTypes";
 import computePhone from "../helpers/phoneFormat";
 import usePaginate from "../hooks/usePaginate";
+import { CREATE_NEWS_LINK } from "../api/mutations/createNewsLink";
+import { DELETE_NEWS_LINK } from "../api/mutations/deleteNewsLink";
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -55,7 +57,7 @@ export const useNewsStore = defineStore('news', () => {
       houses: data.houses,
       approaches: data.approaches,
       floors: data.floors,
-      links: data.links ? data.links.map((link => {return {name:link.UF_TITLE, link:link.UF_LINK}})): [],
+      links: data.links ? data.links.map((link => {return {id:link.ID,name:link.UF_TITLE, link:link.UF_LINK}})): [],
       button: data.UF_BTN_TEXT ? [{
         name: data.UF_BTN_TEXT,
         link: data.UF_BTN_LINK
@@ -129,6 +131,9 @@ export const useNewsStore = defineStore('news', () => {
   })
   const { mutate: updateNews, onDone: onDoneUpdateNews, onError: onErrorUpdateNews } = useMutation(UPDATE_NEWS)
 
+  const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
+  const { mutate: deleteNewsLink, onDone: onDoneDeleteNewsLink, onError: onErrorDeleteNewsLink } = useMutation(DELETE_NEWS_LINK)
+
   return {
     news,
     loading,
@@ -147,6 +152,8 @@ export const useNewsStore = defineStore('news', () => {
     onDoneUpdateNews,
     onErrorUpdateNews,
     refetch,
+    createNewsLink,
+    deleteNewsLink,
     createFormData,
     clearFormData
   }

@@ -12,7 +12,7 @@ import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
 import { useNewsStore } from "../../../store/newsStore";
-import { CREATE_NEWS_LINK } from "../../../api/mutations/createNewsLink";
+
 import NewsForm from "../news-form/news-form.vue";
 
 
@@ -27,9 +27,9 @@ export default {
     const {
       createNews,
       onDoneCreateNews,
-      onErrorCreateNews
+      onErrorCreateNews,
+      createNewsLink
     } = store
-    const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
 
     onDoneCreateNews(() => {
       toast.success('Новость успешно создана')
@@ -62,7 +62,7 @@ export default {
         priority: Object.keys(data.priority).length ? data.priority.ID : 1,
         documents: data.docs.map(el => el.ID),
       }
-      createNews(news).then((id) => {
+      createNews(news).then((result) => {
         let links = data.links
         let linksArr = []
 
@@ -70,7 +70,7 @@ export default {
           const newLink = {
             title:link.name,
             link:link.link,
-            newsID:id.data.createNews.ID
+            newsID:result.data.createNews.ID
           }
           let newID = createNewsLink(newLink)
           linksArr.push(newID)
