@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useRoute } from "vue-router";
 import { CREATE_NEWS } from "../api/mutations/createNews";
 import { DELETE_NEWS } from "../api/mutations/deleteNews";
 import { UPDATE_NEWS } from "../api/mutations/updateNews";
@@ -13,9 +14,9 @@ import usePaginate from "../hooks/usePaginate";
 // the first argument is a unique id of the store across your application
 export const useNewsStore = defineStore('news', () => {
   const { currentPage, perPage, updatePage } = usePaginate(1, 20)
+  const route = useRoute()
 
-
-  const { result, loading, variables } = useQuery(GET_NEWS, {
+  const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
     currentPage: currentPage.value,
     perPage: perPage.value,
   })
@@ -32,10 +33,10 @@ export const useNewsStore = defineStore('news', () => {
   })
 
   updatePage(() => {
-    variables.value = {
+    refetch({
       currentPage: currentPage.value,
       perPage: perPage.value
-    }
+    })
   })
 
   const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews } = useMutation(DELETE_NEWS, {
@@ -49,8 +50,27 @@ export const useNewsStore = defineStore('news', () => {
       }
     ]
   })
-  const { mutate: createNews, onDone: onDoneCreateNews, onError: onErrorCreateNews } = useMutation(CREATE_NEWS)
-  const { mutate: updateNews, onDone: onDoneUpdateNews, onError: onErrorUpdateNews } = useMutation(UPDATE_NEWS)
+  const { mutate: createNews, onDone: onDoneCreateNews, onError: onErrorCreateNews } = useMutation(CREATE_NEWS, {
+    refetchQueries: () => [
+      {
+        query: GET_NEWS,
+        variables: {
+          currentPage: currentPage.value,
+          perPage: perPage.value
+        }
+      }
+    ]
+  })
+  const { mutate: updateNews, onDone: onDoneUpdateNews, onError: onErrorUpdateNews } = useMutation(UPDATE_NEWS, {
+    refetchQueries: () => [
+      {
+        query: GET_NEWS_BY_ID,
+        variables: {
+          newsID: Number(route.params.id)
+        }
+      }
+    ]
+  })
 
   return {
     news,
@@ -62,7 +82,14 @@ export const useNewsStore = defineStore('news', () => {
     perPage,
     deleteNews,
     onDoneDeleteNews,
-    onErrorDeleteNews
+    onErrorDeleteNews,
+    createNews,
+    onDoneCreateNews,
+    onErrorCreateNews,
+    updateNews,
+    onDoneUpdateNews,
+    onErrorUpdateNews,
+    refetch
   }
 
 })

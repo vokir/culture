@@ -153,7 +153,6 @@
     </div>
     <div class="news-controls">
       <v-pagination
-        v-if="store.pageInfo.perPage < store.pageInfo.total"
         v-model="store.currentPage"
         :perPage="store.pageInfo.perPage"
         :total="store.pageInfo.total"
@@ -238,12 +237,6 @@ export default {
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
     const filter = ref([])
     const search = ref("")
-
-
-    onDoneDeleteNews((res) => {
-      store.currentPage = 1
-      store.variables.currentPage = 1
-    })
 
     onErrorDeleteNews(error => {
       let e = JSON.parse(JSON.stringify(error))

@@ -7,6 +7,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
+import { useNewsStore } from "../../../store/newsStore";
 import NewsForm from "../news-form/news-form.vue";
 
 
@@ -16,18 +17,12 @@ export default {
   setup() {
     const toast = useToast();
     const closeModalProp = ref(false)
-    const { mutate: createNews, onDone: onDoneCreateNews, onError: onErrorCreateNews } = useMutation(CREATE_NEWS, {
-      // update: (cache, { data: { createNews } }) => {
-      //   try {
-      //     const data = cache.readQuery({ query: GET_NEWS });
-      //     data.getNews.push(createNews);
-      //     cache.writeQuery({ query: GET_NEWS, data });
-      //   }
-      //   catch(error) {
-      //     console.error(error);
-      //   }
-      // }
-    })
+    const store = useNewsStore()
+    const {
+      createNews,
+      onDoneCreateNews,
+      onErrorCreateNews
+    } = store
 
     onDoneCreateNews(() => {
       toast.success('Новость успешно создана')

@@ -1,5 +1,5 @@
 <template>
-  <nav class="pagination">
+  <nav class="pagination" v-if="perPage < total">
     <ul class="pagination-list">
       <li class="pagination-list__item">
         <button class="pagination-list__button pagination-list__item--prev" @click="prevPage"
@@ -34,10 +34,12 @@ export default {
     },
     total: {
       type: Number,
+      default: 20,
       required: true
     },
     perPage: {
       type: Number,
+      default: 20,
       required: true
     },
   },
