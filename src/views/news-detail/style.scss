@@ -26,6 +26,7 @@
   display: grid;
   grid-template-columns: 1fr 406px;
   gap: 15px;
+  line-height: 150%;
   &__info {
     display: grid;
     gap: 20px;
@@ -40,10 +41,19 @@
     line-height: 150%;
     display: inline-block;
     padding: 2px 12px;
-    background-color: var(--red);
+    background-color: #edf4f9;
     color: var(--variable-19);
     border-radius: 5px;
     margin: 0 0 12px;
+    &--news{
+      background-color: var(--blue);
+    }
+    &--actions{
+      background-color: var(--red);
+    }
+    &--alerts{
+      background-color: #ff9500;
+    }
   }
   &__title {
     font-family: 'OpenSans', sans-serif;
@@ -61,11 +71,13 @@
   }
 
   &__subtitle {
+    font-size: 14px;
     color: var(--variable-7);
     margin: 0 0 11px;
   }
 
   &__text {
+    font-size: 14px;
     color: var(--variable-13);
     margin: 0 0 24px;
   }
@@ -76,6 +88,7 @@
   }
 
   &__name {
+    font-size: 14px;
     flex: 0 0 150px;
     position: relative;
     color: var(--variable-7);
@@ -108,6 +121,7 @@
   }
 
   &__value:not(.news__value-zhk){
+    font-size: 14px;
     display: block;
     margin-bottom: 4px;
     color: var(--variable-6);
@@ -115,6 +129,7 @@
   }
 
   &__edit {
+    font-size: 12px;
     text-transform: uppercase;
     display: flex;
     position: absolute;
@@ -140,6 +155,7 @@
   }
 
   &__label {
+    font-size: 14px;
     color: var(--variable-13);
     margin: 0 0 20px;
   }

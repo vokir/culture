@@ -3,7 +3,7 @@
     :label="label"
     @openModal="openModal"
     :tags="modelValue"
-    @removeTag="removeTag"
+    @removeTag="removeDocument"
   >
     <v-modal
       v-if="isOpen"
@@ -18,8 +18,9 @@
           class="docs-wrapper__input"
           v-model="filter"
           :search="search"
-          :placeholder="'Поиск'"
           :clearBtn="false"
+          :searchPlaceholderProp="'поиск'"
+          :filterPlaceholderProp="'Фильтр'"
           @setSearch="setSearch"
           @setFilter="setFilter"
           @clearFilter="clearFilter"
@@ -52,7 +53,7 @@
         <v-table
           v-else
           :rows="docs"
-          @click="setSelectedDocs"
+          @rowClick="setSelectedDocs"
         >
           <v-table-column
             id="UF_TITLE"
@@ -92,7 +93,10 @@
           </v-table-column>
         </v-table>
         <div class="docs-wrapper__actions">
-          <v-button @click="closeModal" variant="gray">Выбрать документ</v-button>
+          <v-button
+            @click="closeModal"
+            variant="gray"
+          >Выбрать документ</v-button>
           <v-button
             variant="link"
             @click="closeModal"
@@ -126,13 +130,13 @@ export default {
     label: String,
     tags: [Array, Object],
     maxTags: Number,
-    modelValue:{
+    modelValue: {
       type: Array,
-      required:false,
+      required: false,
       default: () => ([])
     }
   },
-  setup({modelValue},{emit}) {
+  setup({ modelValue }, { emit }) {
     const { isOpen, openModal, closeModal } = useModal()
     const { result: docsData, loading: docsLoading, refetch } = useQuery(GET_DOCUMENTS)
     const { result: docsTypes, loading: docsTypesLoading } = useQuery(GET_DOCUMENT_TYPES)
@@ -142,7 +146,7 @@ export default {
     const categorySelect = ref({})
     const search = ref("")
     const selectedDocs = ref(modelValue)
-    
+
     const filter = computed(() => {
 
       if (Object.keys(typeSelect.value).length || Object.keys(categorySelect.value).length) {
@@ -152,7 +156,7 @@ export default {
       return []
     })
     const docs = computed(() => {
-      return docsData.value.getDocuments.data.map(doc => ({ ...doc, selected: selectedDocs.value.find(sDoc => doc.file.ID === sDoc.file.ID) }))
+      return docsData.value.getDocuments.data.map(doc => ({ ...doc, selected: !!(selectedDocs.value.find(sDoc => doc.file.ID === sDoc.file.ID)) }))
     })
     const types = computed(() => {
       return docsTypes.value.getDocumentTypes
@@ -190,15 +194,16 @@ export default {
       }
     }
 
-    const setSelectedDocs = (e) => {
-      let data = JSON.parse(e.target.closest('.table__tbody-tr').dataset.row)
-      let isExists = selectedDocs.value.find(doc => doc.file.ID === data.file.ID) !== undefined
+    const setSelectedDocs = ({ event, row }) => {
+      let isExists = selectedDocs.value.find(doc => doc.file.ID === row.file.ID) !== undefined
       if (!(isExists)) {
-        selectedDocs.value.push(data)
+        selectedDocs.value.push({ ...row })
       }
       else {
-        selectedDocs.value = selectedDocs.value.filter(doc => doc.file.ID !== data.file.ID)
+        selectedDocs.value = selectedDocs.value.filter(doc => doc.file.ID !== row.file.ID)
       }
+      emit('update:modelValue', selectedDocs)
+
     }
 
     const removeDocument = (index) => {
@@ -224,11 +229,15 @@ export default {
       setFilter,
       selectedDocs,
       setSelectedDocs,
-      removeTag
+      removeDocument
     }
   },
 }
 </script>
+
+
+
+
 
 
 

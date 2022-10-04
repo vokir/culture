@@ -16,6 +16,7 @@ export const GET_DOCUMENTS = gql`
       search: $search
     ) {
       data {
+        ID
         UF_TITLE
         category {
           UF_TITLE

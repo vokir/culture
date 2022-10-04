@@ -52,6 +52,7 @@ export default {
         floors: data.floors.map(el => el.ID),
         premises: data.premises.map(el => el.ID),
         priority: Object.keys(data.priority).length ? data.priority.ID : 1,
+        documents: data.docs.map(el => el.ID),
       }
       updateNews(news)
     }

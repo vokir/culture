@@ -17,6 +17,11 @@ query news(
       ID
       UF_NAME
       UF_CREATED_AT
+      links{
+        ID
+        UF_TITLE
+        UF_LINK
+      }
       degree {
         ID,
         UF_TITLE

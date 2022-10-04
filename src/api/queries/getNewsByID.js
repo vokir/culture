@@ -10,6 +10,11 @@ query news($newsID: Int) {
     UF_TEXT
     UF_PHONE
     UF_CREATED_AT
+    links{
+      ID
+      UF_TITLE
+      UF_LINK
+    }
     degree {
       ID,
       UF_TITLE
@@ -25,9 +30,16 @@ query news($newsID: Int) {
     documents {
       ID
       UF_TITLE
+      category {
+        UF_TITLE
+      }
+      type {
+        UF_TITLE
+      }
       file {
-        ORIGINAL_NAME
         SRC
+        ORIGINAL_NAME
+        ID
         FILE_SIZE
       }
     }

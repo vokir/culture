@@ -54,7 +54,8 @@ export default {
       closeModal()
     }
     const removeTag = (index) => {
-      emit('update:modelValue', tags.value.splice(index, 1))
+      tags.value.splice(index, 1)
+      emit('update:modelValue', tags.value)
     }
 
     return {

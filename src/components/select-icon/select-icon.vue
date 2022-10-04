@@ -16,7 +16,8 @@
       <v-filter-and-search
         v-model="filter"
         class="select-image-filter"
-        :placeholder="'Фильтр + поиск'"
+        :searchPlaceholderProp="'поиск'"
+          :filterPlaceholderProp="'Фильтр'"
         :variant="'primary'"
         :filterList="imgCategories"
         @filterTable="filterTable"

@@ -1,5 +1,9 @@
 <template>
-  <news-form :closeModalProp="closeModalProp" @onSave="(event) => create(event, true)" @onCopy="create"/>
+  <news-form
+    :closeModalProp="closeModalProp"
+    @onSave="(event) => create(event, true)"
+    @onCopy="create"
+  />
 </template>
 
 <script>
@@ -7,6 +11,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
+import { CREATE_NEWS_LINK } from "../../../api/mutations/createNewsLink";
 import NewsForm from "../news-form/news-form.vue";
 
 
@@ -28,6 +33,7 @@ export default {
       //   }
       // }
     })
+    const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
 
     onDoneCreateNews(() => {
       toast.success('Новость успешно создана')
@@ -39,6 +45,8 @@ export default {
     })
 
     const create = (data, closeModal = false) => {
+
+
       const news = {
         title: data.title,
         icon: data.icon?.id ?? 1996,
@@ -57,8 +65,22 @@ export default {
         premises: data.premises.map(el => el.ID),
         contacts: data.contacts.map(contact => contact.ID),
         priority: Object.keys(data.priority).length ? data.priority.ID : 1,
+        documents: data.docs.map(el => el.ID),
       }
-      createNews(news).then(() => {
+      createNews(news).then((id) => {
+        let links = data.links
+        let linksArr = []
+
+        links.forEach((link) => {
+          const newLink = {
+            title:link.name,
+            link:link.link,
+            newsID:id.data.createNews.ID
+          }
+          let newID = createNewsLink(newLink)
+          linksArr.push(newID)
+        })
+
         if (closeModal) {
           closeModalProp.value = true
         }

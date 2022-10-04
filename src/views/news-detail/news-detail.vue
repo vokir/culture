@@ -1,7 +1,11 @@
 <template>
   <div class="container-content">
     <div class="container-header">
-      <v-button href="/master-system/news/" variant="transparent" transparent>
+      <v-button
+        href="/master-system/news/"
+        variant="transparent"
+        transparent
+      >
         <svg
           class="btn--transparent__svg"
           width="6"
@@ -22,28 +26,55 @@
       <div class="container-header__title">Новости</div>
     </div>
     <div class="news-detail">
-      <v-loader v-if="loading"/>
-      <div class="news-detail__info" v-else>
+      <v-loader v-if="loading" />
+      <div
+        class="news-detail__info"
+        v-else
+      >
         <v-card class="news-detail__top">
-          <p v-if="form.type && form.type.UF_TITLE" class="news-detail__type">
+          <p
+            v-if="form.type && form.type.UF_TITLE"
+            :class="['news-detail__type', {'news-detail__type--news':form.type.UF_TITLE === 'Новости','news-detail__type--actions':form.type.UF_TITLE === 'Акции','news-detail__type--alerts':form.type.UF_TITLE === 'Оповещения'}]"
+          >
             {{ form.type.UF_TITLE }}
           </p>
           <p class="news-detail__title">{{ form.title }}</p>
           <p class="news-detail__date">{{ computedDate(form.date) }}</p>
           <p class="news-detail__subtitle">{{ form.desc }}</p>
-          <p v-html="form.fullDesc" class="news-detail__text"></p>
+          <p
+            v-html="form.fullDesc"
+            class="news-detail__text"
+          ></p>
           <div class="news-detail__links">
-            <div class="news-detail__row" v-if="form.complex.length">
+            <div
+              class="news-detail__row"
+              v-if="form.complex.length"
+            >
               <span class="news-detail__name news-detail__name-zhk">ЖК</span>
               <span class="news-detail__value news-detail__value-zhk">
                 {{ computedZhk }}
               </span>
             </div>
-<!--            <div class="news-detail__row" v-if="form.complex.length">-->
-<!--              <span class="news-detail__name news-detail__name-links">Ссылки</span>-->
-<!--              <span class="news-detail__value"></span>-->
-<!--            </div>-->
-            <div class="news-detail__row" v-if="form.docs?.length">
+            <div
+              class="news-detail__row"
+              v-if="form.links.length"
+            >
+              <span class="news-detail__name news-detail__name-links">Ссылки</span>
+              <ul class="news-detail__list">
+                <a
+                  class="news-detail__value"
+                  v-for="link in form.links"
+                  :key="link.ID"
+                  :href="link.link"
+                >
+                  {{ link.name }}
+                </a>
+              </ul>
+            </div>
+            <div
+              class="news-detail__row"
+              v-if="form.docs?.length"
+            >
               <span class="news-detail__name news-detail__name-docs">Документы</span>
               <ul class="news-detail__list">
                 <a
@@ -57,16 +88,25 @@
                 </a>
               </ul>
             </div>
-            <div class="news-detail__row" v-if="form.phone">
+            <div
+              class="news-detail__row"
+              v-if="form.phone"
+            >
               <span class="news-detail__name news-detail__name-tel">Телефон</span>
-              <a href="tel:" class="news-detail__value">{{ form.phone }}</a>
+              <a
+                href="tel:"
+                class="news-detail__value"
+              >{{ form.phone }}</a>
             </div>
           </div>
-          <div class="news-detail__edit" @click="openModal">
+          <div
+            class="news-detail__edit"
+            @click="openModal"
+          >
             <svg
               width="11"
               height="21"
-              viewBox="0 0 11 12"
+              viewBox="0 0 11 10"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -81,7 +121,7 @@
             <span>Редактировать</span>
           </div>
         </v-card>
-        <v-card 
+        <v-card
           v-if="form.houses.length || form.approaches.length || form.floors.length || form.premises.length"
           class="news-detail__bottom"
         >
@@ -89,10 +129,18 @@
           <news-for-table :newsInfo="news" />
         </v-card>
       </div>
-      <news-preview v-model="form" hideIcon/>
+      <news-preview
+        v-model="form"
+        hideIcon
+      />
     </div>
   </div>
-  <news-edit v-if="isOpen" :formData="form" :id="route.params.id" @closeModal="closeModal"/>
+  <news-edit
+    v-if="isOpen"
+    :formData="form"
+    :id="route.params.id"
+    @closeModal="closeModal"
+  />
 </template>
 
 <script>
@@ -171,11 +219,11 @@ export default {
         form.value.houses = data.houses;
         form.value.approaches = data.approaches;
         form.value.floors = data.floors;
-        // form.value.links = newsInfo
+        form.value.links = data.links ? data.links.map((link => {return {name:link.UF_TITLE, link:link.UF_LINK}})): [],
         form.value.button = data.UF_BTN_TEXT ? [{
-            name: data.UF_BTN_TEXT,
-            link: data.UF_BTN_LINK
-          }]: []
+          name: data.UF_BTN_TEXT,
+          link: data.UF_BTN_LINK
+        }] : []
         // form.value.imgLandscape = data.imgLandscape?.SRC;
         // form.value.imgLibrary = data.imgLibrary?.SRC;
         form.value.priority = data.degree ?? {}
@@ -191,7 +239,7 @@ export default {
     const news = computed(() => result.value?.getNewsAt ?? []);
 
     const getComplexName = (name) => name.split(/[«»]/)[1];
-    const computedZhk = computed(()=>{
+    const computedZhk = computed(() => {
       let string = form.value.complex.UF_NAME
       if (form.value.houses?.length === 0) {
         string += " / Все";
@@ -199,7 +247,7 @@ export default {
       return string
     })
 
-    onMounted(()=>{
+    onMounted(() => {
       load();
     })
 
@@ -221,5 +269,7 @@ export default {
 
 };
 </script>
+
+
 
 <style lang="scss" src="./style.scss" scoped />
