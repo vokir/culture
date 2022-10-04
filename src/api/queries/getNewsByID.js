@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GET_NEWS_BY_ID = gql`
-query news($newsID: Int) {
+query getNewsAt($newsID: Int) {
   getNewsAt(id: $newsID) {
     ID
     UF_NAME

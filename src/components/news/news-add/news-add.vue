@@ -1,7 +1,7 @@
 <template>
   <news-form
     :closeModalProp="closeModalProp"
-    @onSave="(event) => create(event, true)"
+    @onSave="create($event, true)"
     @onCopy="create"
   />
 </template>
@@ -11,6 +11,7 @@ import { useMutation } from "@vue/apollo-composable";
 import { ref } from "vue";
 import { useToast } from "vue-toastification";
 import { CREATE_NEWS } from "../../../api/mutations/createNews";
+import { useNewsStore } from "../../../store/newsStore";
 import { CREATE_NEWS_LINK } from "../../../api/mutations/createNewsLink";
 import NewsForm from "../news-form/news-form.vue";
 
@@ -21,18 +22,12 @@ export default {
   setup() {
     const toast = useToast();
     const closeModalProp = ref(false)
-    const { mutate: createNews, onDone: onDoneCreateNews, onError: onErrorCreateNews } = useMutation(CREATE_NEWS, {
-      // update: (cache, { data: { createNews } }) => {
-      //   try {
-      //     const data = cache.readQuery({ query: GET_NEWS });
-      //     data.getNews.push(createNews);
-      //     cache.writeQuery({ query: GET_NEWS, data });
-      //   }
-      //   catch(error) {
-      //     console.error(error);
-      //   }
-      // }
-    })
+    const store = useNewsStore()
+    const {
+      createNews,
+      onDoneCreateNews,
+      onErrorCreateNews
+    } = store
     const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
 
     onDoneCreateNews(() => {

@@ -22,7 +22,7 @@
       <div class="container-header__search">
         <v-filter-and-search
           v-model="filter"
-          :filterList="newsTypes"
+          :filterList="store.newsTypes"
           :searchPlaceholderProp="'поиск'"
           :filterPlaceholderProp="'Фильтр'"
           :variant="'transparent'"
@@ -40,17 +40,9 @@
       </div>
     </div>
     <div class="news">
-      <v-loader v-if="loading" />
-      <v-table
-        v-else
-        :class="{'news--action': selected.length}"
-        :rows="news"
-      >
-        <v-table-column
-          id="choice"
-          class="table__thead-th-check"
-          title="check"
-        >
+      <v-loader v-if="store.loading"/>
+      <v-table v-else :class="{'news--action': selected.length}" :rows="store.news">
+        <v-table-column id="choice" class="table__thead-th-check" title="check">
           <template #header>
             <v-checkbox v-model="selectAll" />
           </template>
@@ -87,32 +79,27 @@
               placement="right-start"
               :skidding="-10"
               :distance="10"
+              popperClass="settings-popup"
             >
-              <svg
-                fill="none"
-                height="10"
-                viewBox="0 0 14 10"
-                width="14"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clip-rule="evenodd"
-                  d="M14 0.0195312V2.00954H0V0.0195312H14ZM7.425 3.99953H14V5.98953H0V3.99953H7.425ZM14 7.98953V9.97954H0V7.98953H14Z"
-                  fill="#9E9E9E"
-                  fill-rule="evenodd"
-                />
-              </svg>
-
+              <div class="settings-button">
+                <svg fill="none" height="10" viewBox="0 0 14 10" width="14" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    clip-rule="evenodd" d="M14 0.0195312V2.00954H0V0.0195312H14ZM7.425 3.99953H14V5.98953H0V3.99953H7.425ZM14 7.98953V9.97954H0V7.98953H14Z"
+                    fill="#9E9E9E"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </div>
               <template #popper>
                 <div class="settings">
                   <ul class="settings__list">
-                    <li class="settings__item">
+                    <li v-close-popper class="settings__item">
                       Редактировать
                     </li>
-                    <li class="settings__item">
+                    <li v-close-popper class="settings__item">
                       Копировать
                     </li>
-                    <li class="settings__item">
+                    <li v-close-popper class="settings__item" @click="deleteSingleNews(row.ID)">
                       Удалить
                     </li>
                   </ul>
@@ -261,24 +248,20 @@
             >Отмена</v-button>
           </div>
           <div class="table-action__selected">
-            Отмечено: <span>{{ selected.length }} / {{ news.length }}</span>
+            Отмечено: <span>{{ selected.length }} / {{ store.news.length }}</span>
           </div>
         </div>
       </transition>
     </div>
     <div class="news-controls">
       <v-pagination
-        v-if="pageInfo.perPage < pageInfo.total"
-        v-model="currentPage"
-        :perPage="pageInfo.perPage"
-        :total="pageInfo.total"
+        v-model="store.currentPage"
+        :perPage="store.pageInfo.perPage"
+        :total="store.pageInfo.total"
       />
       <div class="news-controls__page">
         На странице:
-        <v-select
-          v-model="perPage"
-          :options="[5, 10, 20, 50, 100]"
-        />
+        <v-select v-model="store.perPage" :options="[5, 10, 20, 50, 100]"/>
       </div>
     </div>
 
@@ -292,7 +275,7 @@
 <script>
 import { useMutation, useQuery, useSubscription } from "@vue/apollo-composable";
 import dayjs from "dayjs";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import { DELETE_NEWS } from "../../api/mutations/deleteNews";
@@ -306,6 +289,7 @@ import VBadge from "../../components/ui/v-badge/v-badge.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
 import VCropImage from "../../components/ui/v-crop-image/v-crop-image.vue";
+import VFilterAndSearch from "../../components/ui/v-filter-and-search/v-filter-and-search.vue";
 import VLoader from "../../components/ui/v-loader/v-loader.vue";
 import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VPagination from "../../components/ui/v-pagination/v-pagination.vue";
@@ -316,7 +300,7 @@ import VTable from "../../components/ui/v-table/v-table.vue";
 import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
-import VFilterAndSearch from "../../components/ui/v-filter-and-search/v-filter-and-search.vue";
+import { useNewsStore } from "../../store/newsStore";
 
 export default {
   name: 'news',
@@ -338,62 +322,26 @@ export default {
     VLoader,
     VFilterAndSearch,
   },
-  props: {
-    newsFilterOpened: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-  },
   setup() {
     const priorityMap = {
       1: 'gray-dark',
       2: 'warning',
       3: 'danger',
     }
+    const store = useNewsStore()
+    const {
+      deleteNews,
+      onDoneDeleteNews,
+      onErrorDeleteNews
+    } = store
 
     const toast = useToast();
     const route = useRoute();
     const selected = ref([]);
     const { isOpen, openModal, closeModal } = useModal();
     const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
-    const { isOpen: filterPopup, openModal: openFilterPopup, closeModal: closeFilterPopup } = useModal();
-    const { currentPage, perPage, updatePage } = usePaginate(1, 20)
     const filter = ref([])
     const search = ref("")
-
-    const { result, loading, variables } = useSubscription(GET_NEWS, {
-      currentPage: currentPage.value,
-      perPage: perPage.value,
-    })
-
-    const news = computed(() => {
-      return result.value?.getNews.data ?? [];
-    });
-
-    const pageInfo = computed(() => {
-      return result.value?.getNews.paginatorInfo ?? []
-    })
-
-    const { result: resultTypes } = useQuery(GET_NEWS_TYPES)
-
-    const newsTypes = computed(() => {
-      return resultTypes.value?.getNewsTypes ?? [];
-    });
-
-    updatePage(() => {
-      variables.value = {
-        currentPage: currentPage.value,
-        perPage: perPage.value
-      }
-    })
-
-    const { mutate: deleteNews, onDone: onDoneDeleteNews, onError: onErrorDeleteNews, } = useMutation(DELETE_NEWS)
-
-    onDoneDeleteNews(() => {
-      currentPage.value = 1
-      variables.value.currentPage = 1
-    })
 
     onErrorDeleteNews(error => {
       let e = JSON.parse(JSON.stringify(error))
@@ -402,19 +350,23 @@ export default {
 
     const selectAll = computed({
       get() {
-        return selected.value.length === result.value.getNews.data.length;
+        return selected.value.length === store.news.length;
       },
       set(value) {
         selected.value = [];
 
         if (value) {
-          result.value.getNews.data.forEach((select) => {
+          store.news.forEach((select) => {
             selected.value.push(select);
           });
         }
       },
     });
-
+    const deleteSingleNews = (id) => {
+      deleteNews({ id }).then(() => {
+        toast.success('Новость удалена')
+      })
+    }
     const deleteNewsArray = () => {
       if (!selected.value.length) return
       let promises = []
@@ -433,9 +385,8 @@ export default {
     }
 
     const filterTable = () => {
-      variables.value.searchStr = search.value
-      let filterArr = filter.value.map(option => option.UF_TITLE)
-      variables.value.filterStr = filterArr
+      store.variables.searchStr = search.value
+      store.variables.filterStr = filter.value.map(option => option.UF_TITLE)
     }
 
     const clearFilter = () => {
@@ -471,9 +422,6 @@ export default {
       isOpen,
       openModal,
       closeModal,
-      news,
-      loading,
-      variables,
       dayjs,
       selectAll,
       selected,
@@ -483,18 +431,13 @@ export default {
       closeContactsPopup,
       filterTable,
       deleteNewsArray,
-      pageInfo,
-      currentPage,
-      perPage,
-      newsTypes,
-      filterPopup,
-      openFilterPopup,
-      closeFilterPopup,
+      store,
       priorityMap,
       setFilter,
       filter,
       clearFilter,
-      setSearch
+      setSearch,
+      deleteSingleNews
     };
   },
 };

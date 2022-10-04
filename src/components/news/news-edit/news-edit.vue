@@ -3,9 +3,8 @@
 </template>
 
 <script>
-import { useMutation } from "@vue/apollo-composable";
 import { useToast } from "vue-toastification";
-import { UPDATE_NEWS } from "../../../api/mutations/updateNews";
+import { useNewsStore } from "../../../store/newsStore";
 import NewsForm from "../news-form/news-form.vue";
 export default {
   name: "news-edit",
@@ -20,11 +19,17 @@ export default {
   setup ({ id }, { emit }) {
     const toast = useToast();
 
-    const { mutate: updateNews, onDone: onDoneUpdateNews, onError: onErrorUpdateNews } = useMutation(UPDATE_NEWS)
+    const store = useNewsStore()
+    const {
+      updateNews,
+      onDoneUpdateNews,
+      onErrorUpdateNews
+    } = store
 
     onDoneUpdateNews(() => {
       toast.success('Новость успешно обновлена')
       emit('onDone')
+      store.refetch()
     })
 
     onErrorUpdateNews(response => {
@@ -63,7 +68,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>
