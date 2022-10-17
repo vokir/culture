@@ -1,5 +1,5 @@
 <template>
-  <div :class="['select']">
+  <div :class="['select']" ref="selectRef">
     <div
       v-if="labelSelect"
       class="select__label"
@@ -137,7 +137,6 @@
 import { ref, computed, onMounted } from 'vue';
 import useModal from '../../../hooks/useModal';
 import useClickOutside from '../../../hooks/useClickOutside';
-// import useClickOutsideSelect from '../../../hooks/useClickOutsideSelect';
 
 export default {
   name: "v-multi-select",
@@ -172,6 +171,7 @@ export default {
     const selectedList = ref([])
     const select = ref()
     const searchStr = ref("")
+		const selectRef = ref()
 
     const optionsFiltered = computed(() => {
       if(props.variant === 'checkbox'){
@@ -203,11 +203,7 @@ export default {
       }
     }
 
-    // useClickOutsideSelect(select, ()=>{
-		// 	closeModal()
-		// })
-
-		useClickOutside(select, ()=>{
+		useClickOutside(selectRef, ()=>{
 			closeModal()
 		})
 
@@ -240,6 +236,7 @@ export default {
       optionsFiltered,
       searchStr,
 			toggleOption,
+			selectRef
     }
   },
 };
