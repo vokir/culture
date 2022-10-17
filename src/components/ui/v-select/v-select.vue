@@ -15,7 +15,7 @@
       </div>
     </div>
     <ul class="select-wrapper__list" v-if="isOpen" @mousedown.prevent="activate">
-      <li class="select-wrapper__item" v-for="(option, index) in options" @click="select(option)" :key="index">
+      <li class="select-wrapper__item" v-for="(option, index) in options" @click="select(option)" @click.stop="$emit('toggleOption')" :key="index">
         <template v-if="label">
           {{ option[label] }}
         </template>
@@ -32,7 +32,7 @@ import { onMounted, ref } from "vue";
 
 export default {
   name: "v-select",
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", 'toggleOption'],
   inheritAttrs: false,
   props: {
     options: [Array, Object],
@@ -46,7 +46,6 @@ export default {
       type: null,
       default: () => ([]),
     },
-    optionAll: Boolean
   },
   setup({ label, modelValue }, { emit }) {
     const selectedValue = ref([]);
@@ -67,12 +66,13 @@ export default {
 
     const select = (option) => {
       let selected;
-      if (label) {
+      if (label && option) {
         selected = option[label];
       } else {
         selected = option;
       }
       selectedValue.value = selected;
+			deactivate()
       emit("update:modelValue", option);
     };
 

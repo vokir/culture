@@ -5,13 +5,21 @@ query news(
   $currentPage: Int! = 1
   $perPage: Int! = 20
   $searchStr: String = ""
-  $filterStr: [String] = []
+  $title: [String] = []
+  $degrees: [String] = []
+  $types: [String] = []
+  $complexes: [String] = []
 ) {
   getNews(
     search: $searchStr
     currentPage: $currentPage
     perPage: $perPage
-    filterInn: { column: "UF_TITLE", value: $filterStr, relation: "types" }
+    filterInn: [
+      { column: "UF_NAME", value: $title }
+      { column: "ID", value: $degrees, relation: "degree" }
+      { column: "ID", value: $complexes, relation: "complexes" }
+      { column: "ID", value: $types, relation: "types" }
+    ]
   ) {
     data {
       ID

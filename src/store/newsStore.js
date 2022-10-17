@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@vue/apollo-composable";
+import { useMutation, useQuery, useLazyQuery } from "@vue/apollo-composable";
 import dayjs from "dayjs";
 import { useRoute } from "vue-router";
 import { CREATE_NEWS } from "../api/mutations/createNews";
@@ -13,6 +13,8 @@ import computePhone from "../helpers/phoneFormat";
 import usePaginate from "../hooks/usePaginate";
 import { CREATE_NEWS_LINK } from "../api/mutations/createNewsLink";
 import { DELETE_NEWS_LINK } from "../api/mutations/deleteNewsLink";
+import { GET_NEWS_DEGREES } from "../api/queries/getNewsDegrees";
+import { GET_COMPLEXES } from "../api/queries/getComplexes";
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -24,7 +26,10 @@ export const useNewsStore = defineStore('news', () => {
     currentPage: currentPage.value,
     perPage: perPage.value,
   })
-  const { result: resultTypes } = useQuery(GET_NEWS_TYPES)
+
+  const { result: resultTypes, loading: loadingTypes, load: loadTypes } = useLazyQuery(GET_NEWS_TYPES)
+  const { result: resultDegrees, loading: loadingDegrees, load: loadDegrees } = useLazyQuery(GET_NEWS_DEGREES)
+  const { result: resultComplexes, loading: loadingComplexes, load: loadComplexes } = useLazyQuery(GET_COMPLEXES)
 
   const newsTypes = computed(() => {
     return resultTypes.value?.getNewsTypes ?? [];
@@ -35,6 +40,12 @@ export const useNewsStore = defineStore('news', () => {
   const pageInfo = computed(() => {
     return result.value?.getNews.paginatorInfo ?? []
   })
+  const newsDegrees = computed(() => {
+    return resultDegrees.value?.getNewsDegrees ?? [];
+  });
+  const complexes = computed(() => {
+    return resultComplexes.value?.getComplexes ?? [];
+  });
 
   updatePage(() => {
     refetch({
@@ -133,7 +144,6 @@ export const useNewsStore = defineStore('news', () => {
 
   const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
   const { mutate: deleteNewsLink, onDone: onDoneDeleteNewsLink, onError: onErrorDeleteNewsLink } = useMutation(DELETE_NEWS_LINK)
-
   return {
     news,
     loading,
@@ -155,7 +165,12 @@ export const useNewsStore = defineStore('news', () => {
     createNewsLink,
     deleteNewsLink,
     createFormData,
-    clearFormData
+    clearFormData,
+    newsDegrees,
+    complexes,
+    loadTypes,
+    loadDegrees,
+    loadComplexes,
   }
 
 })

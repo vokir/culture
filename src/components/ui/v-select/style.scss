@@ -12,6 +12,9 @@
     .select-wrapper__toggle {
       transform: rotate(180deg);
     }
+		.select-wrapper__select{
+			border-color: var(--input-border-hover);
+		}
   }
 
   &__label {
@@ -25,6 +28,7 @@
     font-size: 14px;
     line-height: 21px;
     user-select: none;
+		cursor: pointer;
   }
 
   &__select {
@@ -34,16 +38,19 @@
     border: 1px solid var(--variable-5);
     border-radius: 2px;
     overflow: hidden;
-
+		transition: all .3s ease-in-out;
+		cursor: pointer;
     &-input {
       position: absolute;
       opacity: 0;
       top: 10px;
       width: calc(100% - 20px);
+			cursor: pointer;
     }
 
     &:focus {
       outline: none;
+			border-color: var(--input-border-hover);
     }
   }
 
@@ -71,7 +78,7 @@
     margin: 0;
     padding: 10px 0;
     list-style-type: none;
-    top: 74px;
+    top: 100%;
   }
 
   &__item {

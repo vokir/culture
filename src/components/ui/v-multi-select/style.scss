@@ -59,6 +59,15 @@
     color: var(--variable-15);
     flex-wrap: wrap;
     gap: 5px;
+    justify-content: space-between;
+		transition: all .3s ease-in-out;
+		cursor: pointer;
+		&--active{
+			border-color: var(--input-border-hover);
+		}
+    &-content{
+      display: flex;
+    }
   }
   &__filter{
     width: 100%;
@@ -99,6 +108,9 @@
       color:#fff;
       background-color: var(--variable-12);;
     }
+  }
+  &__checkbox{
+    margin-right: 5px;
   }
   &__container{
     position: absolute;
