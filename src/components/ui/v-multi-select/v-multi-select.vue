@@ -1,17 +1,17 @@
 <template>
-  <div :class="['select']" ref="selectRef">
+  <div :class="['select']" >
     <div
       v-if="labelSelect"
       class="select__label"
     >
       {{ labelSelect }}
     </div>
-    <div :class="['select__select', {'select__select--active': isOpened}]" v-on="variant === 'checkbox' ? {click: ()=> popupListener()} : {}">
+    <div ref="selectRef" :class="['select__select', {'select__select--active': isOpened}]" v-on="variant === 'checkbox' ? {click: ()=> popupListener()} : {}">
       <div class="select__select-content">
         <div
           class="select__cell"
-          v-if="selectedList.length"
-          v-for="item in selectedList"
+          v-if="modelValue.length"
+          v-for="item in modelValue"
         >
           <div class="select__text">{{item.name}}</div>
           <button
@@ -78,8 +78,7 @@
             <div class="select-popup">
               <ul class="select__list">
                 <li
-                  class="select__item"
-                  :class="{active:selectedList.includes(option.UF_TITLE)}"
+                  :class="['select__item',{'active':selectedList.includes(option.UF_TITLE)}]"
                   v-for="option in optionsFiltered"
                   :data-id="option.ID"
                   @click.stop="addOption(option)"

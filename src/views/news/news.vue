@@ -20,54 +20,7 @@
 				</div>
 			</div>
 			<div class="container-header__search">
-				<v-filter-and-search
-					v-model="filterCells"
-					:fields="computedFields"
-					:filterList="store.newsTypes"
-					:searchPlaceholderProp="'поиск'"
-					:filterPlaceholderProp="'Фильтр'"
-					:variant="'transparent'"
-					@setFilter="setFilter"
-					@filterTable="filterTable"
-					@setSearch="setSearch"
-					@clearFilter="clearFilter"
-				>
-				</v-filter-and-search>
-				<!-- <v-filter-and-search
-          class="docs-wrapper__input"
-          v-model="filter"
-          :search="search"
-          :clearBtn="false"
-          :searchPlaceholderProp="'поиск'"
-          :filterPlaceholderProp="'Фильтр'"
-          @setSearch="setSearch"
-          @setFilter="setFilter"
-          @clearFilter="clearFilter"
-          @filterTable="filterTable"
-        >
-          <div class="search-right__item">
-            <v-select
-              :optionAll="true"
-              v-model="typeSelect"
-              name="type"
-              :options="types"
-              label="UF_TITLE"
-              labelSelect="Тип документа"
-            />
-          </div>
-
-          <div class="search-right__item">
-            <v-select
-              :optionAll="true"
-              v-model="categorySelect"
-              name="type"
-              :options="categories"
-              label="UF_TITLE"
-              labelSelect="Категория документа"
-            />
-          </div>
-
-        </v-filter-and-search> -->
+				<news-filter :fields="fields" @filterTable="filterTable" @clearFilter="clearFilter" @selectFilter="selectFilter"></news-filter>
 			</div>
 			<div class="container-header__action">
 				<v-button
@@ -353,7 +306,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import 'dayjs/locale/ru'
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRef } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
@@ -365,7 +318,6 @@ import VBadge from "../../components/ui/v-badge/v-badge.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
 import VCropImage from "../../components/ui/v-crop-image/v-crop-image.vue";
-import VFilterAndSearch from "../../components/ui/v-filter-and-search/v-filter-and-search.vue";
 import VLoader from "../../components/ui/v-loader/v-loader.vue";
 import VModal from "../../components/ui/v-modal/v-modal.vue";
 import VPagination from "../../components/ui/v-pagination/v-pagination.vue";
@@ -376,6 +328,7 @@ import VTable from "../../components/ui/v-table/v-table.vue";
 import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
 import { useNewsStore } from "../../store/newsStore";
+import NewsFilter from '../../components/news/news-filter/news-filter.vue'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(IsoWeek)
@@ -400,7 +353,7 @@ export default {
 		BindRowsColumn,
 		NewsSearch,
 		VLoader,
-		VFilterAndSearch,
+		NewsFilter
 	},
 	setup() {
 		const priorityMap = {
@@ -422,8 +375,6 @@ export default {
 		const { isOpen, openModal, closeModal } = useModal();
 		const { isOpen: editModal, openModal: openEditModal, closeModal: closeEditModal } = useModal();
 		const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
-		// const filter = ref([])
-		const search = ref("")
 		const formData = ref({
 			title: '',
 			icon: {
@@ -450,165 +401,57 @@ export default {
 			contacts: []
 		})
 
-		const fields = ref([{
-			name: 'id',
-			checked: false,
-			label: 'ID',
-			type: 'string',
-			value: null
-		}, {
-			name: 'name',
-			checked: true,
-			label: 'Название новости',
-			type: 'string',
-			value: null
-		}, {
-			name: 'activity',
-			checked: false,
-			label: 'Активность',
-			type: 'select',
-			value: null
-		}, {
-			name: 'system',
-			checked: false,
-			label: 'Внешняя система',
-			type: 'select',
-			value: null
-		}, {
-			name: 'date',
-			checked: true,
-			label: 'Дата создания',
-			type: 'date',
-			value: null
-		}, {
-			name: 'type',
-			checked: true,
-			label: 'Тип новости',
-			type: 'multi-select',
-			load: store.loadTypes,
-			result: computed(() => store.newsTypes),
-			value: [],
-		}, {
-			name: 'complex',
-			checked: true,
-			label: 'ЖК',
-			type: 'multi-select',
-			load: store.loadComplexes,
-			result: computed(() => store.complexes),
-			value: [],
-		}, {
-			name: 'house',
-			checked: false,
-			label: 'Дом',
-			type: 'string',
-			value: null
-		}, {
-			name: 'approache',
-			checked: false,
-			label: 'Подъезд',
-			type: 'string',
-			value: null
-		}, {
-			name: 'floor',
-			checked: false,
-			label: 'Этаж',
-			type: 'string',
-			value: null
-		}, {
-			name: 'premise',
-			checked: false,
-			label: 'Помещение',
-			type: 'string',
-			value: null
-		}, {
-			name: 'contacts',
-			checked: false,
-			label: 'Контакты',
-			type: 'select',
-			value: null
-		}, {
-			name: 'title',
-			checked: false,
-			label: 'Заголовок новости',
-			type: 'string',
-			value: null
-		}, {
-			name: 'announcement',
-			checked: false,
-			label: 'Текст анонса',
-			type: 'string',
-			value: null
-		}, {
-			name: 'text',
-			checked: false,
-			label: 'Текст новости',
-			type: 'string',
-			value: null
-		}, {
-			name: 'icons',
-			checked: false,
-			label: 'Иконки',
-			type: 'string',
-			value: null
-		}, {
-			name: 'gallery',
-			checked: false,
-			label: 'Галерея',
-			type: 'string',
-			value: null
-		}, {
-			name: 'documents',
-			checked: false,
-			label: 'Документы',
-			type: 'string',
-			value: null
-		}, {
-			name: 'phone',
-			checked: false,
-			label: 'Телефон',
-			type: 'string',
-			value: null
-		}, {
-			name: 'btn-text',
-			checked: false,
-			label: 'Подпись кнопки',
-			type: 'string',
-			value: null
-		}, {
-			name: 'btn-link',
-			checked: false,
-			label: 'Ссылка кнопки',
-			type: 'string',
-			value: null
-		}, {
-			name: 'img-albom',
-			checked: false,
-			label: 'Изображение (альбомная ориентация)',
-			type: 'string',
-			value: null
-		}, {
-			name: 'img-book',
-			checked: false,
-			label: 'Изображение (книжная ориентация)',
-			type: 'string',
-			value: null
-		}, {
-			name: 'degree',
-			checked: true,
-			label: 'Степень важности',
-			type: 'select',
-			load: store.loadDegrees,
-			result: computed(() => store.newsDegrees),
-			value: null,
+		onErrorDeleteNews(error => {
+			let e = JSON.parse(JSON.stringify(error))
+			toast.error(e.message)
+		})
+
+		const selectAll = computed({
+			get() {
+				return selected.value.length === store.news.length;
+			},
+			set(value) {
+				selected.value = [];
+
+				if (value) {
+					store.news.forEach((select) => {
+						selected.value.push(select);
+					});
+				}
+			},
+		});
+		const deleteSingleNews = (id) => {
+			deleteNews({ id }).then(() => {
+				toast.success('Новость удалена')
+			})
 		}
-		])
+		const deleteNewsArray = () => {
+			if (!selected.value.length) return
+			let promises = []
+			selected.value.forEach(news => {
+				promises.push(new Promise((resolve) => {
+					deleteNews({ id: news.ID }).then(() => {
+						resolve()
+					})
+				}))
+			})
 
-		// const spreadDefaultFields = []
+			Promise.all(promises).then(() => {
+				toast.success('Новости удалены')
+				selected.value = []
+			})
+		}
 
-		// Object.assign(spreadDefaultFields, [...defaultFields])
+		const copyNews = (row) => {
+			formData.value = createFormData(row)
+			openModal()
+		}
+		const editNews = (row) => {
+			formData.value = createFormData(row)
+			openEditModal()
+		}
 
-		// const fields = ref(defaultFields)
-
+		//Потом удалить, т.к. фильтр должен делать бэк
 		const computedNews = computed(() => {
 			let dateValue = fields.value[4].value
 			
@@ -688,104 +531,9 @@ export default {
 			})
 		})
 
-		const computedFields = computed(() => {
-			return fields.value.map(field => {
-				if (field.checked && field.load) {
-					field.load()
-					field.computedResult = field.result.map(obj => { return { ...obj, name: obj.UF_NAME || obj.UF_TITLE } })
-				}
-				return field
-			})
-			// .map(field => {return ({...field, result:field.result?.map(row => {return {...row, name:row.UF_NAME || row.UF_TITLE}})})})
-		})
-
-		const filterCells = computed(() => {
-			let cells = computedFields.value.filter(field => field.value)
-			// .map(field => {return {name:field.label, value: field.value}})
-			return cells
-		})
-
-		onErrorDeleteNews(error => {
-			let e = JSON.parse(JSON.stringify(error))
-			toast.error(e.message)
-		})
-
-		const selectAll = computed({
-			get() {
-				return selected.value.length === store.news.length;
-			},
-			set(value) {
-				selected.value = [];
-
-				if (value) {
-					store.news.forEach((select) => {
-						selected.value.push(select);
-					});
-				}
-			},
-		});
-		const deleteSingleNews = (id) => {
-			deleteNews({ id }).then(() => {
-				toast.success('Новость удалена')
-			})
-		}
-		const deleteNewsArray = () => {
-			if (!selected.value.length) return
-			let promises = []
-			selected.value.forEach(news => {
-				promises.push(new Promise((resolve) => {
-					deleteNews({ id: news.ID }).then(() => {
-						resolve()
-					})
-				}))
-			})
-
-			Promise.all(promises).then(() => {
-				toast.success('Новости удалены')
-				selected.value = []
-			})
-		}
-
-		const copyNews = (row) => {
-			formData.value = createFormData(row)
-			openModal()
-		}
-		const editNews = (row) => {
-			formData.value = createFormData(row)
-			openEditModal()
-		}
-
-		const filterTable = () => {
-			store.variables.searchStr = search.value
-
-			store.variables.title = computedFields.value
-				.filter(field => field.name === 'name' && field.value)
-				.map(field => field.value)
-
-			store.variables.types = computedFields.value
-				.filter(field => field.name === 'type' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			store.variables.degrees = computedFields.value
-				.filter(field => field.name === 'degree' && field.value)
-				.map(field => field.value.ID.toString())
-
-			store.variables.complexes = computedFields.value
-				.filter(field => field.name === 'complex' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			console.log(store.variables);	
-		}
-
-
-		const clearFilter = () => {
-			search.value = ""
-			store.variables = {
-				currentPage: store.variables.currentPage,
-				perPage: store.variables.perPage,
-			}
-
-			fields.value = [{
+		//Тоже удалить, должны приходить с бэка
+		const initialState = () => {
+			return [{
 				name: 'id',
 				checked: false,
 				label: 'ID',
@@ -801,7 +549,7 @@ export default {
 				name: 'activity',
 				checked: false,
 				label: 'Активность',
-				type: 'select',
+				type: 'string',
 				value: null
 			}, {
 				name: 'system',
@@ -811,7 +559,7 @@ export default {
 				value: null
 			}, {
 				name: 'date',
-				checked: true,
+				checked: false,
 				label: 'Дата создания',
 				type: 'date',
 				value: null
@@ -822,39 +570,47 @@ export default {
 				type: 'multi-select',
 				load: store.loadTypes,
 				result: computed(() => store.newsTypes),
-				value: null,
+				value: [],
 			}, {
 				name: 'complex',
 				checked: true,
 				label: 'ЖК',
-				type: 'select',
+				type: 'multi-select',
 				load: store.loadComplexes,
 				result: computed(() => store.complexes),
-				value: null,
+				value: [],
 			}, {
 				name: 'house',
 				checked: false,
 				label: 'Дом',
-				type: 'string',
-				value: null
+				type: 'multi-select',
+				load: store.loadHouses,
+				result: computed(() => store.houses),
+				value: []
 			}, {
 				name: 'approache',
 				checked: false,
 				label: 'Подъезд',
-				type: 'string',
-				value: null
+				type: 'multi-select',
+				load: store.loadApproaches,
+				result: computed(() => store.approaches),
+				value: []
 			}, {
 				name: 'floor',
 				checked: false,
 				label: 'Этаж',
-				type: 'string',
-				value: null
+				type: 'multi-select',
+				load: store.loadFloors,
+				result: computed(() => store.floors),
+				value: []
 			}, {
 				name: 'premise',
 				checked: false,
 				label: 'Помещение',
-				type: 'string',
-				value: null
+				type: 'multi-select',
+				load: store.loadPremises,
+				result: computed(() => store.premises),
+				value: []
 			}, {
 				name: 'contacts',
 				checked: false,
@@ -916,7 +672,7 @@ export default {
 				type: 'string',
 				value: null
 			}, {
-				name: 'img-albom',
+				name: 'img-album',
 				checked: false,
 				label: 'Изображение (альбомная ориентация)',
 				type: 'string',
@@ -937,45 +693,135 @@ export default {
 				value: null,
 			}
 			]
-			filterTable
 		}
 
-		const setSearch = (str) => {
-			search.value = str
+		const fields = ref(initialState())
+
+
+		const filterTable = (search, fields) => {
+
+			store.variables.searchStr = search
+
+			// store.variables.id = fields.value
+			// .filter(field => field.name === 'id' && field.value?.length)
+			// .map(field => field.value.ID.toString())
+
+			// store.variables.name = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.active = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.system = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.date = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.types = fields.value
+				.filter(field => field.name === 'type' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.complexes = fields.value
+				.filter(field => field.name === 'complex' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.houses = fields.value
+				.filter(field => field.name === 'house' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.approaches = fields.value
+				.filter(field => field.name === 'approache' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.floors = fields.value
+				.filter(field => field.name === 'floor' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.premises = fields.value
+				.filter(field => field.name === 'premise' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.contacts = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.title = fields.value
+			// 	.filter(field => field.name === 'name' && field.value)
+			// 	.map(field => field.value)
+
+			// store.variables.preview = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.text = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.icons = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.images = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.documents = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.phone = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.btnText = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.btnLink = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.imgAlbum = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			// store.variables.imgBook = fields.value
+			// 	.filter(field => field.name === 'complex' && field.value?.length)
+			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+
+			store.variables.degrees = fields.value
+				.filter(field => field.name === 'degree' && field.value)
+				.map(field => field.value.ID.toString())
+
 		}
 
-		const setFilter = (str) => {
-			str.value = null
-			// if (str.target?.tagName === 'BUTTON') {
-			//   str = Number(str.target.dataset.filter)
-			//   filterCells.value = filterCells.value.filter(option => {
-			//     return option.ID !== str
-			//   })
-			// }
-			// else {
-			//   let isExists = filterCells.value.find(option => option.ID === str.ID) !== undefined
-			//   if (!(isExists)) {
-			//     filterCells.value.push(str)
-			//   }
-			//   else {
-			//     filterCells.value = filterCells.value.filter(option => option !== str)
-			//   }
-			// }
-		}
-
-		const testDayjs = () => {
-			console.log(dayjs("2022-10-14").add(-1,'day'))
-
-			store.news.filter(row => {
-				// console.log(dayjs(row.UF_CREATED_AT).format('YYYY WW'))
-			})
-		}
-
-		document.addEventListener('keypress',(e)=>{
-			if(e.key === 'g'){
-				testDayjs()
+		const clearFilter = (defaultFields) => {
+			store.variables = {
+				currentPage: store.variables.currentPage,
+				perPage: store.variables.perPage,
 			}
-		})
+
+			fields.value.map((field,i) => {
+				field.value = defaultFields[i].value
+				field.checked = defaultFields[i].checked
+			})
+
+			filterTable('',fields)
+		}
+
+		const selectFilter = (filter) => {
+			if(filter){
+				fields.value.map((field,i) => {
+				field.value = filter.fields[i].value
+				field.checked = filter.fields[i].checked
+			})
+			}
+		}
 
 		return {
 			route,
@@ -993,10 +839,7 @@ export default {
 			deleteNewsArray,
 			store,
 			priorityMap,
-			setFilter,
-			filterCells,
 			clearFilter,
-			setSearch,
 			deleteSingleNews,
 			editModal,
 			closeEditModal,
@@ -1005,9 +848,8 @@ export default {
 			clearFormData,
 			formData,
 			fields,
-			computedFields,
-			// defaultFields,
-			computedNews
+			computedNews,
+			selectFilter
 		};
 	},
 };

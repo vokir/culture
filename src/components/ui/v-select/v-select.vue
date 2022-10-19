@@ -1,5 +1,5 @@
 <template>
-  <div :class="['select-wrapper', { 'select-wrapper--active': isOpen }]">
+  <div :class="['select-wrapper', { 'select-wrapper--active': isOpen  }]">
     <div v-if="labelSelect" class="select-wrapper__label">
       {{ labelSelect }}
     </div>
@@ -15,8 +15,8 @@
       </div>
     </div>
     <ul class="select-wrapper__list" v-if="isOpen" @mousedown.prevent="activate">
-      <li class="select-wrapper__item" v-for="(option, index) in options" @click="select(option)" @click.stop="$emit('toggleOption')" :key="index">
-        <template v-if="label">
+      <li :class="['select-wrapper__item', {'active':modelValue === option}]" v-for="(option, index) in options" @click="select(option)" @click.stop="$emit('toggleOption')" :key="index">
+				<template v-if="label">
           {{ option[label] }}
         </template>
         <template v-else>

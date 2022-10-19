@@ -92,5 +92,10 @@
     &:hover {
       background: var(--gray-hover);
     }
+
+		&.active{
+			font-weight: bold;
+			background-color: var(--gray);
+		}
   }
 }

@@ -15,6 +15,11 @@ import { CREATE_NEWS_LINK } from "../api/mutations/createNewsLink";
 import { DELETE_NEWS_LINK } from "../api/mutations/deleteNewsLink";
 import { GET_NEWS_DEGREES } from "../api/queries/getNewsDegrees";
 import { GET_COMPLEXES } from "../api/queries/getComplexes";
+import { GET_HOUSES } from "../api/queries/getHouses";
+import { GET_APPROACHES } from "../api/queries/getApproaches";
+import { GET_FLOORS } from "../api/queries/getFloors";
+import { GET_PREMISES } from "../api/queries/getPremises";
+
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -30,6 +35,10 @@ export const useNewsStore = defineStore('news', () => {
   const { result: resultTypes, loading: loadingTypes, load: loadTypes } = useLazyQuery(GET_NEWS_TYPES)
   const { result: resultDegrees, loading: loadingDegrees, load: loadDegrees } = useLazyQuery(GET_NEWS_DEGREES)
   const { result: resultComplexes, loading: loadingComplexes, load: loadComplexes } = useLazyQuery(GET_COMPLEXES)
+	const { result: resultHouses, loading: loadingHouses, load: loadHouses } = useLazyQuery(GET_HOUSES)
+	const { result: resultApproaches, loading: loadingApproaches, load: loadApproaches } = useLazyQuery(GET_APPROACHES)
+	const { result: resultFloors, loading: loadingFloors, load: loadFloors } = useLazyQuery(GET_FLOORS)
+	const { result: resultPremises, loading: loadingPremises, load: loadPremises } = useLazyQuery(GET_PREMISES)
 
   const newsTypes = computed(() => {
     return resultTypes.value?.getNewsTypes ?? [];
@@ -45,6 +54,18 @@ export const useNewsStore = defineStore('news', () => {
   });
   const complexes = computed(() => {
     return resultComplexes.value?.getComplexes ?? [];
+  });
+	const houses = computed(() => {
+    return resultHouses.value?.getHouses ?? [];
+  });
+	const approaches = computed(() => {
+    return resultApproaches.value?.getApproaches ?? [];
+  });
+	const floors = computed(() => {
+    return resultFloors.value?.getFloors ?? [];
+  });
+	const premises = computed(() => {
+    return resultPremises.value?.getPremises ?? [];
   });
 
   updatePage(() => {
@@ -171,6 +192,14 @@ export const useNewsStore = defineStore('news', () => {
     loadTypes,
     loadDegrees,
     loadComplexes,
-  }
+    houses,
+    approaches,
+    floors,
+    premises,
+    loadHouses,
+    loadApproaches,
+    loadFloors,
+    loadPremises,
+  };
 
 })
