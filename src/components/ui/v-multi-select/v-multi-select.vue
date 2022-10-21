@@ -1,4 +1,9 @@
 <template>
+	{{modelValue[0] }}
+	<br>
+	{{options[1]}}
+	<br>
+	{{modelValue[0] === options[1]}}
   <div :class="['select']" >
     <div
       v-if="labelSelect"
@@ -101,7 +106,8 @@
             <label
               class="select__item"
               v-for="option in optionsFiltered"
-            ><input
+            >
+						<input
                 class="select__checkbox"
                 @click="toggleOption(option,modelValue)"
                 :checked="modelValue.includes(option)"
@@ -133,7 +139,7 @@
   </div>
 </template>
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import useModal from '../../../hooks/useModal';
 import useClickOutside from '../../../hooks/useClickOutside';
 
@@ -222,6 +228,10 @@ export default {
     onMounted(() => {
       selectValue(props.modelValue)
     })
+
+		watch(() => props.modelValue, val => {
+			// selectedList.value = val
+		},{deep:true, })
 
     return {
       search,

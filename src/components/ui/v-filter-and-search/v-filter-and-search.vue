@@ -12,9 +12,10 @@
 					v-if="cell.type !== 'multi-select'"
 					class="search-cell-text"
 				>
-					<template v-if="cell.type === 'string'">{{cell.label + ' : ' + cell.value}}</template>
-					<template v-else-if="cell.type === 'select'">{{cell.label + ' : ' + cell.value.name}}</template>
-					<template v-else-if="cell.type === 'multi-select'">{{cell.label + ' : ' + cell.value.name}}</template>
+					<template v-if="cell.type === 'string'">{{cell.label + ': ' + cell.value}}</template>
+					<template v-else-if="cell.type === 'select'">{{cell.label + ': ' + cell.value.name}}</template>
+					<template v-else-if="cell.type === 'multi-select'">{{cell.label + ': ' + cell.value.name}}</template>
+					<template v-else-if="cell.type === 'select-options'">{{cell.label + ': ' + cell.value.label}}</template>
 				</div>
 				<div
 					v-else
@@ -60,7 +61,7 @@
 			>
 				<div class="search-cell-text">и ещё {{fieldsWithValue.length-2}}</div>
 				<button
-					@click.stop="clearFieldValue"
+					@click.stop="$emit('clearLatestFields')"
 					class="search-cell-btn search-btn"
 				>
 					<svg
@@ -157,11 +158,14 @@
 							</div>
 						</div>
 						<div class="search-right">
-							<div class="search-right__items">
+							<div class="search-right__items" @drop="onDrop($event,)" @dragenter.prevent @dragover.prevent>
 								<div
 									class="search-right__item"
 									v-for="item in checkedFields"
+									draggable="false"
+									@dragstart="startDrag($event,item)"
 								>
+								<div draggable="false"  class="search-right__drag-and-drop"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10"><g fill="#535C69" fill-rule="evenodd"><rect width="12" height="2" rx="1"/><rect width="12" height="2" y="4" rx="1"/><rect width="12" height="2" y="8" rx="1"/></g></svg></div>
 									<template v-if="item.type === 'string'">
 										<v-input
 											v-model="item.value"
@@ -188,13 +192,16 @@
 											@toggleOption="options => $emit('toggleOption',item,options)"
 										/>
 									</template>
-									<template v-if="item.type === 'date'">
+									<!-- <template v-if="item.type === 'date'">
 										<v-select-date
 											v-model="item.value"
 											:name="item.name"
 											:labelSelect="item.label"
 											@toggleOption="$emit('toggleOption')"
 										/>
+									</template> -->
+									<template v-if="item.type === 'select-options'">
+										<v-select-options v-model="item.value" :labelSelect="item.label" :options="item.options" />
 									</template>
 									<div
 										class="search-right__remove-field"
@@ -495,12 +502,14 @@ import VSelect from '../v-select/v-select.vue';
 import VInput from '../v-input/v-input.vue';
 import VMultiSelect from '../v-multi-select/v-multi-select.vue';
 import VSelectDate from '../v-select-date/v-select-date.vue'
+import VSelectOptions from '../v-select-options/v-select-options.vue'
+import draggable from 'vuedraggable'
 
 export default {
 	name: 'v-filter-search',
-	components: { VSelect, VInput, VMultiSelect, VSelectDate },
+	components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable },
 	emits: ["filterTable", "clearFilter", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 'toggleOption', 
-					'toggleAddField', 'saveFilter','selectFilter', 'setPin', 'editFilterName','removeFilter', 'resetFilter'],
+					'toggleAddField', 'saveFilter','selectFilter', 'setPin', 'editFilterName','removeFilter', 'resetFilter', 'clearLatestFields'],
 	props: {
 		search: String,
 		fields: Array,
@@ -582,7 +591,7 @@ export default {
 
 		const addFilter = () => {
 			addingFilter.value = true
-			document.querySelector('.search-left__filter-add-name input').focus()
+			// document.querySelector('.search-left__filter-add-name input').focus()
 		}
 
 		const cancelAddingFilter = () => {
@@ -592,6 +601,10 @@ export default {
 		}
 
 		const saveFilter = () => {
+			if(!newFilterName.value.length){
+				document.querySelector('.search-left__filter-add-name input').focus()
+				return
+			} 
 			emit('saveFilter', newFilterName.value)
 			addingFilter.value = false
 			newFilterName.value = ''
@@ -608,6 +621,38 @@ export default {
 
 		useClickOutside(searchFilterContainer, closeModal)
 		useClickOutside(modalFieldsRef, closeModalFields)
+
+		const startDrag = (e, item) => {
+			
+			// e.dataTransfer.dropEffect = 'move'
+			// e.dataTransfer.effectAllowed = 'move'
+			// e.dataTransfer.setData('fieldName', item.name)
+			// console.log(e.srcElement);
+			// let position = window.getComputedStyle(e.srcElement)
+			
+			// console.log(position);
+			// let left = position.left
+			// let top = position.top
+			// console.log(left);
+			// console.log(top);
+
+			// let el = e.srcElement
+			// el.style.position = 'fixed'
+			// el.style.top = '0'
+			// el.style.left = '0'
+
+		}
+
+
+		const onDrop = (e, item) => {
+			// const fieldName = e.dataTransfer.getData('fieldName')
+			// console.log(fieldName);
+			// const field = props.checkedFields.find(field => field.name === fieldName)
+
+			// console.log('Ты двигаешь поле:', field);
+			// console.log('На поле:', e.toElement.closest('.search-right__item'));
+
+		}
 
 		return {
 			isOpened,
@@ -628,6 +673,8 @@ export default {
 			saveFilter,
 			changeSettings,
 			selectFilter,
+			startDrag,
+			onDrop
 		}
 	},
 };

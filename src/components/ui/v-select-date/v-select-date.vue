@@ -65,7 +65,7 @@ import VSelect from '../v-select/v-select.vue'
 
 export default {
   name: "v-select-date",
-	components: { VSelect, VSelect },
+	components: { VSelect },
   emits: ["update:modelValue"],
   inheritAttrs: false,
   props: {

@@ -103,7 +103,7 @@
 	}
 
 	&-left {
-		padding: 20px 15px 40px;
+		padding: 20px 15px 20px;
 		flex: 0 0 200px;
 		background-color: var(--variable-17);
 		display: flex;
@@ -265,7 +265,7 @@
 
 	&-right {
 		flex: 1 1 auto;
-		padding: 24px 25px 40px 25px;
+		padding: 24px 25px 20px 25px;
 		display: flex;
 		flex-direction: column;
 		gap: 28px;
@@ -293,7 +293,7 @@
 				padding: 10px;
 			}
 
-			&:hover .search-right__remove-field{
+			&:hover .search-right__remove-field, &:hover .search-right__drag-and-drop{
 				opacity: 1;
 			}
 		}
@@ -390,7 +390,18 @@
 				opacity: 0.8;
 			}
 		}
-
+		&__drag-and-drop{
+			position: absolute;
+			left: -18px;
+			bottom: 10px;
+			display: inline-block;
+			cursor: move;
+			transition: all 0.2s ease-in-out;
+			opacity: 0;
+			&:hover{
+				opacity: 1;
+			}
+		}
 		&__remove-field {
 			position: absolute;
 			bottom: 10px;

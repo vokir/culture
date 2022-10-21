@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 export default {
   name: "v-select",
@@ -47,7 +47,7 @@ export default {
       default: () => ([]),
     },
   },
-  setup({ label, modelValue }, { emit }) {
+  setup(props, { emit }) {
     const selectedValue = ref([]);
     const isOpen = ref(false);
     const input = ref(null);
@@ -64,7 +64,12 @@ export default {
       isOpen.value ? deactivate() : activate();
     };
 
+		watch(() => props.modelValue, val => {
+			select(val)
+		})
+
     const select = (option) => {
+			let label = props.label
       let selected;
       if (label && option) {
         selected = option[label];
@@ -77,17 +82,17 @@ export default {
     };
 
     onMounted(() => {
-      select(modelValue)
+      select(props.modelValue)
     })
 
     return {
       selectedValue,
       isOpen,
+			input,
       activate,
       deactivate,
       toggleOptions,
       select,
-      input,
     };
   },
 };

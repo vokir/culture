@@ -20,6 +20,7 @@
 		@removeFilter="removeFilter"
 		@editFilterName="editFilterName"
 		@resetFilter="$emit('selectFilter', filters.filter(filter => filter.selected)[0])"
+		@clearLatestFields="clearLatestFields"
 	/>
 </template>
 <script>
@@ -48,9 +49,21 @@ export default {
 				if (field.checked && field.load) {
 					field.load()
 					field.computedResult = field.result.map(obj => { return { ...obj, name: obj.UF_NAME || obj.UF_TITLE } })
-					// console.log(field.computedResult[0]);
-					// console.log(field.value);
-					// console.log(field.computedResult[0] === field.value);
+					if(field.type === 'select' ){
+						field.value = field.computedResult.filter(row => row.ID === field.value?.ID)[0]
+					}
+					else if(field.type === 'multi-select' ){
+						let tempValue = JSON.parse(JSON.stringify(field.value)) 
+						field.value = []
+						tempValue.map(val => {
+							let obj
+							obj = field.computedResult.find(row => {
+								console.log(123)
+								// row.ID === val.ID
+							})
+							// field.value.push(obj)
+						})
+					}
 				}
 				return field
 			})
@@ -62,11 +75,21 @@ export default {
 		})
 
 		const fieldsWithValue = computed(() => {
-			return checkedFields.value.filter(field => field.value && field.value?.length !== 0 ? true : false)
+			return checkedFields.value.filter(field => {
+				if(field.type === 'string' || field.type === 'select' ){
+					return field.value ? true : false
+				}
+				else if(field.type === 'multi-select'){
+					return field.value.length ? true : false
+				}
+				else if(field.type === 'select-options'){
+					return field.value?.value ? true : false
+				}
+				// field.value && field.value?.length !== 0 ? true : false
+			})
 		})
 
 		const toggleOption = (options, option) => {
-
 			var index = options.value.indexOf(option);
 
 			if (index === -1) {
@@ -91,8 +114,8 @@ export default {
 		}
 
 		const clearFilter = () => {
-			console.log(defaultFields);
 			search.value = ""
+			filters.value.map(field => field.selected = false)
 			emit('clearFilter', defaultFields)
 		}
 
@@ -106,29 +129,13 @@ export default {
 
 		onMounted(() => {
 			props.fields.map(field => defaultFields.push({...field}))
+			getFilters()
 		})
 
 		// localStorage.clear()
 		// localStorage.setItem('filter1', JSON.stringify({name: 'Фильтр 1', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:1}}))
 		// localStorage.setItem('filter2', JSON.stringify({name: 'Фильтр 2', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:2}}))
 		// localStorage.setItem('filter3', JSON.stringify({name: 'Фильтр 3', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:3}}))
-
-		const getFilters = () => {
-			filters.value = []
-			let keys = Object.keys(localStorage)
-			let i = keys.length
-			while(i--){
-				filters.value.push(JSON.parse(localStorage.getItem(keys[i])))
-			}
-			filters.value = filters.value.sort((a,b) => a.date - b.date)
-		}
-
-		getFilters()
-
-		const saveFilter = (name) =>{
-			localStorage.setItem(name, JSON.stringify({name: name, date: Date.now(), selected: false, pinned:false, fields:props.fields}))
-			getFilters()
-		}
 
 		const selectFilter = (filter) => {
 			filters.value.map(row => {
@@ -140,6 +147,27 @@ export default {
 				}
 			})
 			emit('selectFilter',filter)
+		}
+
+		const getFilters = () => {
+			filters.value = []
+			let keys = Object.keys(localStorage)
+			let i = keys.length
+			while(i--){
+				let curFilter = JSON.parse(localStorage.getItem(keys[i]))
+				if(curFilter.pinned){
+					curFilter.selected = true
+					selectFilter(curFilter)
+				}
+				filters.value.push(curFilter)
+			}
+			filters.value = filters.value.sort((a,b) => a.date - b.date)
+		}
+
+
+		const saveFilter = (name) =>{
+			localStorage.setItem(name, JSON.stringify({name: name, date: Date.now(), selected: false, pinned:false, fields:props.fields}))
+			getFilters()
 		}
 
 		const setPin = (filter) => {
@@ -170,6 +198,13 @@ export default {
 			getFilters()
 		}
 
+		const clearLatestFields = () => {
+			fieldsWithValue.value.map((field,i) => {
+				if(i > 1){
+					clearFieldValue(field)
+				}
+			})
+		}
 
 		return {
 			computedFields,
@@ -187,7 +222,8 @@ export default {
 			selectFilter,
 			setPin,
 			editFilterName,
-			removeFilter
+			removeFilter,
+			clearLatestFields
 		}
 	}
 }

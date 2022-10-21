@@ -537,8 +537,56 @@ export default {
 				name: 'id',
 				checked: false,
 				label: 'ID',
-				type: 'string',
-				value: null
+				type: 'select-options',
+				value: null,
+				options: [
+					{
+						name: 'exact',
+						label: 'Точно',
+						value: null,
+						cells: [{
+							name:'number',
+							type:'number',
+						}],
+					},
+					{
+						name: 'range',
+						label: 'Диапазон',
+						value: 'Диапазон',
+						template: 'var0-var1',
+						type:'range',
+						cells: [
+						{
+							name:'number',
+							type:'number',
+						},
+						{
+							name:'number',
+							type:'number',
+						}
+						],
+					},
+					{
+						name: 'more',
+						label: 'Больше чем',
+						value: null,
+						template: '> var0',
+						cells: [{
+							name: 'number',
+							type: 'number',
+						}],
+					},
+					{
+						name: 'less',
+						label: 'Меньше чем',
+						value: null,
+						template: '< var0',
+						cells: [{
+							name: 'number',
+							type: 'number',
+						}],
+					}
+				]
 			}, {
 				name: 'name',
 				checked: true,
@@ -559,10 +607,331 @@ export default {
 				value: null
 			}, {
 				name: 'date',
-				checked: false,
+				checked: true,
 				label: 'Дата создания',
+				type: 'select-options',
+				value: {
+						name: 'any',
+						label: 'Любая дата',
+						value: null,
+						cells: [],
+					},
+				options:[
+					{
+						name: 'any',
+						label: 'Любая дата',
+						value: null,
+						cells: [],
+					},
+					{
+						name: 'yesterday',
+						label: 'Вчера',
+						value: 'Вчера',
+						cells: [],
+					},
+					{
+						name: 'today',
+						label: 'Сегодня',
+						value: 'Сегодня',
+						cells: [],
+					},
+					{
+						name: 'tomorrow',
+						label: 'Завтра',
+						value: 'Завтра',
+						cells: [],
+					},
+					{
+						name: 'curWeek',
+						label: 'Текущая неделя',
+						value: 'Текущая неделя',
+						cells: [],
+					},
+					{
+						name: 'curMonth',
+						label: 'Текущий месяц',
+						value: 'Текущий месяц',
+						cells: [],
+					},
+					{
+						name: 'curQuarter',
+						label: 'Текущий квартал',
+						value: 'Текущий квартал',
+						cells: [],
+					},
+					{
+						name: 'last7days',
+						label: 'Последние 7 дней',
+						value: 'Последние 7 дней',
+						cells: [],
+					},
+					{
+						name: 'last30days',
+						label: 'Последние 30 дней',
+						value: 'Последние 30 дней',
+						cells: [],
+					},
+					{
+						name: 'last60days',
+						label: 'Последние 60 дней',
+						value: 'Последние 60 дней',
+						cells: [],
+					},
+					{
+						name: 'last90days',
+						label: 'Последние 90 дней',
+						value: 'Последние 90 дней',
+						cells: [],
+					},
+					{
+						name: 'lastNdays',
+						label: 'Последние N дней',
+						value: 'Последние N дней',
+						template: 'Последние var0 (дня/дней)',
+						cells: [
+							{
+								name: 'days',
+								type: 'number'
+							}
+						],
+					},
+					{
+						name: 'nextNdays',
+						label: 'Следующие N дней',
+						value: 'Следующие N дней',
+						template: 'Следующие var0 (дня/дней)',
+						cells: [
+							{
+								name: 'days',
+								type: 'number',
+							}
+						],
+					},
+			{
+				name: 'month',
+				label: 'Месяц',
+				value: 'Месяц',
 				type: 'date',
-				value: null
+				cells: [
+					{
+						name: 'month',
+						type: 'select',
+						options: [{
+							name: 'January',
+							label: 'Январь',
+							value: 1
+						},
+						{
+							name: 'February',
+							label: 'Февраль',
+							value: 2
+						},
+						{
+							name: 'March',
+							label: 'Март',
+							value: 3
+						},
+						{
+							name: 'April',
+							label: 'Апрель',
+							value: 4
+						},
+						{
+							name: 'May',
+							label: 'Май',
+							value: 5
+						},
+						{
+							name: 'June',
+							label: 'Июнь',
+							value: 6
+						},
+						{
+							name: 'July',
+							label: 'Июль',
+							value: 7
+						},
+						{
+							name: 'August',
+							label: 'Август',
+							value: 8
+						},
+						{
+							name: 'September',
+							label: 'Сентябрь',
+							value: 9
+						},
+						{
+							name: 'October',
+							label: 'Октябрь',
+							value: 10
+						},
+						{
+							name: 'November',
+							label: 'Ноябрь',
+							value: 11
+						},
+						{
+							name: 'December',
+							label: 'Декабрь',
+							value: 12
+						},
+						],
+						value: null
+					},
+					{
+						name: 'year',
+						type: 'select',
+						options: [{
+							name: '2022',
+							label: '2022',
+							value: 2022
+						}, {
+							name: '2021',
+							label: '2021',
+							value: 2021
+						}, {
+							name: '2020',
+							label: '2020',
+							value: 2020
+						}],
+						value: null
+					}
+				],
+			},
+			{
+				name: 'quarter',
+				label: 'Квартал',
+				value: 'Квартал',
+				type: 'date',
+				template: 'var0 квартал var1',
+				cells: [
+				{
+						name: 'quarter',
+						type: 'select',
+						options: [{
+							name: 'quarter1',
+							label: 'I',
+							value: 1
+						},
+						{
+							name: 'quarter2',
+							label: 'II',
+							value: 2
+						},
+						{
+							name: 'quarter3',
+							label: 'III',
+							value: 3
+						},
+						{
+							name: 'quarter4',
+							label: 'IV',
+							value: 4
+						},
+						],
+						value: null
+					},
+					{
+						name: 'year',
+						type: 'select',
+						options: [{
+							name: '2022',
+							label: '2022',
+							value: 2022
+						}, {
+							name: '2021',
+							label: '2021',
+							value: 2021
+						}, {
+							name: '2020',
+							label: '2020',
+							value: 2020
+						}],
+						value: null
+					}
+				],
+			},
+			{
+				name: 'year',
+				label: 'Год',
+				value: 'Год',
+				type: 'date',
+				cells: [
+					{
+						name: 'year',
+						type: 'select',
+						options: [{
+							name: '2022',
+							label: '2022',
+							value: 2022
+						}, {
+							name: '2021',
+							label: '2021',
+							value: 2021
+						}, {
+							name: '2020',
+							label: '2020',
+							value: 2020
+						}],
+						value: null
+					}
+				],
+			},
+			{
+				name: 'exactDate',
+				label: 'Точная дата',
+				value: null,
+				cells: [
+					{
+						name: 'date',
+						type: 'date',
+						value: null
+					}
+				],
+			},
+			{
+				name: 'lastWeek',
+				label: 'Прошлая неделя',
+				value: 'Прошлая неделя',
+				cells: [],
+			},
+			{
+				name: 'lastMonth',
+				label: 'Прошлый месяц',
+				value: 'Прошлый месяц',
+				cells: [],
+			},
+			{
+				name: 'range',
+				label: 'Диапазон',
+				value: 'Диапазон',
+				cells: [
+					{
+						name: 'dateFrom',
+						type: 'date',
+						value: null
+					},
+					{
+						name: 'dateTo',
+						type: 'date',
+						value: null
+					}
+				],
+			},
+			{
+				name: 'nextWeek',
+				label: 'Следующая неделя',
+				value: 'Следующая неделя',
+				cells: [],
+			},
+			{
+				name: 'nextMonth',
+				label: 'Следующий месяц',
+				value: 'Следующий месяц',
+				cells: [],
+			},
+				]
 			}, {
 				name: 'type',
 				checked: true,
@@ -573,7 +942,7 @@ export default {
 				value: [],
 			}, {
 				name: 'complex',
-				checked: true,
+				checked: false,
 				label: 'ЖК',
 				type: 'multi-select',
 				load: store.loadComplexes,
