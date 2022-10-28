@@ -3,7 +3,42 @@
 		ref="searchFilterContainer"
 		:class="['search', {'search--transparent':variant === 'transparent'}]"
 	>
-		<template v-for="(cell,index) in fieldsWithValue">
+		<template v-if="selectedFilter && isSelectedFilterEqualsSelectedValues">
+			<div class="search-cell">
+				<div class="search-cell-text">
+					{{selectedFilter.name}}
+				</div>
+				<button
+					@click.stop="$emit('disableFilter',selectedFilter)"
+					class="search-cell-btn search-btn"
+				>
+					<svg
+						width="11"
+						height="12"
+						viewBox="0 0 11 12"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M8.71094 2.7915L2.2943 9.20814"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+						<path
+							d="M2.28906 2.7915L8.7057 9.20814"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</button>
+			</div>
+		</template>
+
+		<template v-else v-for="(cell,index) in fieldsWithValue">
 			<div
 				class="search-cell"
 				v-if="index <= 1"
@@ -105,20 +140,39 @@
 				<template #popper>
 					<div class="search-popup">
 						<div class="search-left">
-							<ul class="search-left__filter-list">
+							<v-loader v-if="store.loadingFilters && false">
+						</v-loader>
+
+							<ul v-else class="search-left__filter-list">
                 <div class="search-left__title">Фильтры</div>
-									<div class='search-left__filter-item-wrapper' v-for="filter in filters" @click="selectFilter(filter)">	
-										<li :class="['search-left__filter-item', {'search-left__filter-item_small': changingSettings}, {'active': filter.selected}]">
-											{{filter.name}}
-										</li>
+								<draggable
+									class="search-left__items"
+									v-model="filters"
+									v-bind="dragOptions"
+									:group="'filters'"
+									@start="true"
+									@end="false"
+									item-key="order"
+									handle=".search-left__drag-and-drop"
+								>
+									<template #item="{ element }">
 										
-										<div class='search-left__filter-item-edits'>
-											<span v-if="filter.pinned || changingSettings" @click.stop="$emit('setPin', filter)"><svg :class="['svg-fill', {'svg-pinned':filter.pinned}]" xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11"><path fill="#535C68" fill-rule="evenodd" d="M11.466 2.964L8.73.23C8.535.03 8.25-.046 7.98.025c-.267.07-.476.28-.55.547-.07.267.004.553.2.75l.56.558L3.8 5.157l-.55-.55c-.303-.304-.794-.306-1.098-.004-.304.302-.306.793-.004 1.097l1.677 1.676-3.092 3.3c-.076.077-.076.2 0 .277.076.076.2.076.276 0l3.3-3.102 1.674 1.675c.304.304.797.304 1.1 0 .305-.304.305-.797 0-1.1l-.55-.55 3.274-4.39.565.563c.303.28.772.27 1.065-.02.293-.29.305-.76.028-1.064z"/></svg></span>
-											<span v-if="changingSettings" @click.stop="editFilterName(filter)"><svg class="svg-fill" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.733677 8.65659L0 11.5L2.68831 10.6585C2.52112 10.1998 2.27473 9.78186 1.96234 9.42657C1.61255 9.06908 1.19236 8.80729 0.733677 8.65659ZM6.68119 2.0975L1.42335 7.83162C1.86004 8.06041 2.26483 8.353 2.62672 8.70279C2.92371 9.08008 3.1723 9.50026 3.36369 9.95125L8.61823 4.22043C8.41473 3.72875 8.13754 3.27776 7.79765 2.88617C7.47206 2.54958 7.09367 2.28339 6.67789 2.0997L6.68009 2.0964L6.68119 2.0975ZM9.68739 0.934837C9.4212 0.648846 9.06041 0.491551 8.68642 0.50035C8.31464 0.50915 7.96045 0.681846 7.70525 0.978837L7.38956 1.32313C7.80975 1.51782 8.19474 1.79391 8.52583 2.1371C8.86022 2.51988 9.13081 2.96207 9.331 3.44276L9.64779 3.09737C9.92058 2.82018 10.0768 2.43299 10.0856 2.026C10.0922 1.61902 9.94808 1.22523 9.68519 0.937036H9.68849L9.68739 0.934837Z" fill="#5B6573"/></svg></span>
-											<span v-if="changingSettings" @click.stop="$emit('removeFilter',filter)"><svg class="svg-stroke" width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0859 2.91699L2.91931 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.91406 2.91699L11.0807 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-										</div>
-									</div>	
-										<li :class="['search-left__filter-item', 'search-left__filter-add-name', {'search-left__filter-add-name_show':addingFilter}]">
+											<div :class="['search-left__filter-item-wrapper', {'search-left__filter-item-wrapper--editting':changingSettings && element.selected}]" @click="selectFilter(element)">	
+												<div class="search-left__drag-and-drop" v-if="changingSettings"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10"><g fill="#535C69" fill-rule="evenodd"><rect width="12" height="2" rx="1"/><rect width="12" height="2" y="4" rx="1"/><rect width="12" height="2" y="8" rx="1"/></g></svg></div>
+
+												<li :class="['search-left__filter-item', {'search-left__filter-item_small': changingSettings}, {'active': element.selected}, {'hidden':element.editting},{'search-left__filter-editting-item':changingSettings && element.selected}]">
+													{{element.name}}
+												</li>
+												<input :class="['search-left__filter-item-input',{'hidden':!element.editting}]" v-model="element.newName"/>
+												<div class='search-left__filter-item-edits'>
+													<span v-if="element.pinned || changingSettings" @click.stop="$emit('setPin', element)"><svg :class="['svg-fill', {'svg-pinned':element.pinned}]" xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11"><path fill="#535C68" fill-rule="evenodd" d="M11.466 2.964L8.73.23C8.535.03 8.25-.046 7.98.025c-.267.07-.476.28-.55.547-.07.267.004.553.2.75l.56.558L3.8 5.157l-.55-.55c-.303-.304-.794-.306-1.098-.004-.304.302-.306.793-.004 1.097l1.677 1.676-3.092 3.3c-.076.077-.076.2 0 .277.076.076.2.076.276 0l3.3-3.102 1.674 1.675c.304.304.797.304 1.1 0 .305-.304.305-.797 0-1.1l-.55-.55 3.274-4.39.565.563c.303.28.772.27 1.065-.02.293-.29.305-.76.028-1.064z"/></svg></span>
+													<span v-if="changingSettings" @click.stop="editFilter($event,element)"><svg class="svg-fill" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.733677 8.65659L0 11.5L2.68831 10.6585C2.52112 10.1998 2.27473 9.78186 1.96234 9.42657C1.61255 9.06908 1.19236 8.80729 0.733677 8.65659ZM6.68119 2.0975L1.42335 7.83162C1.86004 8.06041 2.26483 8.353 2.62672 8.70279C2.92371 9.08008 3.1723 9.50026 3.36369 9.95125L8.61823 4.22043C8.41473 3.72875 8.13754 3.27776 7.79765 2.88617C7.47206 2.54958 7.09367 2.28339 6.67789 2.0997L6.68009 2.0964L6.68119 2.0975ZM9.68739 0.934837C9.4212 0.648846 9.06041 0.491551 8.68642 0.50035C8.31464 0.50915 7.96045 0.681846 7.70525 0.978837L7.38956 1.32313C7.80975 1.51782 8.19474 1.79391 8.52583 2.1371C8.86022 2.51988 9.13081 2.96207 9.331 3.44276L9.64779 3.09737C9.92058 2.82018 10.0768 2.43299 10.0856 2.026C10.0922 1.61902 9.94808 1.22523 9.68519 0.937036H9.68849L9.68739 0.934837Z" fill="#5B6573"/></svg></span>
+													<span v-if="changingSettings" @click.stop="$emit('removeFilter',element.ID)"><svg class="svg-stroke" width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0859 2.91699L2.91931 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.91406 2.91699L11.0807 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+												</div>
+											</div>	
+									</template>
+								</draggable>
+										<li :class="['search-left__filter-item', 'search-left__filter-add-name', {'search-left__filter-add-name--show':addingFilter}]">
 											<input v-model="newFilterName" placeholder="Название фильтра"/>
 										</li>
               </ul>
@@ -139,7 +193,7 @@
 										/>
 									</svg>
 									<span>Сохранить фильтр</span></button>
-								<button class="search-btn search-left__settings-btn" @click="changeSettings">
+								<button class="search-btn search-left__settings-btn" @click="changeSettings" :disabled="addingFilter || changingSettings">
 									<svg
 										width="11"
 										height="11"
@@ -158,54 +212,54 @@
 							</div>
 						</div>
 						<div class="search-right">
-							<div class="search-right__items" @drop="onDrop($event,)" @dragenter.prevent @dragover.prevent>
+								<draggable
+									class="search-right__items"
+									v-model="checkedFields"
+									v-bind="dragOptions"
+									:group="'fields'"
+									@start="true"
+									@end="false"
+									item-key="order"
+									handle=".search-right__drag-and-drop"
+								>
+									<template #item="{ element }">
+
 								<div
 									class="search-right__item"
-									v-for="item in checkedFields"
-									draggable="false"
-									@dragstart="startDrag($event,item)"
 								>
-								<div draggable="false"  class="search-right__drag-and-drop"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10"><g fill="#535C69" fill-rule="evenodd"><rect width="12" height="2" rx="1"/><rect width="12" height="2" y="4" rx="1"/><rect width="12" height="2" y="8" rx="1"/></g></svg></div>
-									<template v-if="item.type === 'string'">
+								<div class="search-right__drag-and-drop"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10"><g fill="#535C69" fill-rule="evenodd"><rect width="12" height="2" rx="1"/><rect width="12" height="2" y="4" rx="1"/><rect width="12" height="2" y="8" rx="1"/></g></svg></div>
+									<template v-if="element.type === 'string'">
 										<v-input
-											v-model="item.value"
-											:name="item.name"
-											:label="item.label"
+											v-model="element.value"
+											:name="element.name"
+											:label="element.label"
 										/>
 									</template>
-									<template v-if="item.type === 'select'">
+									<template v-if="element.type === 'select'">
 										<v-select
-											v-model="item.value"
-											:name="item.name"
-											:options="item.computedResult"
-											:labelSelect="item.label"
+											v-model="element.value"
+											:name="element.name"
+											:options="element.computedResult"
+											:labelSelect="element.label"
 											label="name"
 										/>
 									</template>
-									<template v-if="item.type === 'multi-select'">
+									<template v-if="element.type === 'multi-select'">
 										<v-multi-select
-											v-model="item.value"
+											v-model="element.value"
 											variant="checkbox"
-											:name="item.name"
-											:options="item.computedResult"
-											:labelSelect="item.label"
-											@toggleOption="options => $emit('toggleOption',item,options)"
+											:name="element.name"
+											:options="element.computedResult"
+											:labelSelect="element.label"
+											@toggleOption="option => toggleOption(option, element)"
 										/>
 									</template>
-									<!-- <template v-if="item.type === 'date'">
-										<v-select-date
-											v-model="item.value"
-											:name="item.name"
-											:labelSelect="item.label"
-											@toggleOption="$emit('toggleOption')"
-										/>
-									</template> -->
-									<template v-if="item.type === 'select-options'">
-										<v-select-options v-model="item.value" :labelSelect="item.label" :options="item.options" />
+									<template v-if="element.type === 'select-options'">
+										<v-select-options v-model="element.value" :labelSelect="element.label" :options="element.options" />
 									</template>
 									<div
 										class="search-right__remove-field"
-										@click="$emit('toggleAddField',item)"
+										@click="$emit('toggleAddField',checkedFields.find(field => field.name === element.name))"
 									>
 										<svg
 											width="14"
@@ -231,6 +285,10 @@
 										</svg>
 									</div>
 								</div>
+								
+							</template>
+								</draggable>
+								
 								<div class="search-right__item">
 									<button
 										class="search-right__add-field-btn"
@@ -238,7 +296,6 @@
 									>Добавить поле</button>
 									<button @click="$emit('resetFilter')" class="search-right__reset-field-btn">Вернуть поля по умолчанию</button>
 								</div>
-							</div>
 							<div v-if="!addingFilter && !changingSettings" class="search-right__btns" >
 								<button
 									class="search-right__btn search-right__search-btn"
@@ -259,7 +316,7 @@
 									<span>Найти</span></button>
 								<button
 									class="search-right__btn search-right__reset-btn"
-									@click="$emit('clearFilter')"
+									@click="$emit('resetclearFilter')"
 								>Сбросить</button>
 							</div>
 							<div v-else class="search-right__btns" >
@@ -270,7 +327,7 @@
 									<span>Сохранить</span></button>
 								<button
 									class="search-right__btn search-right__cancel-filter-btn"
-									@click="cancelAddingFilter"
+									@click="cancelChangingFilter"
 								>Отменить</button>
 							</div>
 						</div>
@@ -504,12 +561,15 @@ import VMultiSelect from '../v-multi-select/v-multi-select.vue';
 import VSelectDate from '../v-select-date/v-select-date.vue'
 import VSelectOptions from '../v-select-options/v-select-options.vue'
 import draggable from 'vuedraggable'
+import VLoader from '../../ui/v-loader/v-loader.vue'
+import { useNewsStore } from '../../../store/newsStore'
 
 export default {
 	name: 'v-filter-search',
-	components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable },
-	emits: ["filterTable", "clearFilter", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 'toggleOption', 
-					'toggleAddField', 'saveFilter','selectFilter', 'setPin', 'editFilterName','removeFilter', 'resetFilter', 'clearLatestFields'],
+	components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable, VLoader },
+	emits: ["filterTable", "resetclearFilter", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 
+					'toggleAddField', 'saveFilter','selectFilter', 'setPin','removeFilter', 'resetFilter', 'clearLatestFields', 'disableFilter',
+				 'addFilter'],
 	props: {
 		search: String,
 		fields: Array,
@@ -551,6 +611,8 @@ export default {
 		const changingSettings = ref(false)
 		const newFilterName = ref('')
 
+		const store = useNewsStore()
+
 		const computedFilterItems = computed(() => {
 			return props.fields.filter(field => field.label.toLowerCase().includes(searchAddField.value.toLowerCase()))
 		})
@@ -564,6 +626,29 @@ export default {
 				filterPlaceholder = props.filterPlaceholderProp
 			}
 			return filterPlaceholder
+		})
+
+		const selectedFilter = computed(()=>{
+			return props.filters.find(filter => filter.selected)
+		})
+
+		const isSelectedFilterEqualsSelectedValues = computed(()=>{
+			if(selectedFilter.value){
+				return JSON.stringify(selectedFilter.value.fields)  === JSON.stringify(props.fields)? true : false
+			}
+			return true
+		})
+
+		const dragOptions = computed(()=>{
+			return {
+        animation: 200,
+        disabled: false,
+        ghostClass: "chosen-item",
+				dragClass: "drag-class",
+				chosenClass:"chosen-class",
+				swapThreshold: 0.9,
+
+      };
 		})
 
 		const filterTable = () => {
@@ -591,24 +676,27 @@ export default {
 
 		const addFilter = () => {
 			addingFilter.value = true
-			// document.querySelector('.search-left__filter-add-name input').focus()
 		}
 
-		const cancelAddingFilter = () => {
+		const cancelChangingFilter = () => {
 			addingFilter.value = false
 			changingSettings.value = false
 			newFilterName.value = ''
+			props.filters.map(filter => delete filter.editting)
 		}
 
 		const saveFilter = () => {
-			if(!newFilterName.value.length){
-				document.querySelector('.search-left__filter-add-name input').focus()
-				return
-			} 
-			emit('saveFilter', newFilterName.value)
-			addingFilter.value = false
-			newFilterName.value = ''
-
+			if (addingFilter.value) {
+				if (!newFilterName.value.length) {
+					document.querySelector('.search-left__filter-add-name input').focus()
+					return
+				}
+				emit('addFilter', newFilterName.value)
+			}
+			else{
+				emit('saveFilter', props.filters)
+			}
+			cancelChangingFilter()
 		}
 
 		const changeSettings = () => {
@@ -619,40 +707,23 @@ export default {
 			emit('selectFilter', filter)
 		}
 
+		const editFilter = (e, filter) => {
+			console.log(filter);
+			props.filters.map(row => row.name === filter.name? row.selected = true : row.selected = false)
+			filter.editting = true
+			let input =  e.target.closest('.search-left__filter-item-wrapper').querySelector('input');
+			input.focus()
+			input.setSelectionRange(0,0)
+		}
+
+		const toggleOption = (option, options) => {
+			console.log(option);
+			console.log(options);
+			emit('toggleOption',option,options)
+		}
+
 		useClickOutside(searchFilterContainer, closeModal)
 		useClickOutside(modalFieldsRef, closeModalFields)
-
-		const startDrag = (e, item) => {
-			
-			// e.dataTransfer.dropEffect = 'move'
-			// e.dataTransfer.effectAllowed = 'move'
-			// e.dataTransfer.setData('fieldName', item.name)
-			// console.log(e.srcElement);
-			// let position = window.getComputedStyle(e.srcElement)
-			
-			// console.log(position);
-			// let left = position.left
-			// let top = position.top
-			// console.log(left);
-			// console.log(top);
-
-			// let el = e.srcElement
-			// el.style.position = 'fixed'
-			// el.style.top = '0'
-			// el.style.left = '0'
-
-		}
-
-
-		const onDrop = (e, item) => {
-			// const fieldName = e.dataTransfer.getData('fieldName')
-			// console.log(fieldName);
-			// const field = props.checkedFields.find(field => field.name === fieldName)
-
-			// console.log('Ты двигаешь поле:', field);
-			// console.log('На поле:', e.toElement.closest('.search-right__item'));
-
-		}
 
 		return {
 			isOpened,
@@ -665,16 +736,20 @@ export default {
 			addingFilter,
 			newFilterName,
 			changingSettings,
+			selectedFilter,
+			isSelectedFilterEqualsSelectedValues,
+			dragOptions,
+			store,
 			filterTable,
 			popupListener,
 			popupListenerAddFields,
 			addFilter,
-			cancelAddingFilter,
+			cancelChangingFilter,
 			saveFilter,
 			changeSettings,
 			selectFilter,
-			startDrag,
-			onDrop
+			editFilter,
+			toggleOption
 		}
 	},
 };

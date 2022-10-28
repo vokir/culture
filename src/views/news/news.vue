@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="container-header__search">
-				<news-filter :fields="fields" @filterTable="filterTable" @clearFilter="clearFilter" @selectFilter="selectFilter"></news-filter>
+				<news-filter :fields="fields" @filterTable="filterTable" @resetclearFilter="resetclearFilter" @selectFilter="selectFilter"></news-filter>
 			</div>
 			<div class="container-header__action">
 				<v-button
@@ -329,6 +329,7 @@ import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
 import { useNewsStore } from "../../store/newsStore";
 import NewsFilter from '../../components/news/news-filter/news-filter.vue'
+import {newsFieldsPromise} from '../../config/apolloClient.config'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(IsoWeek)
@@ -453,7 +454,7 @@ export default {
 
 		//Потом удалить, т.к. фильтр должен делать бэк
 		const computedNews = computed(() => {
-			let dateValue = fields.value[4].value
+			let dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT')
 			
 			return store.news.filter(row => {
 				if (dateValue.name === 'any')
@@ -586,25 +587,29 @@ export default {
 							type: 'number',
 						}],
 					}
-				]
+				],
+				order:0
 			}, {
 				name: 'name',
 				checked: true,
 				label: 'Название новости',
 				type: 'string',
-				value: null
+				value: null,
+				order:1
 			}, {
 				name: 'activity',
 				checked: false,
 				label: 'Активность',
 				type: 'string',
-				value: null
+				value: null,
+				order:2
 			}, {
 				name: 'system',
 				checked: false,
 				label: 'Внешняя система',
 				type: 'select',
-				value: null
+				value: null,
+				order:3
 			}, {
 				name: 'date',
 				checked: true,
@@ -931,7 +936,8 @@ export default {
 				value: 'Следующий месяц',
 				cells: [],
 			},
-				]
+				],
+				order:4
 			}, {
 				name: 'type',
 				checked: true,
@@ -940,6 +946,7 @@ export default {
 				load: store.loadTypes,
 				result: computed(() => store.newsTypes),
 				value: [],
+				order:5
 			}, {
 				name: 'complex',
 				checked: false,
@@ -948,6 +955,7 @@ export default {
 				load: store.loadComplexes,
 				result: computed(() => store.complexes),
 				value: [],
+				order:6
 			}, {
 				name: 'house',
 				checked: false,
@@ -955,7 +963,8 @@ export default {
 				type: 'multi-select',
 				load: store.loadHouses,
 				result: computed(() => store.houses),
-				value: []
+				value: [],
+				order:7
 			}, {
 				name: 'approache',
 				checked: false,
@@ -963,7 +972,8 @@ export default {
 				type: 'multi-select',
 				load: store.loadApproaches,
 				result: computed(() => store.approaches),
-				value: []
+				value: [],
+				order:8
 			}, {
 				name: 'floor',
 				checked: false,
@@ -971,7 +981,8 @@ export default {
 				type: 'multi-select',
 				load: store.loadFloors,
 				result: computed(() => store.floors),
-				value: []
+				value: [],
+				order:9
 			}, {
 				name: 'premise',
 				checked: false,
@@ -979,31 +990,36 @@ export default {
 				type: 'multi-select',
 				load: store.loadPremises,
 				result: computed(() => store.premises),
-				value: []
+				value: [],
+				order:10
 			}, {
 				name: 'contacts',
 				checked: false,
 				label: 'Контакты',
 				type: 'select',
-				value: null
+				value: null,
+				order:11
 			}, {
 				name: 'title',
 				checked: false,
 				label: 'Заголовок новости',
 				type: 'string',
-				value: null
+				value: null,
+				order:12
 			}, {
 				name: 'announcement',
 				checked: false,
 				label: 'Текст анонса',
 				type: 'string',
-				value: null
+				value: null,
+				order:13
 			}, {
 				name: 'text',
 				checked: false,
 				label: 'Текст новости',
 				type: 'string',
-				value: null
+				value: null,
+				order:14
 			}, {
 				name: 'icons',
 				checked: false,
@@ -1015,43 +1031,50 @@ export default {
 				checked: false,
 				label: 'Галерея',
 				type: 'string',
-				value: null
+				value: null,
+				order:15
 			}, {
 				name: 'documents',
 				checked: false,
 				label: 'Документы',
 				type: 'string',
-				value: null
+				value: null,
+				order:16
 			}, {
 				name: 'phone',
 				checked: false,
 				label: 'Телефон',
 				type: 'string',
-				value: null
+				value: null,
+				order:17
 			}, {
 				name: 'btn-text',
 				checked: false,
 				label: 'Подпись кнопки',
 				type: 'string',
-				value: null
+				value: null,
+				order:18
 			}, {
 				name: 'btn-link',
 				checked: false,
 				label: 'Ссылка кнопки',
 				type: 'string',
-				value: null
+				value: null,
+				order:19
 			}, {
 				name: 'img-album',
 				checked: false,
 				label: 'Изображение (альбомная ориентация)',
 				type: 'string',
-				value: null
+				value: null,
+				order:20
 			}, {
 				name: 'img-book',
 				checked: false,
 				label: 'Изображение (книжная ориентация)',
 				type: 'string',
-				value: null
+				value: null,
+				order:21
 			}, {
 				name: 'degree',
 				checked: true,
@@ -1060,20 +1083,239 @@ export default {
 				load: store.loadDegrees,
 				result: computed(() => store.newsDegrees),
 				value: null,
+				order:22
 			}
 			]
 		}
 
-		const fields = ref(initialState())
+		// const fields = ref(initialState())
 
+		const fields = ref([])
+
+
+		newsFieldsPromise.then(schemaFields => {
+			const filtersName = ['UF_NAME','UF_TITLE','UF_PREVIEW_TEXT','UF_TEXT','UF_ACTIVE','degree','UF_CREATED_AT','types','complexes']
+			schemaFields.map((field,index) => {
+				if(filtersName.includes(field.name)){
+					let newField = {
+						name: field.name,
+						label: field.description,
+						checked: false,
+						order: index
+					}
+					switch (field.name) {
+						case 'UF_NAME':
+							newField.type = 'string'
+							newField.value = null
+							newField.checked = true
+							break;
+						case 'UF_TITLE':
+							newField.type = 'string'
+							newField.value = null
+							break;
+						case 'UF_PREVIEW_TEXT':
+							newField.type = 'string'
+							newField.value = null
+							break;
+						case 'UF_TEXT':
+							newField.type = 'string'
+							newField.value = null
+							break;
+						case 'UF_ACTIVE':
+							newField.type = 'string'
+							newField.value = null
+							break;
+						case 'degree':
+							newField.type = 'select',
+							newField.load = store.loadDegrees
+							newField.result = computed(() => store.newsDegrees)
+							newField.value = null
+							newField.checked = true
+							break;
+						case 'UF_CREATED_AT':
+							newField.type = 'select-options',
+								newField.value = {
+									name: 'exact_date',
+									label: 'Точная дата',
+									value: null,
+									cells: [
+										{
+											name: 'date',
+											type: 'date',
+											value: null
+										}
+									],
+								},
+							newField.options = [									
+									{
+										name: 'exact_date',
+										label: 'Точная дата',
+										value: null,
+										cells: [
+											{
+												name: 'date',
+												type: 'date',
+												value: null
+											}
+										],
+									},
+									{
+										name: 'range',
+										label: 'Диапазон',
+										value: 'Диапазон',
+										cells: [
+											{
+												name: 'dateFrom',
+												type: 'date',
+												value: null
+											},
+											{
+												name: 'dateTo',
+												type: 'date',
+												value: null
+											}
+										],
+									},
+									{
+										name: 'month',
+										label: 'Месяц',
+										value: 'Месяц',
+										type: 'date',
+										cells: [
+											{
+												name: 'month',
+												type: 'select',
+												options: [{
+													name: 'January',
+													label: 'Январь',
+													value: '01'
+												},
+												{
+													name: 'February',
+													label: 'Февраль',
+													value: '02'
+												},
+												{
+													name: 'March',
+													label: 'Март',
+													value: '03'
+												},
+												{
+													name: 'April',
+													label: 'Апрель',
+													value: '04'
+												},
+												{
+													name: 'May',
+													label: 'Май',
+													value: '05'
+												},
+												{
+													name: 'June',
+													label: 'Июнь',
+													value: '06'
+												},
+												{
+													name: 'July',
+													label: 'Июль',
+													value: '07'
+												},
+												{
+													name: 'August',
+													label: 'Август',
+													value: '08'
+												},
+												{
+													name: 'September',
+													label: 'Сентябрь',
+													value: '09'
+												},
+												{
+													name: 'October',
+													label: 'Октябрь',
+													value: '10'
+												},
+												{
+													name: 'November',
+													label: 'Ноябрь',
+													value: '11'
+												},
+												{
+													name: 'December',
+													label: 'Декабрь',
+													value: '12'
+												},
+												],
+												value: null
+											},
+										],
+									},
+									{
+										name: 'year',
+										label: 'Год',
+										value: 'Год',
+										type: 'date',
+										cells: [
+											{
+												name: 'year',
+												type: 'select',
+												options: [{
+													name: '2022',
+													label: '2022',
+													value: 2022
+												}, {
+													name: '2021',
+													label: '2021',
+													value: 2021
+												}, {
+													name: '2020',
+													label: '2020',
+													value: 2020
+												}],
+												value: null
+											}
+										],
+									},
+									{
+										name: 'last_n_days',
+										label: 'Последние N дней',
+										value: 'Последние N дней',
+										template: 'Последние var0 (дня/дней)',
+										cells: [
+											{
+												name: 'days',
+												type: 'number'
+											}
+										],
+									},
+								]
+								newField.checked = true
+							break;
+						case 'types':
+							newField.type = 'multi-select',
+								newField.load = store.loadTypes,
+								newField.result = computed(() => store.newsTypes),
+								newField.value = []
+								newField.checked = true
+							break;
+						case 'complexes':
+							newField.type = 'multi-select',
+								newField.load = store.loadComplexes,
+								newField.result = computed(() => store.complexes),
+								newField.value = []
+								// newField.checked = true
+							break;
+						default:
+							break;
+					}
+					fields.value.push(newField)
+				}
+			})
+		})
 
 		const filterTable = (search, fields) => {
 
-			store.variables.searchStr = search
-
-			// store.variables.id = fields.value
-			// .filter(field => field.name === 'id' && field.value?.length)
-			// .map(field => field.value.ID.toString())
+			store.variables.searchStr = search.value
 
 			// store.variables.name = fields.value
 			// 	.filter(field => field.name === 'complex' && field.value?.length)
@@ -1083,41 +1325,28 @@ export default {
 			// 	.filter(field => field.name === 'complex' && field.value?.length)
 			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
 
-			// store.variables.system = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.date = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+			const dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT').value
+			if(dateValue){
+				if(dateValue.name === 'range'){
+				let splittedValue = dateValue.value.split(' ')
+				store.variables.date = splittedValue[0]
+				store.variables.rangeValue = splittedValue[1]
+			}
+			else{
+				store.variables.date = dateValue.value
+			}
+			store.variables.dateFilterType = dateValue.name
+		}
 
 			store.variables.types = fields.value
-				.filter(field => field.name === 'type' && field.value?.length)
+				.filter(field => field.name === 'types' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]
 
 			store.variables.complexes = fields.value
-				.filter(field => field.name === 'complex' && field.value?.length)
+				.filter(field => field.name === 'complexes' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]
 
-			store.variables.houses = fields.value
-				.filter(field => field.name === 'house' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			store.variables.approaches = fields.value
-				.filter(field => field.name === 'approache' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			store.variables.floors = fields.value
-				.filter(field => field.name === 'floor' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			store.variables.premises = fields.value
-				.filter(field => field.name === 'premise' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.contacts = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
+			
 
 			// store.variables.title = fields.value
 			// 	.filter(field => field.name === 'name' && field.value)
@@ -1131,45 +1360,15 @@ export default {
 			// 	.filter(field => field.name === 'complex' && field.value?.length)
 			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
 
-			// store.variables.icons = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.images = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.documents = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.phone = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.btnText = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.btnLink = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.imgAlbum = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.imgBook = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
 			store.variables.degrees = fields.value
 				.filter(field => field.name === 'degree' && field.value)
 				.map(field => field.value.ID.toString())
 
+				// console.log(store.variables);
+
 		}
 
-		const clearFilter = (defaultFields) => {
+		const resetclearFilter = (defaultFields) => {
 			store.variables = {
 				currentPage: store.variables.currentPage,
 				perPage: store.variables.perPage,
@@ -1192,6 +1391,7 @@ export default {
 			}
 		}
 
+
 		return {
 			route,
 			isOpen,
@@ -1208,7 +1408,7 @@ export default {
 			deleteNewsArray,
 			store,
 			priorityMap,
-			clearFilter,
+			resetclearFilter,
 			deleteSingleNews,
 			editModal,
 			closeEditModal,

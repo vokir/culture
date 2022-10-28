@@ -19,6 +19,10 @@ import { GET_HOUSES } from "../api/queries/getHouses";
 import { GET_APPROACHES } from "../api/queries/getApproaches";
 import { GET_FLOORS } from "../api/queries/getFloors";
 import { GET_PREMISES } from "../api/queries/getPremises";
+import { CREATE_FILTER } from "../api/mutations/createFilter";
+import { DELETE_FILTER } from "../api/mutations/deleteFilter";
+import { UPDATE_FILTER } from "../api/mutations/updateFilter";
+import { GET_FILTERS } from "../api/queries/getFilters";
 
 
 // useStore could be anything like useUser, useCart
@@ -30,7 +34,11 @@ export const useNewsStore = defineStore('news', () => {
   const { result, loading, variables, refetch } = useQuery(GET_NEWS, {
     currentPage: currentPage.value,
     perPage: perPage.value,
+		dateFilterType: 'exact_date'
   })
+
+	const { result: resultFilters, loading: loadingFilters, refetch:refetchFilters, onResult: onResultFilters} = useQuery(GET_FILTERS)
+
 
   const { result: resultTypes, loading: loadingTypes, load: loadTypes } = useLazyQuery(GET_NEWS_TYPES)
   const { result: resultDegrees, loading: loadingDegrees, load: loadDegrees } = useLazyQuery(GET_NEWS_DEGREES)
@@ -66,6 +74,9 @@ export const useNewsStore = defineStore('news', () => {
   });
 	const premises = computed(() => {
     return resultPremises.value?.getPremises ?? [];
+  });
+	const filters = computed(() => {
+    return resultFilters.value?.getFilters ?? [];
   });
 
   updatePage(() => {
@@ -165,6 +176,11 @@ export const useNewsStore = defineStore('news', () => {
 
   const { mutate: createNewsLink, onDone: onDoneCreateNewsLink, onError: onErrorCreateNewsLink } = useMutation(CREATE_NEWS_LINK)
   const { mutate: deleteNewsLink, onDone: onDoneDeleteNewsLink, onError: onErrorDeleteNewsLink } = useMutation(DELETE_NEWS_LINK)
+
+  const { mutate: createFilter, onDone: onDoneCreateFilter, onError: onErrorCreateFilter } = useMutation(CREATE_FILTER)
+  const { mutate: deleteFilter, onDone: onDoneDeleteFilter, onError: onErrorDeleteFilter } = useMutation(DELETE_FILTER)
+	const { mutate: updateFilter, onDone: onDoneUpdateFilter, onError: onErrorUpdateFilter } = useMutation(UPDATE_FILTER)
+
   return {
     news,
     loading,
@@ -200,6 +216,13 @@ export const useNewsStore = defineStore('news', () => {
     loadApproaches,
     loadFloors,
     loadPremises,
+		createFilter,
+		deleteFilter,
+		updateFilter,
+		filters,
+		refetchFilters,
+		loadingFilters,
+		onResultFilters
   };
 
 })

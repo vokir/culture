@@ -1,5 +1,6 @@
 import { ApolloClient, ApolloLink, concat, createHttpLink, InMemoryCache } from '@apollo/client/core'
 import axios from "axios";
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 
 let sessid = 'd7a0d89faf1977c72ab08842ec935cf2'
 
@@ -34,3 +35,17 @@ export const apolloClientConfig = new ApolloClient({
   cache: new InMemoryCache(),
   connectToDevTools: true,
 })
+
+//Get news fields from schema
+
+const ENDPOINT_URL = '/api/v2/master-system/graphql?sessid=' + sessid;
+
+export const newsFieldsPromise = (async () => {
+    const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+		const fields = res.data.data.__schema.types.find(type => type.description === 'Новости').fields
+		return fields
+
+    const schema = buildClientSchema(res.data.data)
+    const sdl = printSchema(schema)
+    console.log(sdl)
+})()

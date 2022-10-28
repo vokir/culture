@@ -1,5 +1,4 @@
 <template lang="">
-	<!-- {{modelValue}} -->
 	<div class="select-options-wrapper">
 		<div v-if="labelSelect" class="select-options-wrapper__label">
 				{{ labelSelect }}
@@ -73,7 +72,7 @@ export default {
 		}
 
 		const updateModelValue = () => {
-			let newModelValue = {label:null, value:null}
+			let newModelValue = {name:selectedValue.value.name, label:null, value:null}
 			let type = selectedValue.value.type
 			let template = selectedValue.value.template
 			let cells = selectedValue.value.cells
@@ -94,7 +93,7 @@ export default {
 
 				newModelValue.label = template
 				if(cells.length === 1){
-					newModelValue.value = cells[0].value
+					newModelValue.value = (cells[0].value).toString()
 				}
 				else{
 					//если месяц и квартал то value = label (исправить)

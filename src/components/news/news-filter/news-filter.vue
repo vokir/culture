@@ -3,35 +3,38 @@
 		:fields="computedFields"
 		:fieldsWithValue="fieldsWithValue"
 		:checkedFields="checkedFields"
-		:filters="filters"
+		:filters="filtersTemp"
 		:search="search"
 		:searchPlaceholderProp="'поиск'"
 		:filterPlaceholderProp="'Фильтр'"
 		:variant="'transparent'"
 		@filterTable="filterTable"
 		@setSearch="setSearch"
-		@clearFilter="clearFilter"
+		@resetclearFilter="resetclearFilter"
 		@toggleAddField="toggleAddField"
 		@toggleOption="toggleOption"
 		@clearFieldValue="clearFieldValue"
+		@addFilter="addFilter"
 		@saveFilter="saveFilter"
 		@selectFilter="selectFilter"
 		@setPin="setPin"
 		@removeFilter="removeFilter"
-		@editFilterName="editFilterName"
 		@resetFilter="$emit('selectFilter', filters.filter(filter => filter.selected)[0])"
 		@clearLatestFields="clearLatestFields"
+		@disableFilter="disableFilter"
 	/>
 </template>
 <script>
 
 import { filter } from 'lodash'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import VFilterAndSearch from '../../ui/v-filter-and-search/v-filter-and-search.vue'
+import { useNewsStore } from "../../../store/newsStore";
+
 
 export default {
 	name: 'news-filter',
-	emits: ['filterTable', 'clearFilter','selectFilter'],
+	emits: ['filterTable', 'resetclearFilter','selectFilter'],
 	components: {
 		VFilterAndSearch,
 	},
@@ -40,9 +43,16 @@ export default {
 	},
 	setup(props, { emit }) {
 		const search = ref("")
-		const filters = ref([])
-
 		let defaultFields = []
+		const filtersTemp = ref([])
+
+		const store = useNewsStore()
+    const {
+      createFilter,
+			deleteFilter,
+			updateFilter,
+			onResultFilters
+    } = store
 
 		const computedFields = computed(() => {
 			return props.fields.map(field => {
@@ -50,19 +60,23 @@ export default {
 					field.load()
 					field.computedResult = field.result.map(obj => { return { ...obj, name: obj.UF_NAME || obj.UF_TITLE } })
 					if(field.type === 'select' ){
-						field.value = field.computedResult.filter(row => row.ID === field.value?.ID)[0]
+						if(field.computedResult.length){
+							field.value = field.computedResult.filter(row => row.ID === field.value?.ID)[0]
+						}
 					}
-					else if(field.type === 'multi-select' ){
-						let tempValue = JSON.parse(JSON.stringify(field.value)) 
-						field.value = []
-						tempValue.map(val => {
+					else if(field.type === 'multi-select'){
+						if(field.computedResult.length && field.value.length){
+							let tempValue = JSON.parse(JSON.stringify(field.value)) 
+							field.value = []
+							tempValue.map(val => {
 							let obj
 							obj = field.computedResult.find(row => {
-								console.log(123)
-								// row.ID === val.ID
+								return row.ID === val.ID
 							})
-							// field.value.push(obj)
+							field.value.push(obj)
 						})
+						}
+
 					}
 				}
 				return field
@@ -71,7 +85,7 @@ export default {
 
 		const checkedFields = computed(() => {
 			return props.fields.filter(field => field.checked)
-			.sort((a,b) => a.checked - b.checked)
+			.sort((a,b) => a.order - b.order)
 		})
 
 		const fieldsWithValue = computed(() => {
@@ -89,11 +103,24 @@ export default {
 			})
 		})
 
-		const toggleOption = (options, option) => {
-			var index = options.value.indexOf(option);
+		const filters = computed(() => {
+			return store.filters.map(filter => {
+				let json = JSON.parse(filter.UF_CONTENT)
+				let newFilter = {ID:filter.ID, ...json}
+				if(json.pinned){
+					newFilter.selected = true
+					emit('selectFilter',newFilter)
+				}
+				return newFilter
+			})
+			.sort((a,b) => a.order - b.order)
+		})
 
+		const toggleOption = (option, options) => {
+			var index = options.value.indexOf(option);
 			if (index === -1) {
 				options.value.push(option);
+
 			} else {
 				options.value.splice(index, 1);
 			}
@@ -102,6 +129,7 @@ export default {
 		const toggleAddField = (field) => {
 			if (!field.checked) {
 				field.checked = Date.now()
+				field.order = checkedFields.value.length - 1
 			}
 			else {
 				field.checked = false
@@ -113,10 +141,10 @@ export default {
 			emit('filterTable', search, computedFields)
 		}
 
-		const clearFilter = () => {
+		const resetclearFilter = () => {
 			search.value = ""
-			filters.value.map(field => field.selected = false)
-			emit('clearFilter', defaultFields)
+			filtersTemp.value.map(field => field.selected = false)
+			emit('resetclearFilter', defaultFields)
 		}
 
 		const setSearch = (str) => {
@@ -127,75 +155,59 @@ export default {
 			field.value = field.type === 'multi-select' ? [] : null
 		}
 
-		onMounted(() => {
-			props.fields.map(field => defaultFields.push({...field}))
-			getFilters()
-		})
-
-		// localStorage.clear()
-		// localStorage.setItem('filter1', JSON.stringify({name: 'Фильтр 1', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:1}}))
-		// localStorage.setItem('filter2', JSON.stringify({name: 'Фильтр 2', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:2}}))
-		// localStorage.setItem('filter3', JSON.stringify({name: 'Фильтр 3', date: Date.now(), selected: false, pinned:false, fields:{name:'ID', value:3}}))
-
 		const selectFilter = (filter) => {
-			filters.value.map(row => {
-				if(row === filter){
+			filtersTemp.value.map(row => {
+				if (row === filter) {
 					row.selected = true
 				}
-				else{
-					row.selected= false
+				else {
+					row.selected = false
 				}
 			})
-			emit('selectFilter',filter)
+			emit('selectFilter', filter)
 		}
 
-		const getFilters = () => {
-			filters.value = []
-			let keys = Object.keys(localStorage)
-			let i = keys.length
-			while(i--){
-				let curFilter = JSON.parse(localStorage.getItem(keys[i]))
-				if(curFilter.pinned){
-					curFilter.selected = true
-					selectFilter(curFilter)
+		onResultFilters(()=>{
+			filtersTemp.value = filters.value
+		})
+
+		const addFilter = (name) =>{
+			filtersTemp.value.push({name, order:filtersTemp.value.length})
+			createFilter(({content: JSON.stringify({name, date: Date.now(), selected: false, pinned:false, fields:props.fields, order:filtersTemp.value.length})}))
+			store.refetchFilters()
+		}
+
+		const saveFilter = () =>{
+			filters.value.map(filter => {
+				if(filter.name !== filter.newName){
+					localStorage.removeItem(filter.name)
+					filter.name = filter.newName
+					delete filter.newName
 				}
-				filters.value.push(curFilter)
-			}
-			filters.value = filters.value.sort((a,b) => a.date - b.date)
-		}
-
-
-		const saveFilter = (name) =>{
-			localStorage.setItem(name, JSON.stringify({name: name, date: Date.now(), selected: false, pinned:false, fields:props.fields}))
-			getFilters()
+			delete filter.editting
+			localStorage.setItem(filter.name, JSON.stringify({...filter, selected:false}))
+			})
+			store.refetchFilters()
 		}
 
 		const setPin = (filter) => {
+			console.log(filter);
 			if (filter.pinned) {
 				filter.pinned = false
-				localStorage.setItem(filter.name, JSON.stringify({...filter, selected:false}))
-				return
+				updateFilter({id:filter.ID, content:JSON.stringify({...filter, id:undefined, selected:false})})
 			}
 			else {
-				filters.value.map(row => {
-					if (row === filter) {
-						row.pinned = true
-					}
-					else {
-						row.pinned = false
-					}
-					localStorage.setItem(row.name,  JSON.stringify({...row, selected:false}))
+				filtersTemp.value.map(row => {
+					row === filter ? row.pinned = true : row.pinned = false
+					updateFilter({id:row.ID, content:JSON.stringify({...row, id:undefined, selected:row.pinned})})
 				})
 			}
 		}
 
-		const editFilterName = (filter) => {
-			console.log(filter);
-		}
-
-		const removeFilter = (filter) => {
-			localStorage.removeItem(filter.name)
-			getFilters()
+		const removeFilter = (id) => {
+			filtersTemp.value.splice(filtersTemp.value.indexOf(filtersTemp.value.find(filter => filter.id === id)),1)
+			deleteFilter({id})
+			store.refetchFilters()
 		}
 
 		const clearLatestFields = () => {
@@ -206,24 +218,40 @@ export default {
 			})
 		}
 
+		const disableFilter = (filter) =>{
+			filter.selected = false
+		}
+
+		watch(props.fields, val => {
+			if(!defaultFields.length){
+				val.map(field => {
+				defaultFields.push(JSON.parse(JSON.stringify(field)))
+			})
+			}
+		})
+
 		return {
 			computedFields,
 			checkedFields,
 			fieldsWithValue,
 			search,
 			filters,
+			store,
+			filtersTemp,
+			defaultFields,
 			toggleAddField,
 			filterTable,
-			clearFilter,
+			resetclearFilter,
 			setSearch,
 			toggleOption,
 			clearFieldValue,
+			addFilter,
 			saveFilter,
 			selectFilter,
 			setPin,
-			editFilterName,
 			removeFilter,
-			clearLatestFields
+			clearLatestFields,
+			disableFilter,
 		}
 	}
 }

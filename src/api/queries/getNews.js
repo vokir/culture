@@ -9,7 +9,7 @@ query news(
   $active: [String] = []
   $name: [String] = []
   $system: [String] = []
-  $date: [String]
+  $date: String
   $types: [String] = []
   $complexes: [String] = []
   $houses: [String] = []
@@ -29,6 +29,8 @@ query news(
   $imgAlbum: [String] = []
   $imgBook: [String] = []
   $degrees: [String] = []
+	$dateFilterType: DateFilterType!
+	$rangeValue: String
 ) {
   getNews(
     search: $searchStr
@@ -39,7 +41,6 @@ query news(
       { column: "UF_NAME", value: $name }
       { column: "UF_ACTIVE", value: $active }
       { column: "system", value: $system }
-      { column: "UF_CREATED_AT", value: $date }
       { column: "ID", value: $types, relation: "types" }
       { column: "ID", value: $complexes, relation: "complexes" }
       { column: "ID", value: $houses, relation: "houses" }
@@ -60,6 +61,7 @@ query news(
       { column: "imgLibrary", value: $imgBook }
       { column: "ID", value: $degrees, relation: "degree" }
     ]
+		dateFilter:{column:"UF_CREATED_AT", value: $date, type:$dateFilterType, range_value:$rangeValue}
   ) {
     data {
       ID

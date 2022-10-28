@@ -1,9 +1,4 @@
 <template>
-	{{modelValue[0] }}
-	<br>
-	{{options[1]}}
-	<br>
-	{{modelValue[0] === options[1]}}
   <div :class="['select']" >
     <div
       v-if="labelSelect"
@@ -95,27 +90,21 @@
           </template>
           <template #popper v-if="variant === 'checkbox'">
             <div class="select-popup">
-              <div class="select__list">
-                <input
-              class="select__input"
-              v-model="searchStr"
-              v-if="isOpened  && variant === 'primary'"
-              placeholder="Поиск"
-              type="text"
-            />
-            <label
-              class="select__item"
-              v-for="option in optionsFiltered"
-            >
-						<input
-                class="select__checkbox"
-                @click="toggleOption(option,modelValue)"
-                :checked="modelValue.includes(option)"
-                type="checkbox"
-                :id="option.label"
-              >{{option.name}}
-            </label>
-              </div>
+							<div class="select__list">
+								<label
+									class="select__item"
+									v-for="option in optionsFiltered"
+								>
+									<input
+										class="select__checkbox"
+										@click="toggleOption(option)"
+										:checked="modelValue.includes(option)"
+										type="checkbox"
+										:id="option.label"
+									/>
+									{{option.name}}
+								</label>
+							</div>
             </div>
             <!-- <div class="select-popup">
               <ul class="select__list">
@@ -196,7 +185,6 @@ export default {
 
     const removeOption = (option,options) => {
       emit("removeOption", option, options);
-
     }
 
     const popupListener = () => {
@@ -208,10 +196,6 @@ export default {
       }
     }
 
-		useClickOutside(selectRef, ()=>{
-			closeModal()
-		})
-
     const selectValue = (option) => {
       if (option?.length) {
         option.forEach(item => {
@@ -221,17 +205,17 @@ export default {
       emit("update:modelValue", selectedList.value);
     };
 
-		const toggleOption = (option, modelValue)=>{
-			emit('toggleOption',option, modelValue)
+		const toggleOption = (option)=>{
+			emit('toggleOption',option)
 		}
 
     onMounted(() => {
       selectValue(props.modelValue)
     })
 
-		watch(() => props.modelValue, val => {
-			// selectedList.value = val
-		},{deep:true, })
+		useClickOutside(selectRef, ()=>{
+			closeModal()
+		})
 
     return {
       search,
