@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="container-header__search">
-				<news-filter :fields="fields" @filterTable="filterTable" @resetclearFilter="resetclearFilter" @selectFilter="selectFilter"></news-filter>
+				<news-filter :fields="fields" @filterTable="filterTable" @updateFields="newFields => updateFields(newFields)" @resetclearFilter="resetclearFilter" @selectFilter="selectFilter"></news-filter>
 			</div>
 			<div class="container-header__action">
 				<v-button
@@ -402,6 +402,8 @@ export default {
 			contacts: []
 		})
 
+		const fields = ref([])
+
 		onErrorDeleteNews(error => {
 			let e = JSON.parse(JSON.stringify(error))
 			toast.error(e.message)
@@ -452,678 +454,53 @@ export default {
 			openEditModal()
 		}
 
-		//Потом удалить, т.к. фильтр должен делать бэк
-		const computedNews = computed(() => {
-			let dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT')
-			
-			return store.news.filter(row => {
-				if (dateValue.name === 'any')
-					return true
-				else if (dateValue.name === 'yesterday') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM-DD') === dayjs().add(-1, 'day').format('YYYY-MM-DD') ? true : false
-				}
-				else if (dateValue.name === 'today') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM-DD') === dayjs().format('YYYY-MM-DD') ? true : false
-				}
-				else if (dateValue.name === 'tomorrow') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM-DD') === dayjs().add(1, 'day').format('YYYY-MM-DD') ? true : false
-				}
-				else if (dateValue.name === 'curWeek') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY W') === dayjs().format('YYYY W') ? true : false
-				}
-				else if (dateValue.name === 'curMonth') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY MM') === dayjs().format('YYYY MM') ? true : false
-				}
-				else if (dateValue.name === 'curQuarter') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY Q') === dayjs().format('YYYY Q') ? true : false
-				}
-				else if (dateValue.name === 'last7days') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-7,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(1,'day')) ? true : false
-				}
-				else if (dateValue.name === 'last30days') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-30,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(1,'day')) ? true : false				
-				}
-				else if (dateValue.name === 'last60days') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-60,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(1,'day')) ? true : false				
-				}
-				else if (dateValue.name === 'last90days') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-90,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(1,'day')) ? true : false				
-				}
-				else if (dateValue.name === 'lastNdays') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-dateValue.value,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(1,'day')) ? true : false			
-				}
-				else if (dateValue.name === 'nextNdays') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs().add(-1,'day')) && 
-					dayjs(row.UF_CREATED_AT).isBefore(dayjs().add(dateValue.value,'day')) ? true : false			
-				}
-				else if (dateValue.name === 'month') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY M') === dateValue.value ? true : false
-				}
-				else if (dateValue.name === 'quarter') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY Q') === dateValue.value ? true : false
-				}
-				else if (dateValue.name === 'year') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY')  === dateValue.value ? true : false
-				}
-				else if (dateValue.name === 'exactDate') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM-DD') === dateValue.value ? true : false
-				}
-				else if (dateValue.name === 'lastWeek') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY WW') === dayjs().add(-1,'week').format('YYYY WW') ? true : false
-				}
-				else if (dateValue.name === 'lastMonth') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM') === dayjs().add(-1, 'month').format('YYYY-MM') ? true : false
-				}
-				else if (dateValue.name === 'range') {
-					return dayjs(row.UF_CREATED_AT).isAfter(dayjs(dateValue.value[0]).add(-1,'day')) 
-					&& dayjs(row.UF_CREATED_AT).isBefore(dayjs(dateValue.value[1]).add(1,'day')) ? true : false
-				}
-				else if (dateValue.name === 'nextWeek') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY WW') === dayjs().add(1,'week').format('YYYY WW') ? true : false
-				}
-				else if (dateValue.name === 'nextMonth') {
-					return dayjs(row.UF_CREATED_AT).format('YYYY-MM') === dayjs().add(1, 'month').format('YYYY-MM') ? true : false
-				}
-			})
-		})
-
-		//Тоже удалить, должны приходить с бэка
-		const initialState = () => {
-			return [{
-				name: 'id',
-				checked: false,
-				label: 'ID',
-				type: 'select-options',
-				value: null,
-				options: [
-					{
-						name: 'exact',
-						label: 'Точно',
-						value: null,
-						cells: [{
-							name:'number',
-							type:'number',
-						}],
-					},
-					{
-						name: 'range',
-						label: 'Диапазон',
-						value: 'Диапазон',
-						template: 'var0-var1',
-						type:'range',
-						cells: [
-						{
-							name:'number',
-							type:'number',
-						},
-						{
-							name:'number',
-							type:'number',
-						}
-						],
-					},
-					{
-						name: 'more',
-						label: 'Больше чем',
-						value: null,
-						template: '> var0',
-						cells: [{
-							name: 'number',
-							type: 'number',
-						}],
-					},
-					{
-						name: 'less',
-						label: 'Меньше чем',
-						value: null,
-						template: '< var0',
-						cells: [{
-							name: 'number',
-							type: 'number',
-						}],
-					}
-				],
-				order:0
-			}, {
-				name: 'name',
-				checked: true,
-				label: 'Название новости',
-				type: 'string',
-				value: null,
-				order:1
-			}, {
-				name: 'activity',
-				checked: false,
-				label: 'Активность',
-				type: 'string',
-				value: null,
-				order:2
-			}, {
-				name: 'system',
-				checked: false,
-				label: 'Внешняя система',
-				type: 'select',
-				value: null,
-				order:3
-			}, {
-				name: 'date',
-				checked: true,
-				label: 'Дата создания',
-				type: 'select-options',
-				value: {
-						name: 'any',
-						label: 'Любая дата',
-						value: null,
-						cells: [],
-					},
-				options:[
-					{
-						name: 'any',
-						label: 'Любая дата',
-						value: null,
-						cells: [],
-					},
-					{
-						name: 'yesterday',
-						label: 'Вчера',
-						value: 'Вчера',
-						cells: [],
-					},
-					{
-						name: 'today',
-						label: 'Сегодня',
-						value: 'Сегодня',
-						cells: [],
-					},
-					{
-						name: 'tomorrow',
-						label: 'Завтра',
-						value: 'Завтра',
-						cells: [],
-					},
-					{
-						name: 'curWeek',
-						label: 'Текущая неделя',
-						value: 'Текущая неделя',
-						cells: [],
-					},
-					{
-						name: 'curMonth',
-						label: 'Текущий месяц',
-						value: 'Текущий месяц',
-						cells: [],
-					},
-					{
-						name: 'curQuarter',
-						label: 'Текущий квартал',
-						value: 'Текущий квартал',
-						cells: [],
-					},
-					{
-						name: 'last7days',
-						label: 'Последние 7 дней',
-						value: 'Последние 7 дней',
-						cells: [],
-					},
-					{
-						name: 'last30days',
-						label: 'Последние 30 дней',
-						value: 'Последние 30 дней',
-						cells: [],
-					},
-					{
-						name: 'last60days',
-						label: 'Последние 60 дней',
-						value: 'Последние 60 дней',
-						cells: [],
-					},
-					{
-						name: 'last90days',
-						label: 'Последние 90 дней',
-						value: 'Последние 90 дней',
-						cells: [],
-					},
-					{
-						name: 'lastNdays',
-						label: 'Последние N дней',
-						value: 'Последние N дней',
-						template: 'Последние var0 (дня/дней)',
-						cells: [
-							{
-								name: 'days',
-								type: 'number'
-							}
-						],
-					},
-					{
-						name: 'nextNdays',
-						label: 'Следующие N дней',
-						value: 'Следующие N дней',
-						template: 'Следующие var0 (дня/дней)',
-						cells: [
-							{
-								name: 'days',
-								type: 'number',
-							}
-						],
-					},
-			{
-				name: 'month',
-				label: 'Месяц',
-				value: 'Месяц',
-				type: 'date',
-				cells: [
-					{
-						name: 'month',
-						type: 'select',
-						options: [{
-							name: 'January',
-							label: 'Январь',
-							value: 1
-						},
-						{
-							name: 'February',
-							label: 'Февраль',
-							value: 2
-						},
-						{
-							name: 'March',
-							label: 'Март',
-							value: 3
-						},
-						{
-							name: 'April',
-							label: 'Апрель',
-							value: 4
-						},
-						{
-							name: 'May',
-							label: 'Май',
-							value: 5
-						},
-						{
-							name: 'June',
-							label: 'Июнь',
-							value: 6
-						},
-						{
-							name: 'July',
-							label: 'Июль',
-							value: 7
-						},
-						{
-							name: 'August',
-							label: 'Август',
-							value: 8
-						},
-						{
-							name: 'September',
-							label: 'Сентябрь',
-							value: 9
-						},
-						{
-							name: 'October',
-							label: 'Октябрь',
-							value: 10
-						},
-						{
-							name: 'November',
-							label: 'Ноябрь',
-							value: 11
-						},
-						{
-							name: 'December',
-							label: 'Декабрь',
-							value: 12
-						},
-						],
-						value: null
-					},
-					{
-						name: 'year',
-						type: 'select',
-						options: [{
-							name: '2022',
-							label: '2022',
-							value: 2022
-						}, {
-							name: '2021',
-							label: '2021',
-							value: 2021
-						}, {
-							name: '2020',
-							label: '2020',
-							value: 2020
-						}],
-						value: null
-					}
-				],
-			},
-			{
-				name: 'quarter',
-				label: 'Квартал',
-				value: 'Квартал',
-				type: 'date',
-				template: 'var0 квартал var1',
-				cells: [
-				{
-						name: 'quarter',
-						type: 'select',
-						options: [{
-							name: 'quarter1',
-							label: 'I',
-							value: 1
-						},
-						{
-							name: 'quarter2',
-							label: 'II',
-							value: 2
-						},
-						{
-							name: 'quarter3',
-							label: 'III',
-							value: 3
-						},
-						{
-							name: 'quarter4',
-							label: 'IV',
-							value: 4
-						},
-						],
-						value: null
-					},
-					{
-						name: 'year',
-						type: 'select',
-						options: [{
-							name: '2022',
-							label: '2022',
-							value: 2022
-						}, {
-							name: '2021',
-							label: '2021',
-							value: 2021
-						}, {
-							name: '2020',
-							label: '2020',
-							value: 2020
-						}],
-						value: null
-					}
-				],
-			},
-			{
-				name: 'year',
-				label: 'Год',
-				value: 'Год',
-				type: 'date',
-				cells: [
-					{
-						name: 'year',
-						type: 'select',
-						options: [{
-							name: '2022',
-							label: '2022',
-							value: 2022
-						}, {
-							name: '2021',
-							label: '2021',
-							value: 2021
-						}, {
-							name: '2020',
-							label: '2020',
-							value: 2020
-						}],
-						value: null
-					}
-				],
-			},
-			{
-				name: 'exactDate',
-				label: 'Точная дата',
-				value: null,
-				cells: [
-					{
-						name: 'date',
-						type: 'date',
-						value: null
-					}
-				],
-			},
-			{
-				name: 'lastWeek',
-				label: 'Прошлая неделя',
-				value: 'Прошлая неделя',
-				cells: [],
-			},
-			{
-				name: 'lastMonth',
-				label: 'Прошлый месяц',
-				value: 'Прошлый месяц',
-				cells: [],
-			},
-			{
-				name: 'range',
-				label: 'Диапазон',
-				value: 'Диапазон',
-				cells: [
-					{
-						name: 'dateFrom',
-						type: 'date',
-						value: null
-					},
-					{
-						name: 'dateTo',
-						type: 'date',
-						value: null
-					}
-				],
-			},
-			{
-				name: 'nextWeek',
-				label: 'Следующая неделя',
-				value: 'Следующая неделя',
-				cells: [],
-			},
-			{
-				name: 'nextMonth',
-				label: 'Следующий месяц',
-				value: 'Следующий месяц',
-				cells: [],
-			},
-				],
-				order:4
-			}, {
-				name: 'type',
-				checked: true,
-				label: 'Тип новости',
-				type: 'multi-select',
-				load: store.loadTypes,
-				result: computed(() => store.newsTypes),
-				value: [],
-				order:5
-			}, {
-				name: 'complex',
-				checked: false,
-				label: 'ЖК',
-				type: 'multi-select',
-				load: store.loadComplexes,
-				result: computed(() => store.complexes),
-				value: [],
-				order:6
-			}, {
-				name: 'house',
-				checked: false,
-				label: 'Дом',
-				type: 'multi-select',
-				load: store.loadHouses,
-				result: computed(() => store.houses),
-				value: [],
-				order:7
-			}, {
-				name: 'approache',
-				checked: false,
-				label: 'Подъезд',
-				type: 'multi-select',
-				load: store.loadApproaches,
-				result: computed(() => store.approaches),
-				value: [],
-				order:8
-			}, {
-				name: 'floor',
-				checked: false,
-				label: 'Этаж',
-				type: 'multi-select',
-				load: store.loadFloors,
-				result: computed(() => store.floors),
-				value: [],
-				order:9
-			}, {
-				name: 'premise',
-				checked: false,
-				label: 'Помещение',
-				type: 'multi-select',
-				load: store.loadPremises,
-				result: computed(() => store.premises),
-				value: [],
-				order:10
-			}, {
-				name: 'contacts',
-				checked: false,
-				label: 'Контакты',
-				type: 'select',
-				value: null,
-				order:11
-			}, {
-				name: 'title',
-				checked: false,
-				label: 'Заголовок новости',
-				type: 'string',
-				value: null,
-				order:12
-			}, {
-				name: 'announcement',
-				checked: false,
-				label: 'Текст анонса',
-				type: 'string',
-				value: null,
-				order:13
-			}, {
-				name: 'text',
-				checked: false,
-				label: 'Текст новости',
-				type: 'string',
-				value: null,
-				order:14
-			}, {
-				name: 'icons',
-				checked: false,
-				label: 'Иконки',
-				type: 'string',
-				value: null
-			}, {
-				name: 'gallery',
-				checked: false,
-				label: 'Галерея',
-				type: 'string',
-				value: null,
-				order:15
-			}, {
-				name: 'documents',
-				checked: false,
-				label: 'Документы',
-				type: 'string',
-				value: null,
-				order:16
-			}, {
-				name: 'phone',
-				checked: false,
-				label: 'Телефон',
-				type: 'string',
-				value: null,
-				order:17
-			}, {
-				name: 'btn-text',
-				checked: false,
-				label: 'Подпись кнопки',
-				type: 'string',
-				value: null,
-				order:18
-			}, {
-				name: 'btn-link',
-				checked: false,
-				label: 'Ссылка кнопки',
-				type: 'string',
-				value: null,
-				order:19
-			}, {
-				name: 'img-album',
-				checked: false,
-				label: 'Изображение (альбомная ориентация)',
-				type: 'string',
-				value: null,
-				order:20
-			}, {
-				name: 'img-book',
-				checked: false,
-				label: 'Изображение (книжная ориентация)',
-				type: 'string',
-				value: null,
-				order:21
-			}, {
-				name: 'degree',
-				checked: true,
-				label: 'Степень важности',
-				type: 'select',
-				load: store.loadDegrees,
-				result: computed(() => store.newsDegrees),
-				value: null,
-				order:22
-			}
-			]
-		}
-
-		// const fields = ref(initialState())
-
-		const fields = ref([])
 
 
 		newsFieldsPromise.then(schemaFields => {
 			const filtersName = ['UF_NAME','UF_TITLE','UF_PREVIEW_TEXT','UF_TEXT','UF_ACTIVE','degree','UF_CREATED_AT','types','complexes']
-			schemaFields.map((field,index) => {
+			schemaFields.map(field => {
 				if(filtersName.includes(field.name)){
 					let newField = {
 						name: field.name,
 						label: field.description,
 						checked: false,
-						order: index
+						order: fields.value.length
 					}
 					switch (field.name) {
 						case 'UF_NAME':
 							newField.type = 'string'
-							newField.value = null
+							newField.value = ""
 							newField.checked = true
 							break;
 						case 'UF_TITLE':
 							newField.type = 'string'
-							newField.value = null
+							newField.value = ""
 							break;
 						case 'UF_PREVIEW_TEXT':
 							newField.type = 'string'
-							newField.value = null
+							newField.value = ""
 							break;
 						case 'UF_TEXT':
 							newField.type = 'string'
-							newField.value = null
+							newField.value = ""
 							break;
+							
 						case 'UF_ACTIVE':
-							newField.type = 'string'
+							newField.type = 'select'
 							newField.value = null
+							newField.computedResult = [
+								{
+									UF_TITLE:"Нет",
+									name:"Нет",
+									value:["0"]
+								},
+								{
+									UF_TITLE:"Да",
+									name:"Да",
+									value:["1"]
+								},
+							]
+
 							break;
 						case 'degree':
 							newField.type = 'select',
@@ -1133,8 +510,19 @@ export default {
 							newField.checked = true
 							break;
 						case 'UF_CREATED_AT':
-							newField.type = 'select-options',
-								newField.value = {
+							newField.type = 'select-options'
+							newField.value = {
+									name: 'any',
+									label: 'Любая дата',
+									value: null,
+								},
+							newField.options = [
+								{
+									name: 'any',
+									label: 'Любая дата',
+									value: null,
+								},
+								{
 									name: 'exact_date',
 									label: 'Точная дата',
 									value: null,
@@ -1146,150 +534,138 @@ export default {
 										}
 									],
 								},
-							newField.options = [									
-									{
-										name: 'exact_date',
-										label: 'Точная дата',
-										value: null,
-										cells: [
-											{
-												name: 'date',
-												type: 'date',
-												value: null
-											}
-										],
-									},
-									{
-										name: 'range',
-										label: 'Диапазон',
-										value: 'Диапазон',
-										cells: [
-											{
-												name: 'dateFrom',
-												type: 'date',
-												value: null
+								{
+									name: 'range',
+									label: 'Диапазон',
+									value: 'Диапазон',
+									cells: [
+										{
+											name: 'dateFrom',
+											type: 'date',
+											value: null
+										},
+										{
+											name: 'dateTo',
+											type: 'date',
+											value: null
+										}
+									],
+								},
+								{
+									name: 'month',
+									label: 'Месяц',
+									value: 'Месяц',
+									type: 'date',
+									cells: [
+										{
+											name: 'month',
+											type: 'select',
+											options: [{
+												name: 'January',
+												label: 'Январь',
+												value: '01'
 											},
 											{
-												name: 'dateTo',
-												type: 'date',
-												value: null
-											}
-										],
-									},
-									{
-										name: 'month',
-										label: 'Месяц',
-										value: 'Месяц',
-										type: 'date',
-										cells: [
-											{
-												name: 'month',
-												type: 'select',
-												options: [{
-													name: 'January',
-													label: 'Январь',
-													value: '01'
-												},
-												{
-													name: 'February',
-													label: 'Февраль',
-													value: '02'
-												},
-												{
-													name: 'March',
-													label: 'Март',
-													value: '03'
-												},
-												{
-													name: 'April',
-													label: 'Апрель',
-													value: '04'
-												},
-												{
-													name: 'May',
-													label: 'Май',
-													value: '05'
-												},
-												{
-													name: 'June',
-													label: 'Июнь',
-													value: '06'
-												},
-												{
-													name: 'July',
-													label: 'Июль',
-													value: '07'
-												},
-												{
-													name: 'August',
-													label: 'Август',
-													value: '08'
-												},
-												{
-													name: 'September',
-													label: 'Сентябрь',
-													value: '09'
-												},
-												{
-													name: 'October',
-													label: 'Октябрь',
-													value: '10'
-												},
-												{
-													name: 'November',
-													label: 'Ноябрь',
-													value: '11'
-												},
-												{
-													name: 'December',
-													label: 'Декабрь',
-													value: '12'
-												},
-												],
-												value: null
+												name: 'February',
+												label: 'Февраль',
+												value: '02'
 											},
-										],
-									},
-									{
-										name: 'year',
-										label: 'Год',
-										value: 'Год',
-										type: 'date',
-										cells: [
 											{
-												name: 'year',
-												type: 'select',
-												options: [{
-													name: '2022',
-													label: '2022',
-													value: 2022
-												}, {
-													name: '2021',
-													label: '2021',
-													value: 2021
-												}, {
-													name: '2020',
-													label: '2020',
-													value: 2020
-												}],
-												value: null
-											}
-										],
-									},
-									{
-										name: 'last_n_days',
-										label: 'Последние N дней',
-										value: 'Последние N дней',
-										template: 'Последние var0 (дня/дней)',
-										cells: [
+												name: 'March',
+												label: 'Март',
+												value: '03'
+											},
 											{
-												name: 'days',
-												type: 'number'
-											}
-										],
-									},
-								]
-								newField.checked = true
+												name: 'April',
+												label: 'Апрель',
+												value: '04'
+											},
+											{
+												name: 'May',
+												label: 'Май',
+												value: '05'
+											},
+											{
+												name: 'June',
+												label: 'Июнь',
+												value: '06'
+											},
+											{
+												name: 'July',
+												label: 'Июль',
+												value: '07'
+											},
+											{
+												name: 'August',
+												label: 'Август',
+												value: '08'
+											},
+											{
+												name: 'September',
+												label: 'Сентябрь',
+												value: '09'
+											},
+											{
+												name: 'October',
+												label: 'Октябрь',
+												value: '10'
+											},
+											{
+												name: 'November',
+												label: 'Ноябрь',
+												value: '11'
+											},
+											{
+												name: 'December',
+												label: 'Декабрь',
+												value: '12'
+											},
+											],
+											value: null
+										},
+									],
+								},
+								{
+									name: 'year',
+									label: 'Год',
+									value: 'Год',
+									type: 'date',
+									cells: [
+										{
+											name: 'year',
+											type: 'select',
+											options: [{
+												name: '2022',
+												label: '2022',
+												value: 2022
+											}, {
+												name: '2021',
+												label: '2021',
+												value: 2021
+											}, {
+												name: '2020',
+												label: '2020',
+												value: 2020
+											}],
+											value: null
+										}
+									],
+								},
+								{
+									name: 'last_n_days',
+									label: 'Последние N дней',
+									value: 'Последние N дней',
+									template: 'Последние var0 (дня/дней)',
+									cells: [
+										{
+											name: 'days',
+											type: 'number'
+										}
+									],
+								},
+							]
+							newField.checked = true
+							newField.selectedOption = null
 							break;
 						case 'types':
 							newField.type = 'multi-select',
@@ -1303,7 +679,6 @@ export default {
 								newField.load = store.loadComplexes,
 								newField.result = computed(() => store.complexes),
 								newField.value = []
-								// newField.checked = true
 							break;
 						default:
 							break;
@@ -1313,59 +688,38 @@ export default {
 			})
 		})
 
-		const filterTable = (search, fields) => {
+		const filterTable = (search) => {
 
-			store.variables.searchStr = search.value
-
-			// store.variables.name = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.active = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			const dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT').value
-			if(dateValue){
-				if(dateValue.name === 'range'){
-				let splittedValue = dateValue.value.split(' ')
-				store.variables.date = splittedValue[0]
-				store.variables.rangeValue = splittedValue[1]
+			
+			store.variables.searchStr = search
+			store.variables.name = fields.value.find(field => field.name === 'UF_NAME')?.value
+			store.variables.active = fields.value.find(field => field.name === 'UF_ACTIVE' && field.value)?.value?.value
+			const dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT')?.value
+			if (dateValue) {
+				if (dateValue.name === 'range') {
+					let splittedValue = dateValue.value.split(' ')
+					store.variables.date = splittedValue[0]
+					store.variables.rangeValue = splittedValue[1]
+				}
+				else {
+					store.variables.date = dateValue.value
+				}
+				store.variables.dateFilterType = dateValue.name === 'any' ? 'exact_date' : dateValue.name
 			}
-			else{
-				store.variables.date = dateValue.value
-			}
-			store.variables.dateFilterType = dateValue.name
-		}
-
 			store.variables.types = fields.value
 				.filter(field => field.name === 'types' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]
-
 			store.variables.complexes = fields.value
 				.filter(field => field.name === 'complexes' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			
-
-			// store.variables.title = fields.value
-			// 	.filter(field => field.name === 'name' && field.value)
-			// 	.map(field => field.value)
-
-			// store.variables.preview = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
-			// store.variables.text = fields.value
-			// 	.filter(field => field.name === 'complex' && field.value?.length)
-			// 	.map(field => field.value.map(value => value.ID.toString()))[0]
-
+			store.variables.title = fields.value.find(field => field.name === 'UF_TITLE').value
+			store.variables.preview = fields.value.find(field => field.name === 'UF_PREVIEW_TEXT').value
+			store.variables.text = fields.value.find(field => field.name === 'UF_TEXT').value
 			store.variables.degrees = fields.value
 				.filter(field => field.name === 'degree' && field.value)
 				.map(field => field.value.ID.toString())
 
-				// console.log(store.variables);
-
+			// console.log(store.variables);
 		}
 
 		const resetclearFilter = (defaultFields) => {
@@ -1383,12 +737,25 @@ export default {
 		}
 
 		const selectFilter = (filter) => {
-			if(filter){
-				fields.value.map((field,i) => {
-				field.value = filter.fields[i].value
-				field.checked = filter.fields[i].checked
-			})
+			if (filter) {
+				fields.value.map((field, i) => {
+					if(field.type === 'string'){
+						field.value = filter.fields[i].value ? JSON.parse(JSON.stringify(filter.fields[i]?.value)) : ""
+					}
+					else{
+						field.value = filter.fields[i].value ? JSON.parse(JSON.stringify(filter.fields[i]?.value)) : null
+					}
+					field.checked = filter.fields[i].checked
+					if (field.type === 'select-options') {
+						field.options = filter.fields[i].options ? JSON.parse(JSON.stringify(filter.fields[i].options)) : null
+					}
+				})
 			}
+		}
+
+		const updateFields = (newFields) => {
+			// console.log(newFields);
+			fields.value = newFields
 		}
 
 
@@ -1417,8 +784,8 @@ export default {
 			clearFormData,
 			formData,
 			fields,
-			computedNews,
-			selectFilter
+			selectFilter,
+			updateFields
 		};
 	},
 };

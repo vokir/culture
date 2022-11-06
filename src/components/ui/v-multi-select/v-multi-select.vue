@@ -98,7 +98,7 @@
 									<input
 										class="select__checkbox"
 										@click="toggleOption(option)"
-										:checked="modelValue.includes(option)"
+										:checked="modelValue.find(row => row.ID === option.ID)"
 										type="checkbox"
 										:id="option.label"
 									/>
@@ -106,21 +106,7 @@
 								</label>
 							</div>
             </div>
-            <!-- <div class="select-popup">
-              <ul class="select__list">
-                <li
-                  class="select__item"
-                  :class="{active:selectedList.includes(option.UF_TITLE)}"
-                  v-for="option in optionsFiltered"
-                  :data-id="option.ID"
-                  @click.stop="addOption(option)"
-                >
-                  {{option.FULL_NAME}}
-                </li>
-              </ul>
-            </div> -->
           </template>
-
         </v-dropdown>
       </div>
 
@@ -196,9 +182,9 @@ export default {
       }
     }
 
-    const selectValue = (option) => {
-      if (option?.length) {
-        option.forEach(item => {
+    const selectValue = (options) => {
+      if (options?.length) {
+        options.forEach(item => {
           selectedList.value.push(item)
         });
       }

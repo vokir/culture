@@ -2,49 +2,23 @@
 	<div
 		ref="searchFilterContainer"
 		:class="['search', {'search--transparent':variant === 'transparent'}]"
+		@keydown.esc="isOpened = false"
 	>
-		<template v-if="selectedFilter && isSelectedFilterEqualsSelectedValues">
-			<div class="search-cell">
-				<div class="search-cell-text">
-					{{selectedFilter.name}}
-				</div>
-				<button
-					@click.stop="$emit('disableFilter',selectedFilter)"
-					class="search-cell-btn search-btn"
-				>
-					<svg
-						width="11"
-						height="12"
-						viewBox="0 0 11 12"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="M8.71094 2.7915L2.2943 9.20814"
-							stroke="white"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-						<path
-							d="M2.28906 2.7915L8.7057 9.20814"
-							stroke="white"
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						/>
-					</svg>
-				</button>
-			</div>
-		</template>
+		
 
-		<template v-else v-for="(cell,index) in fieldsWithValue">
+		<template v-for="(cell,index) in fieldsWithValue">
 			<div
 				class="search-cell"
 				v-if="index <= 1"
 			>
+			<div
+					v-if="cell.filter"
+					class="search-cell-text"
+				>
+					{{cell.name}}
+				</div>
 				<div
-					v-if="cell.type !== 'multi-select'"
+					v-else-if="cell.type !== 'multi-select'"
 					class="search-cell-text"
 				>
 					<template v-if="cell.type === 'string'">{{cell.label + ': ' + cell.value}}</template>
@@ -62,11 +36,9 @@
 						{{value.name}}
 					</template>
 				</div>
-				<button
-					@click.stop="$emit('clearFieldValue',cell)"
-					class="search-cell-btn search-btn"
-				>
+				<button @click.stop="cell.pinned === undefined ? $emit('clearFieldValue',cell) : $emit('disableFilter',cell)" class="search-cell-btn">
 					<svg
+						class="svg-stroke"
 						width="11"
 						height="12"
 						viewBox="0 0 11 12"
@@ -89,6 +61,7 @@
 						/>
 					</svg>
 				</button>
+
 			</div>
 			<div
 				class="search-cell"
@@ -97,9 +70,10 @@
 				<div class="search-cell-text">и ещё {{fieldsWithValue.length-2}}</div>
 				<button
 					@click.stop="$emit('clearLatestFields')"
-					class="search-cell-btn search-btn"
+					class="search-cell-btn"
 				>
 					<svg
+					class="svg-stroke"
 						width="11"
 						height="12"
 						viewBox="0 0 11 12"
@@ -138,7 +112,8 @@
 				:boundary="searchFilterContainer"
 			>
 				<template #popper>
-					<div class="search-popup">
+					<div class="search-popup" 
+					>
 						<div class="search-left">
 							<v-loader v-if="store.loadingFilters && false">
 						</v-loader>
@@ -147,7 +122,7 @@
                 <div class="search-left__title">Фильтры</div>
 								<draggable
 									class="search-left__items"
-									v-model="filters"
+									v-model="filtersComputed"
 									v-bind="dragOptions"
 									:group="'filters'"
 									@start="true"
@@ -160,13 +135,13 @@
 											<div :class="['search-left__filter-item-wrapper', {'search-left__filter-item-wrapper--editting':changingSettings && element.selected}]" @click="selectFilter(element)">	
 												<div class="search-left__drag-and-drop" v-if="changingSettings"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="10" viewBox="0 0 12 10"><g fill="#535C69" fill-rule="evenodd"><rect width="12" height="2" rx="1"/><rect width="12" height="2" y="4" rx="1"/><rect width="12" height="2" y="8" rx="1"/></g></svg></div>
 
-												<li :class="['search-left__filter-item', {'search-left__filter-item_small': changingSettings}, {'active': element.selected}, {'hidden':element.editting},{'search-left__filter-editting-item':changingSettings && element.selected}]">
+												<li :class="['search-left__filter-item', {'search-left__filter-item--small': changingSettings}, {'active': element.selected}, {'hidden':element.editting},{'search-left__filter-editting-item':changingSettings && element.selected}]">
 													{{element.name}}
 												</li>
-												<input :class="['search-left__filter-item-input',{'hidden':!element.editting}]" v-model="element.newName"/>
+												<input :class="['search-left__filter-item-input',{'hidden':!element.editting}, {'search-left__filter-item-input--small': changingSettings}]" v-model="element.newName"/>
 												<div class='search-left__filter-item-edits'>
 													<span v-if="element.pinned || changingSettings" @click.stop="$emit('setPin', element)"><svg :class="['svg-fill', {'svg-pinned':element.pinned}]" xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11"><path fill="#535C68" fill-rule="evenodd" d="M11.466 2.964L8.73.23C8.535.03 8.25-.046 7.98.025c-.267.07-.476.28-.55.547-.07.267.004.553.2.75l.56.558L3.8 5.157l-.55-.55c-.303-.304-.794-.306-1.098-.004-.304.302-.306.793-.004 1.097l1.677 1.676-3.092 3.3c-.076.077-.076.2 0 .277.076.076.2.076.276 0l3.3-3.102 1.674 1.675c.304.304.797.304 1.1 0 .305-.304.305-.797 0-1.1l-.55-.55 3.274-4.39.565.563c.303.28.772.27 1.065-.02.293-.29.305-.76.028-1.064z"/></svg></span>
-													<span v-if="changingSettings" @click.stop="editFilter($event,element)"><svg class="svg-fill" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.733677 8.65659L0 11.5L2.68831 10.6585C2.52112 10.1998 2.27473 9.78186 1.96234 9.42657C1.61255 9.06908 1.19236 8.80729 0.733677 8.65659ZM6.68119 2.0975L1.42335 7.83162C1.86004 8.06041 2.26483 8.353 2.62672 8.70279C2.92371 9.08008 3.1723 9.50026 3.36369 9.95125L8.61823 4.22043C8.41473 3.72875 8.13754 3.27776 7.79765 2.88617C7.47206 2.54958 7.09367 2.28339 6.67789 2.0997L6.68009 2.0964L6.68119 2.0975ZM9.68739 0.934837C9.4212 0.648846 9.06041 0.491551 8.68642 0.50035C8.31464 0.50915 7.96045 0.681846 7.70525 0.978837L7.38956 1.32313C7.80975 1.51782 8.19474 1.79391 8.52583 2.1371C8.86022 2.51988 9.13081 2.96207 9.331 3.44276L9.64779 3.09737C9.92058 2.82018 10.0768 2.43299 10.0856 2.026C10.0922 1.61902 9.94808 1.22523 9.68519 0.937036H9.68849L9.68739 0.934837Z" fill="#5B6573"/></svg></span>
+													<span v-if="changingSettings" @click.stop="editFilterName($event,element)"><svg class="svg-fill" width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0.733677 8.65659L0 11.5L2.68831 10.6585C2.52112 10.1998 2.27473 9.78186 1.96234 9.42657C1.61255 9.06908 1.19236 8.80729 0.733677 8.65659ZM6.68119 2.0975L1.42335 7.83162C1.86004 8.06041 2.26483 8.353 2.62672 8.70279C2.92371 9.08008 3.1723 9.50026 3.36369 9.95125L8.61823 4.22043C8.41473 3.72875 8.13754 3.27776 7.79765 2.88617C7.47206 2.54958 7.09367 2.28339 6.67789 2.0997L6.68009 2.0964L6.68119 2.0975ZM9.68739 0.934837C9.4212 0.648846 9.06041 0.491551 8.68642 0.50035C8.31464 0.50915 7.96045 0.681846 7.70525 0.978837L7.38956 1.32313C7.80975 1.51782 8.19474 1.79391 8.52583 2.1371C8.86022 2.51988 9.13081 2.96207 9.331 3.44276L9.64779 3.09737C9.92058 2.82018 10.0768 2.43299 10.0856 2.026C10.0922 1.61902 9.94808 1.22523 9.68519 0.937036H9.68849L9.68739 0.934837Z" fill="#5B6573"/></svg></span>
 													<span v-if="changingSettings" @click.stop="$emit('removeFilter',element.ID)"><svg class="svg-stroke" width="12" height="12" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0859 2.91699L2.91931 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.91406 2.91699L11.0807 11.0836" stroke="#C6CDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
 												</div>
 											</div>	
@@ -177,24 +152,39 @@
 										</li>
               </ul>
 							<div class="search-left__bottom">
-								<button class="search-btn search-left__save-btn" @click="addFilter">
-									<svg
-										width="10"
-										height="11"
-										viewBox="0 0 10 11"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
+								<template v-if="!changingSettings">
+									<button
+										class="search-left__left-btn"
+										@click="addFilter"
 									>
-										<path
-											fill-rule="evenodd"
-											clip-rule="evenodd"
-											d="M6 4.5V0.5H4V4.5H0V6.5H4V10.5H6V6.5H10V4.5H6Z"
-											fill="#868D95"
-										/>
-									</svg>
-									<span>Сохранить фильтр</span></button>
-								<button class="search-btn search-left__settings-btn" @click="changeSettings" :disabled="addingFilter || changingSettings">
+										<svg
+										class="svg-fill"
+											width="10"
+											height="11"
+											viewBox="0 0 10 11"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												fill-rule="evenodd"
+												clip-rule="evenodd"
+												d="M6 4.5V0.5H4V4.5H0V6.5H4V10.5H6V6.5H10V4.5H6Z"
+												fill="#868D95"
+											/>
+										</svg>
+										<span class="uppercase">Сохранить фильтр</span></button>
+								</template>
+								<template v-else>
+									<button
+										class="search-left__left-btn"
+										@click="$emit('returnFilters')"
+									>
+									<svg class="svg-fill" xmlns="http://www.w3.org/2000/svg" width="11" height="10" viewBox="0 0 11 10"><path fill="#868D95" fill-rule="evenodd" d="M7.334 6.745h-4.34l-.01 2.53-3.26-3.27 3.28-3.28-.01 2.73h4.34c1.07 0 1.935-.866 1.935-1.935 0-1.07-.868-1.935-1.937-1.935h-1.11V.295h1.11c1.78 0 3.225 1.444 3.225 3.225 0 1.78-1.445 3.225-3.226 3.225h.002z"/></svg>
+										<span>Вернуть по умолчанию</span></button>
+								</template>
+								<button class="search-left__settings-btn" @click="toggleChangingSettings" :disabled="addingFilter || changingSettings">
 									<svg
+									class="svg-fill"
 										width="11"
 										height="11"
 										viewBox="0 0 11 11"
@@ -214,7 +204,7 @@
 						<div class="search-right">
 								<draggable
 									class="search-right__items"
-									v-model="checkedFields"
+									v-model="checkedFieldsComputed"
 									v-bind="dragOptions"
 									:group="'fields'"
 									@start="true"
@@ -233,7 +223,32 @@
 											v-model="element.value"
 											:name="element.name"
 											:label="element.label"
+											@keypress.enter="filterTable"
 										/>
+										<div class="search-right__clear-field" @click="$emit('resetField',element)" v-if="element.value">
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 14 14"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												d="M11.0859 2.91699L2.91931 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+											<path
+												d="M2.91406 2.91699L11.0807 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</div>
 									</template>
 									<template v-if="element.type === 'select'">
 										<v-select
@@ -243,6 +258,30 @@
 											:labelSelect="element.label"
 											label="name"
 										/>
+										<div class="search-right__clear-field" @click="$emit('resetField',element)" v-if="element.value">
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 14 14"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												d="M11.0859 2.91699L2.91931 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+											<path
+												d="M2.91406 2.91699L11.0807 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</div>
 									</template>
 									<template v-if="element.type === 'multi-select'">
 										<v-multi-select
@@ -253,9 +292,33 @@
 											:labelSelect="element.label"
 											@toggleOption="option => toggleOption(option, element)"
 										/>
+										<div class="search-right__clear-field" @click="$emit('resetField',element)" v-if="element.value?.length">
+										<svg
+											width="14"
+											height="14"
+											viewBox="0 0 14 14"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<path
+												d="M11.0859 2.91699L2.91931 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+											<path
+												d="M2.91406 2.91699L11.0807 11.0836"
+												stroke="#C6CDD3"
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											/>
+										</svg>
+									</div>
 									</template>
 									<template v-if="element.type === 'select-options'">
-										<v-select-options v-model="element.value" :labelSelect="element.label" :options="element.options" />
+										<v-select-options :selectedOption="element.selectedOption" v-model="element.value" :labelSelect="element.label" :options="element.options" />
 									</template>
 									<div
 										class="search-right__remove-field"
@@ -289,7 +352,7 @@
 							</template>
 								</draggable>
 								
-								<div class="search-right__item">
+								<div class="search-right__item search-right__open-modal-fields">
 									<button
 										class="search-right__add-field-btn"
 										@click="popupListenerAddFields"
@@ -302,6 +365,7 @@
 									@click="filterTable"
 								>
 									<svg
+										class="svg-fill"
 										width="15"
 										height="16"
 										viewBox="0 0 15 16"
@@ -322,9 +386,10 @@
 							<div v-else class="search-right__btns" >
 								<button
 									class="search-right__btn search-right__save-filter-btn"
-									@click="saveFilter"
+									@click="saveFilters"
 								>
-									<span>Сохранить</span></button>
+									<span>Сохранить</span>
+								</button>
 								<button
 									class="search-right__btn search-right__cancel-filter-btn"
 									@click="cancelChangingFilter"
@@ -348,10 +413,11 @@
 
 		<div :class="['search-btns', {'search-btns--transparent':variant === 'transparent'}]">
 			<button
-				class="search-btn search-btn__search"
+				:class="['search-btn search-btn--search',{'search-btn--to-left':fieldsWithValue.length || search.length}]"
 				@click.stop="filterTable"
 			>
 				<svg
+					class="svg-fill"
 					width="16"
 					height="16"
 					viewBox="0 0 16 16"
@@ -367,11 +433,12 @@
 				</svg>
 			</button>
 			<button
-				class="search-btn search-btn__clear"
+				:class="['search-btn search-btn--clear',{'search-btn--to-left':fieldsWithValue.length || search.length}, {'search-btn--visible':fieldsWithValue.length || search.length}]"
 				v-if="clearBtn"
-				@click.stop="$emit('clearFilter')"
+				@click.stop="$emit('removeAllFieldsOrFilter')"
 			>
 				<svg
+					class="svg-stroke"
 					width="18"
 					height="18"
 					viewBox="0 0 18 18"
@@ -544,7 +611,6 @@
 						stroke-linejoin="round"
 					/>
 				</svg>
-
 			</div>
 		</div>
 	</div>
@@ -568,14 +634,20 @@ export default {
 	name: 'v-filter-search',
 	components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable, VLoader },
 	emits: ["filterTable", "resetclearFilter", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 
-					'toggleAddField', 'saveFilter','selectFilter', 'setPin','removeFilter', 'resetFilter', 'clearLatestFields', 'disableFilter',
-				 'addFilter'],
+					'toggleAddField', 'saveFilters','selectFilter', 'setPin','removeFilter', 'resetFilter', 'clearLatestFields', 'disableFilter',
+				 'addFilter', 'changeDraggableList', 'clearAllFields', 'toggleChangingSettings', 'resetField', 'addingFilter', 'returnFilters', 'removeAllFieldsOrFilter', 'cancelChangingFilter'],
 	props: {
 		search: String,
 		fields: Array,
 		fieldsWithValue: Array,
 		checkedFields: Array,
 		filters: Array,
+		selectedFilter: Object,
+		changingSettings: {
+			type:Boolean,
+			required: false,
+			default: false
+		},
 		clearBtn: {
 			type: Boolean,
 			required: false,
@@ -608,7 +680,6 @@ export default {
 		const modalFieldsRef = ref()
 		const searchAddField = ref('')
 		const addingFilter = ref(false)
-		const changingSettings = ref(false)
 		const newFilterName = ref('')
 
 		const store = useNewsStore()
@@ -628,13 +699,11 @@ export default {
 			return filterPlaceholder
 		})
 
-		const selectedFilter = computed(()=>{
-			return props.filters.find(filter => filter.selected)
-		})
-
 		const isSelectedFilterEqualsSelectedValues = computed(()=>{
-			if(selectedFilter.value){
-				return JSON.stringify(selectedFilter.value.fields)  === JSON.stringify(props.fields)? true : false
+			if(props.selectedFilter){
+				// console.log(JSON.parse(JSON.stringify(selectedFilter.value.fields)))
+				// console.log(JSON.parse(JSON.stringify(props.fields)))
+				return JSON.stringify(props.selectedFilter.fields)  === JSON.stringify(props.fields)? true : false
 			}
 			return true
 		})
@@ -649,6 +718,32 @@ export default {
 				swapThreshold: 0.9,
 
       };
+		})
+
+		const filtersComputed = computed({
+			get: () => {
+				return props.filters.filter((filter, index) => {
+					filter.order = index
+					if(filter.defaultStatus !== 'hidden'){
+						return true
+					}
+				})
+			},
+			set: filters => {
+				emit('changeDraggableList', 'filters', filters)
+			}
+		})
+		
+		const checkedFieldsComputed = computed({
+			get: () => {
+				return props.checkedFields.map((field, index) => {
+					field.order = index
+					return field
+				})
+			},
+			set: fields => {
+				emit('changeDraggableList', 'checkedFields' ,fields)
+			}
 		})
 
 		const filterTable = () => {
@@ -676,16 +771,23 @@ export default {
 
 		const addFilter = () => {
 			addingFilter.value = true
+			emit('addingFilter')
+		}
+
+		const clearOnCancelChangingFilter = () => {
+			addingFilter.value = false
+			newFilterName.value = ''
+			props.filters.map(filter => delete filter?.editting)
+
 		}
 
 		const cancelChangingFilter = () => {
-			addingFilter.value = false
-			changingSettings.value = false
-			newFilterName.value = ''
-			props.filters.map(filter => delete filter.editting)
+			clearOnCancelChangingFilter()
+			emit('cancelChangingFilter')
+			emit('toggleChangingSettings', false)
 		}
 
-		const saveFilter = () => {
+		const saveFilters = () => {
 			if (addingFilter.value) {
 				if (!newFilterName.value.length) {
 					document.querySelector('.search-left__filter-add-name input').focus()
@@ -694,21 +796,22 @@ export default {
 				emit('addFilter', newFilterName.value)
 			}
 			else{
-				emit('saveFilter', props.filters)
+				emit('saveFilters')
 			}
-			cancelChangingFilter()
+			clearOnCancelChangingFilter()
 		}
 
-		const changeSettings = () => {
-			changingSettings.value = true
+		const toggleChangingSettings = () => {
+			emit('toggleChangingSettings')
 		}
 
 		const selectFilter = (filter) => {
-			emit('selectFilter', filter)
+			!props.changingSettings ? isOpened.value = false : null
+			emit('selectFilter', filter, false)
+
 		}
 
-		const editFilter = (e, filter) => {
-			console.log(filter);
+		const editFilterName = (e, filter) => {
 			props.filters.map(row => row.name === filter.name? row.selected = true : row.selected = false)
 			filter.editting = true
 			let input =  e.target.closest('.search-left__filter-item-wrapper').querySelector('input');
@@ -717,8 +820,6 @@ export default {
 		}
 
 		const toggleOption = (option, options) => {
-			console.log(option);
-			console.log(options);
 			emit('toggleOption',option,options)
 		}
 
@@ -735,21 +836,21 @@ export default {
 			computedFilterItems,
 			addingFilter,
 			newFilterName,
-			changingSettings,
-			selectedFilter,
 			isSelectedFilterEqualsSelectedValues,
 			dragOptions,
 			store,
+			checkedFieldsComputed,
+			filtersComputed,
 			filterTable,
 			popupListener,
 			popupListenerAddFields,
 			addFilter,
 			cancelChangingFilter,
-			saveFilter,
-			changeSettings,
+			saveFilters,
+			toggleChangingSettings,
 			selectFilter,
-			editFilter,
-			toggleOption
+			editFilterName,
+			toggleOption,
 		}
 	},
 };
