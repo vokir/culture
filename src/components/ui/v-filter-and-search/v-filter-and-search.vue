@@ -17,25 +17,10 @@
 				>
 					{{cell.name}}
 				</div>
-				<div
-					v-else-if="cell.type !== 'multi-select'"
-					class="search-cell-text"
-				>
-					<template v-if="cell.type === 'string'">{{cell.label + ': ' + cell.value}}</template>
-					<template v-else-if="cell.type === 'select'">{{cell.label + ': ' + cell.value.name}}</template>
-					<template v-else-if="cell.type === 'multi-select'">{{cell.label + ': ' + cell.value.name}}</template>
-					<template v-else-if="cell.type === 'select-options'">{{cell.label + ': ' + cell.value.label}}</template>
-				</div>
-				<div
-					v-else
-					class="search-cell-text"
-				>
-					{{cell.label + ' : '}}
-					<template v-for="(value,indexValue) in cell.value">
-						<template v-if="indexValue">,</template>
-						{{value.name}}
-					</template>
-				</div>
+				<div v-else class="search-cell-text">
+				<template v-if="cell.displayValue.length <= 20"><span :title="cell.displayValue">{{cell.displayValue}}</span></template>
+				<template  v-else><span :title="cell.displayValue">{{cell.displayValue.slice(0,20) + ' ...'}}</span></template>
+			</div>
 				<button @click.stop="cell.pinned === undefined ? $emit('clearFieldValue',cell) : $emit('disableFilter',cell)" class="search-cell-btn">
 					<svg
 						class="svg-stroke"
@@ -67,7 +52,7 @@
 				class="search-cell"
 				v-if="index === 2"
 			>
-				<div class="search-cell-text">и ещё {{fieldsWithValue.length-2}}</div>
+				<div class="search-cell-text" :title="fieldsWithValue.filter((_,i) => i >= 2 ? true : false).map(field => field.displayValue)">и ещё {{fieldsWithValue.length-2}}</div>
 				<button
 					@click.stop="$emit('clearLatestFields')"
 					class="search-cell-btn"

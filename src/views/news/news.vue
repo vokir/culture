@@ -678,7 +678,8 @@ export default {
 							newField.type = 'multi-select',
 								newField.load = store.loadComplexes,
 								newField.result = computed(() => store.complexes),
-								newField.value = []
+								newField.value = [],
+								newField.checked = true
 							break;
 						default:
 							break;

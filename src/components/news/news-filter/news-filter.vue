@@ -220,7 +220,7 @@ export default {
 						fieldsWithoutFilter.map(field => fieldsWithValue.value.push(field))
 						similarFields.map(field => fieldsWithValue.value.push(field))
 						fieldsWithFilter.map(field => fieldsWithValue.value.push(field))
-						// console.log(1);
+
 						// removeAllFieldsOrFilter()
 						// fieldsWithValue.value.splice(0, 1)
 
@@ -235,11 +235,34 @@ export default {
 			else{
 				addAllFieldsWithValue()
 			}
-			fieldsWithValue.value.sort((a,b)=> a.order - b.order)
-
+			fieldsWithValue.value
+			.map(field => updateFieldDisplayValue(field))
+			.sort((a,b)=> a.order - b.order)
 		}
 
-		const defFields = ref([])
+		const updateFieldDisplayValue = field => {
+
+			switch (field.type) {
+				case 'string':
+					field.displayValue = field.label + ': ' + field.value
+					break;
+				case 'select':
+					field.displayValue = field.label + ': ' + field.value.name
+					break; 
+					case 'multi-select':
+					field.displayValue = field.label + ': ' + field.value.map(row => row.name).join(', ')
+					break; 
+					case 'select-options':
+					field.displayValue = field.label + ': ' + field.value.label
+					break;
+				default:
+				field.displayValue = ''
+					break;
+			}
+			// field.displayValue.length > 20 ? field.displayValue = field.displayValue.split(': ')[1] : null
+		}
+
+		const defaultFilterFields = ref([])
 		const filtersBeforeChanges = ref([])
 
 		const filterTable = () => {
@@ -249,7 +272,7 @@ export default {
 			// 	}
 			// })
 			updateFieldsWithValue()
-			defFields.value =  JSON.parse(JSON.stringify(computedFields.value)) 
+			defaultFilterFields.value =  JSON.parse(JSON.stringify(computedFields.value)) 
 			emit('filterTable', search, computedFields)
 		}
 
@@ -296,7 +319,7 @@ export default {
 						row.selected = false
 					}
 				})
-				defFields.value = JSON.parse(JSON.stringify(filter.fields))
+				defaultFilterFields.value = JSON.parse(JSON.stringify(filter.fields))
 				if (!changingSettings.value) {
 					emit('selectFilter', filter)
 					updateFieldsWithValue()
@@ -337,6 +360,8 @@ export default {
 			updateFilter({id:filter.ID, content:JSON.stringify({...filter, selected:false})})
 			})
 			store.refetchFilters()
+			
+			selectedFilter.value ? defaultFilterFields.value = JSON.parse(JSON.stringify(selectedFilter.value.fields)) : null
 		}
 
 		const setPin = (filter) => {
@@ -371,6 +396,7 @@ export default {
 					clearFieldValue(field)
 				}
 			})
+			updateFieldsWithValue()
 		}
 
 		const changeDraggableList = (list, newList) => {
@@ -453,8 +479,8 @@ export default {
 		}
 
 		const resetFilter = () => {
-			if(defFields.value){
-				emit('updateFields', JSON.parse(JSON.stringify(defFields.value)) )
+			if(defaultFilterFields.value.length){
+				emit('updateFields', JSON.parse(JSON.stringify(defaultFilterFields.value)) )
 			}
 			else{
 
@@ -528,7 +554,7 @@ export default {
 			defaultFields,
 			selectedFilter,
 			newFilter,
-			defFields,
+			defaultFilterFields,
 			changingSettings,
 			toggleAddField,
 			filterTable,
