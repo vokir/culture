@@ -4,7 +4,7 @@
     <v-select-image
       v-if="isOpen"
       v-model="active"
-      :items="images"
+      :items="store.images"
       :loading="loading"
       title="Выберите изображение"
       @closeModal="closeModal"
@@ -12,12 +12,11 @@
       @onSubmit="submit"
     >
       <template #filter>
-        <v-filter-and-search
-          :filterList="imgCategories"
-          class="select-image-filter"
-          variant="primary"
-          @filterTable="filterTable"
-        />
+				<v-image-filter
+				:fields="fields"
+				@filterTable="filterTable"
+				@updateFields="newFields => updateFields(newFields)"
+			/>
       </template>
 
       <template #cropper>
@@ -45,7 +44,7 @@ import axios from "axios";
 import { computed, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
-import { GET_IMAGES_CATEGORIES } from "../../api/queries/getImagesCategories";
+import { GET_IMAGE_CATEGORIES } from "../../api/queries/getImageCategories";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
 import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
@@ -53,10 +52,13 @@ import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue"
 import VImagePlaceholder from "../ui/v-image-placeholder/v-image-placeholder.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VSelectImage from "../ui/v-select-image/v-select-image.vue";
+import VImageFilter from "../news/image-filter/image-filter.vue"
+import { useNewsStore } from "../../store/newsStore";
+import {imageFieldsPromise} from '../../config/apolloClient.config'
 
 export default {
   name: "select-background-image",
-  components: { VImagePlaceholder, VPagination, VCropImage, VFilterAndSearch, VSelectImage },
+  components: { VImagePlaceholder, VPagination, VCropImage, VFilterAndSearch, VSelectImage, VImageFilter },
   emits: ['onLoadFiles', 'closeModal'],
   inheritAttrs: false,
   props: {
@@ -77,11 +79,13 @@ export default {
     const toast = useToast();
     const {isOpen, openModal, closeModal} = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
+		
 
-    const { result, loading, refetch } = useQuery(GET_IMAGES, {
+    const { result, loading, varibales, refetch } = useQuery(GET_IMAGES, {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
+
     const images = computed(() => {
       return result.value?.getImages.data ?? []
     })
@@ -89,20 +93,12 @@ export default {
       return result.value?.getImages.paginatorInfo ?? []
     })
 
-    const { result: resultImgCategories } = useQuery(GET_IMAGES_CATEGORIES)
+    const { result: resultImgCategories } = useQuery(GET_IMAGE_CATEGORIES)
 
     const imgCategories = computed(() => {
       return resultImgCategories.value?.getImageCategories ?? [];
     });
 
-    const filterTable = (filter, search) => {
-      refetch({
-        currentPage: currentPage.value,
-        perPage: perPage.value,
-        filterStr: filter,
-        searchStr: search
-      })
-    }
     const deleteImage = () => {
       active.value = {
         id: null,
@@ -147,6 +143,54 @@ export default {
       }
     }
 
+		const store = useNewsStore()
+		const fields = ref([])
+
+		imageFieldsPromise.then(schemaFields => {
+			const filtersName = ['UF_TITLE','category']
+			schemaFields.map(field => {
+				if(filtersName.includes(field.name)){
+					let newField = {
+						name: field.name,
+						label: field.description,
+						checked: false,
+						order: fields.value.length
+					}
+					switch (field.name) {
+						case 'UF_TITLE':
+							newField.type = 'string'
+							newField.value = ""
+							newField.checked = true
+							break;
+						case 'category':
+							newField.type = 'multi-select',
+								newField.load = store.loadImageCategories,
+								newField.result = computed(() => store.imageCategories),
+								newField.value = []
+								newField.checked = true
+							break;
+						default:
+							break;
+					}
+					fields.value.push(newField)
+				}
+			})
+		})
+
+
+		const filterTable = (search) => {
+
+			store.variablesImages.searchStr = search
+			store.variablesImages.name = fields.value.find(field => field.name === 'UF_NAME')?.value
+			store.variablesImages.categories = fields.value
+				.filter(field => field.name === 'category' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+		}
+
+		const updateFields = (newFields) => {
+			fields.value = newFields
+		}
+
     return {
       isOpen,
       images,
@@ -157,12 +201,15 @@ export default {
       pageInfo,
       image,
       cropperSmall,
+			fields,
+			store,
       deleteImage,
       openModal,
       closeModal,
       selectImage,
       submit,
-      filterTable
+      filterTable,
+			updateFields
     }
   }
 }

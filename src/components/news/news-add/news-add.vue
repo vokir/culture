@@ -3,6 +3,7 @@
     :closeModalProp="closeModalProp"
     @onSave="create($event, true)"
     @onCopy="create"
+		@onCancel="onCancel"
   />
 </template>
 
@@ -82,9 +83,14 @@ export default {
       })
     }
 
+		const onCancel = () => {
+			closeModalProp.value = true
+		}
+
     return {
       closeModalProp,
-      create
+      create,
+			onCancel
     }
   }
 }

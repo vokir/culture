@@ -23,6 +23,9 @@ import { CREATE_FILTER } from "../api/mutations/createFilter";
 import { DELETE_FILTER } from "../api/mutations/deleteFilter";
 import { UPDATE_FILTER } from "../api/mutations/updateFilter";
 import { GET_FILTERS } from "../api/queries/getFilters";
+import { GET_IMAGE_CATEGORIES } from "../api/queries/getImageCategories";
+import { GET_IMAGES } from "../api/queries/getImages";
+import { GET_ICONS } from "../api/queries/getIcons";
 
 
 // useStore could be anything like useUser, useCart
@@ -37,16 +40,38 @@ export const useNewsStore = defineStore('news', () => {
 		dateFilterType: 'exact_date'
   })
 
-	const { result: resultFilters, loading: loadingFilters, refetch:refetchFilters, onResult: onResultFilters} = useQuery(GET_FILTERS)
+
+	const { result: resultImages, loading: loadingImages, variables:variablesImages, refetch: refetchImages } = useQuery(GET_IMAGES, {
+    currentPage: currentPage.value,
+    perPage: perPage.value,
+  })
+
+	const { result: resultIcons, loading: loadingIcons, variables:variablesIcons, refetch: refetchIcons } = useQuery(GET_ICONS, {
+    currentPage: currentPage.value,
+    perPage: perPage.value,
+  })
+
+	const { result: resultFiltersNews, load:loadFiltersNews, loading: loadingFiltersNews, refetch:refetchFiltersNews, onResult: onResultFiltersNews} = useLazyQuery(GET_FILTERS, {
+		entity: 'news'
+	})
+
+	const { result: resultFiltersImage, load:loadFiltersImage, loading: loadingFiltersImage, refetch:refetchFiltersImage, onResult: onResultFiltersImage} = useLazyQuery(GET_FILTERS, {
+		entity: 'image'
+	})
+
+	const { result: resultFiltersIcon, load:loadFiltersIcon, loading: loadingFiltersIcon, refetch:refetchFiltersIcon, onResult: onResultFiltersIcon} = useLazyQuery(GET_FILTERS, {
+		entity: 'icon'
+	})
 
 
-  const { result: resultTypes, loading: loadingTypes, load: loadTypes } = useLazyQuery(GET_NEWS_TYPES)
+  const { result: resultTypes, loading: loadingTypes, load: loadTypes, } = useLazyQuery(GET_NEWS_TYPES)
   const { result: resultDegrees, loading: loadingDegrees, load: loadDegrees } = useLazyQuery(GET_NEWS_DEGREES)
   const { result: resultComplexes, loading: loadingComplexes, load: loadComplexes } = useLazyQuery(GET_COMPLEXES)
 	const { result: resultHouses, loading: loadingHouses, load: loadHouses } = useLazyQuery(GET_HOUSES)
 	const { result: resultApproaches, loading: loadingApproaches, load: loadApproaches } = useLazyQuery(GET_APPROACHES)
 	const { result: resultFloors, loading: loadingFloors, load: loadFloors } = useLazyQuery(GET_FLOORS)
 	const { result: resultPremises, loading: loadingPremises, load: loadPremises } = useLazyQuery(GET_PREMISES)
+	const { result: resultImageCategories, loading: loadingImageCategories, load: loadImageCategories } = useLazyQuery(GET_IMAGE_CATEGORIES)
 
   const newsTypes = computed(() => {
     return resultTypes.value?.getNewsTypes ?? [];
@@ -75,8 +100,23 @@ export const useNewsStore = defineStore('news', () => {
 	const premises = computed(() => {
     return resultPremises.value?.getPremises ?? [];
   });
-	const filters = computed(() => {
-    return resultFilters.value?.getFilters ?? [];
+	const filtersNews = computed(() => {
+    return resultFiltersNews.value?.getFilters ?? [];
+  });
+	const filtersImage = computed(() => {
+    return resultFiltersImage.value?.getFilters ?? [];
+  });
+	const filtersIcon = computed(() => {
+    return resultFiltersIcon.value?.getFilters ?? [];
+  });
+	const imageCategories = computed(() => {
+    return resultImageCategories.value?.getImageCategories ?? [];
+  });
+	const images = computed(() => {
+    return resultImages.value?.getImages.data ?? [];
+  });
+	const icons = computed(() => {
+    return resultIcons.value?.getIcons.data ?? [];
   });
 
   updatePage(() => {
@@ -216,13 +256,35 @@ export const useNewsStore = defineStore('news', () => {
     loadApproaches,
     loadFloors,
     loadPremises,
-		createFilter,
-		deleteFilter,
-		updateFilter,
-		filters,
-		refetchFilters,
-		loadingFilters,
-		onResultFilters
+    createFilter,
+    deleteFilter,
+    updateFilter,
+    filtersNews,
+    refetchFiltersNews,
+    loadingFiltersNews,
+    onResultFiltersNews,
+    filtersImage,
+    refetchFiltersImage,
+    loadingFiltersImage,
+    onResultFiltersImage,
+    filtersIcon,
+    refetchFiltersIcon,
+    loadingFiltersIcon,
+    onResultFiltersIcon,
+    imageCategories,
+    loadImageCategories,
+    images,
+    loadingImages,
+    variablesImages,
+    refetchImages,
+    loadFiltersNews,
+    loadFiltersImage,
+    loadFiltersIcon,
+    resultIcons,
+    loadingIcons,
+    variablesIcons,
+    refetchIcons,
+		icons
   };
 
 })

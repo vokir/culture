@@ -9,7 +9,14 @@
     @onSubmit="submit"
   >
     <template #filter>
-      <v-filter-and-search
+			<!-- <v-image-filter
+				:fields="fields"
+				@filterTable="filterTable"
+				@updateFields="newFields => updateFields(newFields)"
+				@resetclearFilter="resetclearFilter"
+				@selectFilter="selectFilter"
+			/> -->
+      <!-- <v-filter-and-search
         class="select-image-filter"
         v-model="filter"
         :searchPlaceholderProp="'поиск'"
@@ -20,7 +27,7 @@
         @setFilter="setFilter"
         @clearFilter="clearFilter"
         @setSearch="setSearch"
-      />
+      /> -->
     </template>
     <template #cropper>
       <v-crop-image ref="cropperSmall" :img="image"/>
@@ -43,7 +50,7 @@ import axios from "axios";
 import { computed, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
-import { GET_IMAGES_CATEGORIES } from "../../api/queries/getImagesCategories";
+import { GET_IMAGE_CATEGORIES } from "../../api/queries/getImageCategories";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
 import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
@@ -51,10 +58,14 @@ import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue"
 import VLoader from "../ui/v-loader/v-loader.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VSelectImage from "../ui/v-select-image/v-select-image.vue";
+import VImageFilter from "../news/image-filter/image-filter.vue"
+import { useNewsStore } from "../../store/newsStore";
+import {imageFieldsPromise} from '../../config/apolloClient.config'
+
 
 export default {
   name: "select-image",
-  components: { VSelectImage, VLoader, VCropImage, VPagination, VFilterAndSearch },
+  components: { VSelectImage, VLoader, VCropImage, VPagination, VFilterAndSearch, VImageFilter },
   emits: ['onLoadFiles', 'closeModal'],
   setup(_, { emit }) {
     const image = ref('/src/assets/images/storyPreview.png')
@@ -70,6 +81,39 @@ export default {
     const filter = ref([])
     const search = ref("")
 
+		const store = useNewsStore()
+		const fields = ref([])
+
+		imageFieldsPromise.then(schemaFields => {
+			const filtersName = ['UF_TITLE','category']
+			schemaFields.map(field => {
+				if(filtersName.includes(field.name)){
+					let newField = {
+						name: field.name,
+						label: field.description,
+						checked: false,
+						order: fields.value.length
+					}
+					switch (field.name) {
+						case 'UF_TITLE':
+							newField.type = 'string'
+							newField.value = ""
+							break;
+						case 'category':
+							newField.type = 'multi-select',
+								newField.load = store.loadImageCategories,
+								newField.result = computed(() => store.imageCategories),
+								newField.value = []
+								newField.checked = true
+							break;
+						default:
+							break;
+					}
+					fields.value.push(newField)
+				}
+			})
+		})
+
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
     const { result, loading, refetch } = useQuery(GET_IMAGES, {
       currentPage: currentPage.value,
@@ -82,7 +126,7 @@ export default {
       return result.value?.getImages.paginatorInfo ?? []
     })
 
-    const { result: resultImgCategories } = useQuery(GET_IMAGES_CATEGORIES)
+    const { result: resultImgCategories } = useQuery(GET_IMAGE_CATEGORIES)
 
     const imgCategories = computed(() => {
       return resultImgCategories.value?.getImageCategories ?? [];

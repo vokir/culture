@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
-export const GET_IMAGES_CATEGORIES = gql`
-query category{
+export const GET_IMAGE_CATEGORIES = gql`
+query getImageCategories{
 	getImageCategories{
     ID
     UF_TITLE

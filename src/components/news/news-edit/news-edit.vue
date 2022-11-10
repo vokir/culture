@@ -1,11 +1,22 @@
 <template>
-  <news-form edit title="Редактировать новость" @onSave="update"/>
+	<news-form
+		edit
+		title="Редактировать новость"
+		:closeModalProp="closeModalProp"
+		@onSave="update"
+		@onCancel="onCancel"
+	/>
+	
 </template>
 
 <script>
+
+import { ref } from 'vue'
 import { useToast } from "vue-toastification";
 import { useNewsStore } from "../../../store/newsStore";
+
 import NewsForm from "../news-form/news-form.vue";
+
 export default {
   name: "news-edit",
   components: { NewsForm },
@@ -18,7 +29,7 @@ export default {
   },
   setup ({ id }, { emit }) {
     const toast = useToast();
-
+		const closeModalProp = ref(false)
     const store = useNewsStore()
     const {
       updateNews,
@@ -81,8 +92,14 @@ export default {
       updateNews(news)
     }
 
+		const onCancel = () => {
+			closeModalProp.value = true
+		}
+
     return {
-      update
+			closeModalProp,
+      update,
+			onCancel,
     }
   }
 }

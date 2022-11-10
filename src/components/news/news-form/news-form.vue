@@ -117,7 +117,7 @@
       v-if="isOpen"
       :complexID="form.complex.ID"
       :complexName="form.complex.UF_NAME"
-      @closeModal="closeModal"
+      @onCancel="closeModal"
       @onSave="setBind"
       :houses="form.houses"
       :approaches="form.approaches"

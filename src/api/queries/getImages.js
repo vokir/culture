@@ -1,16 +1,20 @@
 import gql from "graphql-tag";
 
 export const GET_IMAGES = gql`
-query images(
+query getImages(
   $currentPage: Int! = 1
   $perPage: Int! = 20
-  $filterStr: [String] = []
+  $name: [String] = []
+  $categories: [String] = []
   $searchStr: String = ""
 ) {
   getImages(
     currentPage: $currentPage
     perPage: $perPage
-    filterInn: [{ column: "UF_TITLE", value: $filterStr, relation: "category" }]
+    filterInn: [
+      { column: "UF_TITLE", value: $name}
+      { column: "ID", value: $categories, relation: "category" }
+    ]
     search: $searchStr
   ) {
     data {
@@ -31,4 +35,5 @@ query images(
     }
   }
 }
+
 `

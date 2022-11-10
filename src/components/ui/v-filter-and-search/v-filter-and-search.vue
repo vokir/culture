@@ -100,10 +100,8 @@
 					<div class="search-popup" 
 					>
 						<div class="search-left">
-							<v-loader v-if="store.loadingFilters && false">
-						</v-loader>
 
-							<ul v-else class="search-left__filter-list">
+							<ul class="search-left__filter-list">
                 <div class="search-left__title">Фильтры</div>
 								<draggable
 									class="search-left__items"
@@ -342,7 +340,7 @@
 										class="search-right__add-field-btn"
 										@click="popupListenerAddFields"
 									>Добавить поле</button>
-									<button @click="$emit('resetFilter')" class="search-right__reset-field-btn">Вернуть поля по умолчанию</button>
+									<button @click="$emit('returnFilterFields')" class="search-right__reset-field-btn">Вернуть поля по умолчанию</button>
 								</div>
 							<div v-if="!addingFilter && !changingSettings" class="search-right__btns" >
 								<button
@@ -365,7 +363,7 @@
 									<span>Найти</span></button>
 								<button
 									class="search-right__btn search-right__reset-btn"
-									@click="$emit('resetclearFilter')"
+									@click="$emit('resetFields')"
 								>Сбросить</button>
 							</div>
 							<div v-else class="search-right__btns" >
@@ -613,13 +611,12 @@ import VSelectDate from '../v-select-date/v-select-date.vue'
 import VSelectOptions from '../v-select-options/v-select-options.vue'
 import draggable from 'vuedraggable'
 import VLoader from '../../ui/v-loader/v-loader.vue'
-import { useNewsStore } from '../../../store/newsStore'
 
 export default {
 	name: 'v-filter-search',
 	components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable, VLoader },
-	emits: ["filterTable", "resetclearFilter", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 
-					'toggleAddField', 'saveFilters','selectFilter', 'setPin','removeFilter', 'resetFilter', 'clearLatestFields', 'disableFilter',
+	emits: ["filterTable", "resetFields", "setSearch", "clearFieldValue", "toggleOption", 'update:searchAddField', 'toggleAddField', 
+					'toggleAddField', 'saveFilters','selectFilter', 'setPin','removeFilter', 'returnFilterFields', 'clearLatestFields', 'disableFilter',
 				 'addFilter', 'changeDraggableList', 'clearAllFields', 'toggleChangingSettings', 'resetField', 'addingFilter', 'returnFilters', 'removeAllFieldsOrFilter', 'cancelChangingFilter'],
 	props: {
 		search: String,
@@ -667,7 +664,6 @@ export default {
 		const addingFilter = ref(false)
 		const newFilterName = ref('')
 
-		const store = useNewsStore()
 
 		const computedFilterItems = computed(() => {
 			return props.fields.filter(field => field.label.toLowerCase().includes(searchAddField.value.toLowerCase()))
@@ -823,7 +819,6 @@ export default {
 			newFilterName,
 			isSelectedFilterEqualsSelectedValues,
 			dragOptions,
-			store,
 			checkedFieldsComputed,
 			filtersComputed,
 			filterTable,

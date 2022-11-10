@@ -42,10 +42,21 @@ const ENDPOINT_URL = '/api/v2/master-system/graphql?sessid=' + sessid;
 
 export const newsFieldsPromise = (async () => {
     const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
-		const fields = res.data.data.__schema.types.find(type => type.description === 'Новости').fields
+		const fields = res.data.data.__schema.types.find(type => type.name === 'News').fields
 		return fields
 
     const schema = buildClientSchema(res.data.data)
     const sdl = printSchema(schema)
     console.log(sdl)
+})()
+
+export const imageFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Image').fields
+	return fields
+})()
+export const iconFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Icon').fields
+	return fields
 })()

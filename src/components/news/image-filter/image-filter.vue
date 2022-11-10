@@ -9,10 +9,9 @@
 		:search="search"
 		:searchPlaceholderProp="'поиск'"
 		:filterPlaceholderProp="'Фильтр'"
-		:variant="'transparent'"
 		@filterTable="filterTable"
 		@setSearch="setSearch"
-		@resetFields="resetFields"
+		@resetclearFilter="resetclearFilter"
 		@toggleAddField="toggleAddField"
 		@toggleOption="toggleOption"
 		@clearFieldValue="field => clearFieldValue(field,true)"
@@ -21,7 +20,7 @@
 		@selectFilter="selectFilter"
 		@setPin="setPin"
 		@removeFilter="removeFilter"
-		@returnFilterFields="returnFilterFields"
+		@resetFilter="resetFilter"
 		@clearLatestFields="clearLatestFields"
 		@disableFilter="removeAllFieldsOrFilter"
 		@changeDraggableList="changeDraggableList"
@@ -37,13 +36,13 @@
 
 import { ref, computed, onMounted, watch } from 'vue'
 import VFilterAndSearch from '../../ui/v-filter-and-search/v-filter-and-search.vue'
-import { useNewsStore } from "../../../store/newsStore";
 import useFilter from '../../../hooks/useFilter'
 
 
+
 export default {
-	name: 'news-filter',
-	emits: ['filterTable', 'updateFields'],
+	name: 'image-filter',
+	emits: ['filterTable', 'resetclearFilter','selectFilter', 'updateFields'],
 	components: {
 		VFilterAndSearch,
 	},
@@ -51,7 +50,7 @@ export default {
 		fields: Array
 	},
 	setup(props, { emit }) {
-		const filterUse = useFilter('news', props, emit)
+		const filterUse = useFilter('image',props, emit)
 		
 		const { 
 			filterEntity,
@@ -66,7 +65,7 @@ export default {
 			filters,
 			filterTable,
 			setSearch,
-			resetFields,
+			resetclearFilter,
 			toggleAddField,
 			toggleOption,
 			clearFieldValue,
@@ -75,7 +74,7 @@ export default {
 			selectFilter,
 			setPin,
 			removeFilter,
-			returnFilterFields,
+			resetFilter,
 			clearLatestFields,
 			clearAllFields,
 			removeAllFieldsOrFilter,
@@ -84,11 +83,12 @@ export default {
 			resetField,
 			addingFilter,
 			returnFilters,
-			cancelChangingFilter ,
-			loadFiltersNews
+			cancelChangingFilter,
+			loadFiltersImage,
 		} = filterUse
 
-		loadFiltersNews()
+		loadFiltersImage()
+
 		return {
 			filterEntity,
 			store,
@@ -102,7 +102,7 @@ export default {
 			changingSettings,
 			toggleAddField,
 			filterTable,
-			resetFields,
+			resetclearFilter,
 			setSearch,
 			toggleOption,
 			clearFieldValue,
@@ -117,7 +117,7 @@ export default {
 			toggleChangingSettings,
 			resetField,
 			addingFilter,
-			returnFilterFields,
+			resetFilter,
 			returnFilters,
 			removeAllFieldsOrFilter,
 			cancelChangingFilter

@@ -144,7 +144,6 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
 import NewsEdit from "../../components/news/news-edit/news-edit.vue";
 import VCard from "../../components/ui/v-card/v-card.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
@@ -234,16 +233,16 @@ export default {
     return {
       form,
       news,
+			isOpen,
+      computedZhk,
+      loading,
+      route,
       computedDate,
       computePhone,
       getComplexName,
       openModal,
       closeModal,
-      isOpen,
-      getSingular,
-      computedZhk,
-      loading,
-      route
+      getSingular
     };
   },
 

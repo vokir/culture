@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="container-header__search">
-				<news-filter :fields="fields" @filterTable="filterTable" @updateFields="newFields => updateFields(newFields)" @resetclearFilter="resetclearFilter" @selectFilter="selectFilter"></news-filter>
+				<news-filter :fields="fields" @filterTable="filterTable" @updateFields="newFields => updateFields(newFields)"></news-filter>
 			</div>
 			<div class="container-header__action">
 				<v-button
@@ -719,43 +719,9 @@ export default {
 			store.variables.degrees = fields.value
 				.filter(field => field.name === 'degree' && field.value)
 				.map(field => field.value.ID.toString())
-
-			// console.log(store.variables);
-		}
-
-		const resetclearFilter = (defaultFields) => {
-			store.variables = {
-				currentPage: store.variables.currentPage,
-				perPage: store.variables.perPage,
-			}
-
-			fields.value.map((field,i) => {
-				field.value = defaultFields[i].value
-				field.checked = defaultFields[i].checked
-			})
-
-			filterTable('',fields)
-		}
-
-		const selectFilter = (filter) => {
-			if (filter) {
-				fields.value.map((field, i) => {
-					if(field.type === 'string'){
-						field.value = filter.fields[i].value ? JSON.parse(JSON.stringify(filter.fields[i]?.value)) : ""
-					}
-					else{
-						field.value = filter.fields[i].value ? JSON.parse(JSON.stringify(filter.fields[i]?.value)) : null
-					}
-					field.checked = filter.fields[i].checked
-					if (field.type === 'select-options') {
-						field.options = filter.fields[i].options ? JSON.parse(JSON.stringify(filter.fields[i].options)) : null
-					}
-				})
-			}
 		}
 
 		const updateFields = (newFields) => {
-			// console.log(newFields);
 			fields.value = newFields
 		}
 
@@ -776,7 +742,6 @@ export default {
 			deleteNewsArray,
 			store,
 			priorityMap,
-			resetclearFilter,
 			deleteSingleNews,
 			editModal,
 			closeEditModal,
@@ -785,7 +750,6 @@ export default {
 			clearFormData,
 			formData,
 			fields,
-			selectFilter,
 			updateFields
 		};
 	},
