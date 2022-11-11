@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUpdated, watch } from 'vue'
 import { useNewsStore } from "../store/newsStore";
 
 const useFilter = (entity = '', props, emit) => {
@@ -259,6 +259,7 @@ const useFilter = (entity = '', props, emit) => {
 			field.value = defaultFields[i].value
 			field.checked = defaultFields[i].checked
 		})
+		updateFieldsWithValue(newFields)
 		emit('updateFields', newFields)
 		emit('filterTable','')
 	}
@@ -330,10 +331,19 @@ const useFilter = (entity = '', props, emit) => {
 
 
 	watch(filters, value => {
-		if(value.length && !filtersTemp.value.length){
-			filtersTemp.value = value
+		console.log("watch");
+		if (value.length && !filtersTemp.value.length) {
+			filtersTemp.value = value;
+		}},{ deep: true }
+  );
+
+	onMounted(()=>{
+		if(filters.value.length){
+			filtersTemp.value = JSON.parse(JSON.stringify(filters.value))
 		}
-	},{deep:true})
+	})
+
+	
 
 	let filterTempIsEmpty = true
 	// onResultFiltersImage(()=>{
@@ -368,7 +378,7 @@ const useFilter = (entity = '', props, emit) => {
 		updateFilter({id:filter.ID, content:JSON.stringify({...filter, selected:false}), entity:entity })
 		})
 		store.refetchFiltersNews()
-		selectedFilter.value ? defaultFilterFields.value = JSON.parse(JSON.stringify(selectedFilter.value.fields)) : null
+		selectedFilter.value.filter ? defaultFilterFields.value = JSON.parse(JSON.stringify(selectedFilter.value.fields)) : null
 	}
 
 	const setPin = (filter) => {
@@ -386,11 +396,13 @@ const useFilter = (entity = '', props, emit) => {
 
 	const removeFilter = (id) => {
 		let exactFilter = filtersTemp.value.find(filter => filter.ID === id)
+		let exactFilterBeforeChanges = filtersBeforeChanges.value.find(filter => filter.ID === id)
 		filtersTemp.value.map(filter => {
 			filter.fields = JSON.parse(JSON.stringify(filter.fields))
 		})
 		clearAllFields()
 		filtersTemp.value.splice(filtersTemp.value.indexOf(exactFilter),1)
+		filtersBeforeChanges.value.splice(filtersBeforeChanges.value.indexOf(exactFilterBeforeChanges),1)
 		exactFilter.defaultStatus 
 			? updateFilter({id:exactFilter.ID, content:JSON.stringify({...exactFilter, selected:false, pinned:false, defaultStatus: 'hidden'}), entity:entity }) 
 			: deleteFilter({id})
@@ -421,12 +433,23 @@ const useFilter = (entity = '', props, emit) => {
 		}
 	}
 
-	watch(props.fields, val => {
-		if(!defaultFields.length){
+	watch(computedFields, val => {
+		const everyLoadHasComputedResult = val.every(field => {
+			let typesToCheck = ['select', 'multi-select']
+			if(typesToCheck.includes(field.type)){
+				return field.computedResult.length ? true : false
+			}
+			return true
+		})
+		if(!defaultFields.length && everyLoadHasComputedResult){
 			val.map(field => {
 			defaultFields.push(JSON.parse(JSON.stringify(field)))
 		})
 		}
+	})
+
+	watch(filterEntity, val => {
+		console.log();
 	})
 
 	const clearAllFields = () => {

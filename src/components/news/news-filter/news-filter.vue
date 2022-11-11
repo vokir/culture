@@ -52,8 +52,8 @@ export default {
 	},
 	setup(props, { emit }) {
 		const filterUse = useFilter('news', props, emit)
-		
-		const { 
+
+			const { 
 			filterEntity,
 			store,
 			computedFields,
@@ -85,11 +85,13 @@ export default {
 			addingFilter,
 			returnFilters,
 			cancelChangingFilter ,
-			loadFiltersNews
+			loadFiltersNews,
+			defaultFields
 		} = filterUse
 
 		loadFiltersNews()
 		return {
+			defaultFields,
 			filterEntity,
 			store,
 			computedFields,

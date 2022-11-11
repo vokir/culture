@@ -690,8 +690,6 @@ export default {
 		})
 
 		const filterTable = (search) => {
-
-			
 			store.variables.searchStr = search
 			store.variables.name = fields.value.find(field => field.name === 'UF_NAME')?.value
 			store.variables.active = fields.value.find(field => field.name === 'UF_ACTIVE' && field.value)?.value?.value
