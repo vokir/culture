@@ -243,7 +243,7 @@ const useFilter = (entity = '', props, emit) => {
 		// 	}
 		// })
 		updateFieldsWithValue()
-		defaultFilterFields.value =  JSON.parse(JSON.stringify(computedFields.value)) 
+		// defaultFilterFields.value =  JSON.parse(JSON.stringify(computedFields.value)) 
 		emit('filterTable', search, computedFields)
 	}
 
@@ -256,8 +256,8 @@ const useFilter = (entity = '', props, emit) => {
 		}
 		let newFields = props.fields;
 		newFields.map((field,i) => {
-			field.value = defaultFields[i].value
-			field.checked = defaultFields[i].checked
+			field.value = JSON.parse(JSON.stringify(defaultFields[i].value)) 
+			field.checked = JSON.parse(JSON.stringify(defaultFields[i].checked)) 
 		})
 		updateFieldsWithValue(newFields)
 		emit('updateFields', newFields)
@@ -331,7 +331,6 @@ const useFilter = (entity = '', props, emit) => {
 
 
 	watch(filters, value => {
-		console.log("watch");
 		if (value.length && !filtersTemp.value.length) {
 			filtersTemp.value = value;
 		}},{ deep: true }
@@ -446,10 +445,6 @@ const useFilter = (entity = '', props, emit) => {
 			defaultFields.push(JSON.parse(JSON.stringify(field)))
 		})
 		}
-	})
-
-	watch(filterEntity, val => {
-		console.log();
 	})
 
 	const clearAllFields = () => {

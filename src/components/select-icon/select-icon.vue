@@ -165,7 +165,7 @@ export default {
 
 		const filterTable = (search) => {
 			store.variablesIcons.searchStr = search
-			store.variablesIcons.name = fields.value.find(field => field.name === 'UF_NAME')?.value
+			store.variablesIcons.name = fields.value.find(field => field.name === 'UF_TITLE')?.value
 			store.variablesIcons.categories = fields.value
 				.filter(field => field.name === 'category' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]

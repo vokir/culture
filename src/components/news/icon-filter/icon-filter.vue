@@ -11,7 +11,7 @@
 		:filterPlaceholderProp="'Фильтр'"
 		@filterTable="filterTable"
 		@setSearch="setSearch"
-		@resetclearFilter="resetclearFilter"
+		@resetFields="resetFields"
 		@toggleAddField="toggleAddField"
 		@toggleOption="toggleOption"
 		@clearFieldValue="field => clearFieldValue(field,true)"
@@ -20,7 +20,7 @@
 		@selectFilter="selectFilter"
 		@setPin="setPin"
 		@removeFilter="removeFilter"
-		@resetFilter="resetFilter"
+		@returnFilterFields="returnFilterFields"
 		@clearLatestFields="clearLatestFields"
 		@disableFilter="removeAllFieldsOrFilter"
 		@changeDraggableList="changeDraggableList"
@@ -63,9 +63,10 @@ export default {
 			selectedFilter,
 			search,
 			filters,
+			defaultFilterFields,
 			filterTable,
 			setSearch,
-			resetclearFilter,
+			resetFields,
 			toggleAddField,
 			toggleOption,
 			clearFieldValue,
@@ -74,7 +75,7 @@ export default {
 			selectFilter,
 			setPin,
 			removeFilter,
-			resetFilter,
+			returnFilterFields,
 			clearLatestFields,
 			clearAllFields,
 			removeAllFieldsOrFilter,
@@ -100,9 +101,10 @@ export default {
 			filtersTemp,
 			selectedFilter,
 			changingSettings,
+			defaultFilterFields,
 			toggleAddField,
 			filterTable,
-			resetclearFilter,
+			resetFields,
 			setSearch,
 			toggleOption,
 			clearFieldValue,
@@ -117,7 +119,7 @@ export default {
 			toggleChangingSettings,
 			resetField,
 			addingFilter,
-			resetFilter,
+			returnFilterFields,
 			returnFilters,
 			removeAllFieldsOrFilter,
 			cancelChangingFilter

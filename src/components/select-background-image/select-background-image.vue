@@ -58,7 +58,7 @@ import {imageFieldsPromise} from '../../config/apolloClient.config'
 
 export default {
   name: "select-background-image",
-  components: { VImagePlaceholder, VPagination, VCropImage, VFilterAndSearch, VSelectImage, VImageFilter },
+  components: { VImagePlaceholder, VPagination, VCropImage, VSelectImage, VImageFilter },
   emits: ['onLoadFiles', 'closeModal'],
   inheritAttrs: false,
   props: {
@@ -181,7 +181,7 @@ export default {
 		const filterTable = (search) => {
 
 			store.variablesImages.searchStr = search
-			store.variablesImages.name = fields.value.find(field => field.name === 'UF_NAME')?.value
+			store.variablesImages.name = fields.value.find(field => field.name === 'UF_TITLE')?.value
 			store.variablesImages.categories = fields.value
 				.filter(field => field.name === 'category' && field.value?.length)
 				.map(field => field.value.map(value => value.ID.toString()))[0]

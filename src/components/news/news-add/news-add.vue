@@ -45,7 +45,7 @@ export default {
     const create = (data, closeModal = false) => {
       const news = {
         title: data.title,
-        icon: data.icon?.id ?? 1,
+        icon: data.icon?.id,
         types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,
@@ -60,28 +60,35 @@ export default {
         floors: data.floors.map(el => el.ID),
         premises: data.premises.map(el => el.ID),
         contacts: data.contacts.map(contact => contact.ID),
-        priority: Object.keys(data.priority).length ? data.priority.ID : 1,
+        priority: data.priority.ID,
         documents: data.docs.map(el => el.ID),
       }
-      createNews(news).then((result) => {
-        let links = data.links
-        let linksArr = []
+			if(news.title.length && news.icon && news.priority){
+				createNews(news).then((result) => {
+				if (result) {
+					let links = data.links
+					let linksArr = []
 
-        links.forEach((link) => {
-          const newLink = {
-            title:link.name,
-            link:link.link,
-            newsID:result.data.createNews.ID
-          }
-          let newID = createNewsLink(newLink)
-          linksArr.push(newID)
-        })
+					links.forEach((link) => {
+						const newLink = {
+							title: link.name,
+							link: link.link,
+							newsID: result.data.createNews.ID
+						}
+						let newID = createNewsLink(newLink)
+						linksArr.push(newID)
+					})
+					if (closeModal) {
+						closeModalProp.value = true
+					}
+				}
+			})
+			}
+			else{
+				toast.error("Заполните обязательные поля (степень важности, заголовок и иконка)")
+			}
 
-        if (closeModal) {
-          closeModalProp.value = true
-        }
-      })
-    }
+		}
 
 		const onCancel = () => {
 			closeModalProp.value = true

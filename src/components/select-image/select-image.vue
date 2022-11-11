@@ -1,7 +1,7 @@
 <template>
   <v-select-image
     v-model="active"
-    :items="images"
+    :items="store.images"
     :loading="loading"
     title="Выберите изображение"
     @closeModal="$emit('closeModal')"
@@ -9,25 +9,11 @@
     @onSubmit="submit"
   >
     <template #filter>
-			<!-- <v-image-filter
+			<v-image-filter
 				:fields="fields"
 				@filterTable="filterTable"
 				@updateFields="newFields => updateFields(newFields)"
-				@resetclearFilter="resetclearFilter"
-				@selectFilter="selectFilter"
-			/> -->
-      <!-- <v-filter-and-search
-        class="select-image-filter"
-        v-model="filter"
-        :searchPlaceholderProp="'поиск'"
-        :filterPlaceholderProp="'Фильтр'"
-        :variant="'primary'"
-        :filterList="imgCategories"
-        @filterTable="filterTable"
-        @setFilter="setFilter"
-        @clearFilter="clearFilter"
-        @setSearch="setSearch"
-      /> -->
+			/>
     </template>
     <template #cropper>
       <v-crop-image ref="cropperSmall" :img="image"/>
@@ -65,7 +51,7 @@ import {imageFieldsPromise} from '../../config/apolloClient.config'
 
 export default {
   name: "select-image",
-  components: { VSelectImage, VLoader, VCropImage, VPagination, VFilterAndSearch, VImageFilter },
+  components: { VSelectImage, VLoader, VCropImage, VPagination, VImageFilter },
   emits: ['onLoadFiles', 'closeModal'],
   setup(_, { emit }) {
     const image = ref('/src/assets/images/storyPreview.png')
@@ -79,40 +65,9 @@ export default {
     })
     const toast = useToast();
     const filter = ref([])
-    const search = ref("")
 
 		const store = useNewsStore()
 		const fields = ref([])
-
-		imageFieldsPromise.then(schemaFields => {
-			const filtersName = ['UF_TITLE','category']
-			schemaFields.map(field => {
-				if(filtersName.includes(field.name)){
-					let newField = {
-						name: field.name,
-						label: field.description,
-						checked: false,
-						order: fields.value.length
-					}
-					switch (field.name) {
-						case 'UF_TITLE':
-							newField.type = 'string'
-							newField.value = ""
-							break;
-						case 'category':
-							newField.type = 'multi-select',
-								newField.load = store.loadImageCategories,
-								newField.result = computed(() => store.imageCategories),
-								newField.value = []
-								newField.checked = true
-							break;
-						default:
-							break;
-					}
-					fields.value.push(newField)
-				}
-			})
-		})
 
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
     const { result, loading, refetch } = useQuery(GET_IMAGES, {
@@ -174,44 +129,53 @@ export default {
       }
     }
 
-    const filterTable = () => {
-      let filterArr = filter.value.map(option => option.UF_TITLE)
-      refetch({
-        currentPage: currentPage.value,
-        perPage: perPage.value,
-        filterStr: filterArr,
-        searchStr: search.value
-      })
-    }
+		imageFieldsPromise.then(schemaFields => {
+			const filtersName = ['UF_TITLE','category']
+			schemaFields.map(field => {
+				if(filtersName.includes(field.name)){
+					let newField = {
+						name: field.name,
+						label: field.description,
+						checked: false,
+						order: fields.value.length
+					}
+					switch (field.name) {
+						case 'UF_TITLE':
+							newField.type = 'string'
+							newField.value = ""
+							newField.checked = true
+							break;
+						case 'category':
+							newField.type = 'multi-select',
+								newField.load = store.loadImageCategories,
+								newField.result = computed(() => store.imageCategories),
+								newField.value = []
+								newField.checked = true
+							break;
+						default:
+							break;
+					}
+					fields.value.push(newField)
+				}
+			})
+		})
 
-    const clearFilter = () => {
-      filter.value = []
-      search.value = ""
-    }
+		const filterTable = (search) => {
 
-    const setSearch = (str) => {
-      search.value = str
-    }
+			store.variablesImages.searchStr = search
+			store.variablesImages.name = fields.value.find(field => field.name === 'UF_TITLE')?.value
+			store.variablesImages.categories = fields.value
+				.filter(field => field.name === 'category' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
 
-    const setFilter = (str) => {
-      if (str.target?.tagName === 'BUTTON') {
-        str = Number(str.target.dataset.filter)
-        filter.value = filter.value.filter(option => {
-          return option.ID !== str
-        })
-      }
-      else {
-        let isExists = filter.value.find(option => option.ID === str.ID) !== undefined
-        if (!(isExists)) {
-          filter.value.push(str)
-        }
-        else {
-          filter.value = filter.value.filter(option => option !== str)
-        }
-      }
-    }
+		}
+
+		const updateFields = (newFields) => {
+			fields.value = newFields
+		}
     
     return {
+			store,
       currentPage,
       images,
       loading,
@@ -221,14 +185,13 @@ export default {
       pageInfo,
       active,
       isDirty,
-      selectImage,
-      submit,
       imgCategories,
-      filterTable,
-      setSearch,
-      clearFilter,
-      setFilter,
-      filter
+      filter,
+			fields,
+			selectImage,
+      submit,
+			filterTable,
+			updateFields,
     }
   }
 }
