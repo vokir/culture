@@ -13,7 +13,7 @@
           v-if="modelValue.length"
           v-for="item in modelValue"
         >
-          <div class="select__text">{{item.name}}</div>
+          <div class="select__text">{{item.name || item.FULL_NAME}}</div>
           <button
             @click.stop="$emit('toggleOption',item, modelValue)"
             :data-id="item.ID"
@@ -158,14 +158,21 @@ export default {
         return props.options
       }
       else{
-        return props.options.filter(option => selectedList.value.every(item => option.ID !== item.ID) && option.FULL_NAME.includes(searchStr.value))
+        return props.options.filter(option => !props.modelValue.find(item => option.ID === item.ID) && option.FULL_NAME.includes(searchStr.value))
       }
     })
 
     const addOption = (option) => {
-      selectedList.value.push(option)
+			if(props.variant === 'checkbox'){
+				selectedList.value.push(option)
       emit("update:modelValue", selectedList.value);
-      closeModal()
+			}
+			else if(props.variant === 'primary'){
+				let newModelValue = JSON.parse(JSON.stringify(props.modelValue)) 
+				newModelValue.push(option)
+				emit("update:modelValue", newModelValue);
+			}
+			closeModal()
       searchStr.value = ""
     }
 

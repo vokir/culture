@@ -161,7 +161,7 @@ export const useNewsStore = defineStore('news', () => {
       },
       priority: data.degree ?? {},
       icon: {
-        id: data.icon?.file?.ID,
+        id: data.icon?.ID,
         name: data.icon?.file?.ORIGINAL_NAME,
         src: data.icon?.file?.SRC,
       },

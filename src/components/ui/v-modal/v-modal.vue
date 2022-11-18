@@ -1,5 +1,5 @@
 <template>
-  <teleport to="body">
+  <teleport to="#app">
     <transition :name="centered || small ? 'fade-in' : 'slide' " appear @after-leave="$emit('closeModal')">
       <div
           :class="['modal-wrapper', {
@@ -55,6 +55,7 @@ export default {
     const { isOpen, openModal, closeModal } = useModal()
 
     watch(() => props.closeModalProp, (value) => {
+			console.log(value);
       if (value) {
         closeModal()
       }

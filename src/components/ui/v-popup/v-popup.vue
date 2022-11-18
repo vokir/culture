@@ -13,6 +13,7 @@
       }"
       :distance="-30"
       :skidding="-160"
+			container="#app"
     >
       <button class="contacts-button" @click="togglePopup">Все > </button>
 

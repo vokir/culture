@@ -1,4 +1,4 @@
-* {
+#app * {
   box-sizing: border-box;
   font-family: 'Helvetica', sans-serif
 }
@@ -21,7 +21,7 @@ body {
   }
 }
 
-body {
+.dev {
   overflow-x: hidden;
   min-width: 320px;
   background-image: url("../images/mountain-air 1.jpg");

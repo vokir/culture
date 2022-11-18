@@ -15,7 +15,11 @@ export default {
     }
   },
   setup(props, { slots, emit }) {
-    const columns = slots.default(props.rows)
+    let columns = slots.default(props.rows)
+
+		slots.columns(props.row)[0].children
+			.filter(child => child.props.checked)
+			.map(child => columns.push(child))
 
     return () => h('div', { class: 'table-wrapper' }, [
       h('table', { class: 'table' }, [

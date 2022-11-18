@@ -1,5 +1,5 @@
 <template>
-  <v-modal :closeModalProp="closeModalProp" class="modal-select-bind" centered>
+  <v-modal :closeModalProp="closeModalProp" class="modal-select-bind" centered  @closeModal="onCancel">
     <div class="modal-title">{{ complexName }}</div>
     <div class="modal-title-desc">Задать принадлежность новости к Дому/ Подъезду / Этажу / Помещению.</div>
     <span class="modal-hint">Выберите один или несколько вариантов</span>
@@ -116,7 +116,7 @@ export default {
     houses: Object,
     approaches: Object,
     floors: Object,
-    premises: Object
+    premises: Object,
   },
   setup(props, { emit }) {
     const closeModalProp = ref(false)

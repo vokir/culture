@@ -185,3 +185,15 @@
 .slide-up-leave-from {
   transform: translateX(0);
 }
+
+.table__thead-th-settings{
+	svg{
+		cursor: pointer;
+		path{
+			transition: all 0.25s ease-in-out;
+		}
+		&:hover path{
+			fill:var(--blue)
+		}
+	}
+}

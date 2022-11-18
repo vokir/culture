@@ -67,6 +67,8 @@
 		}
     &-content{
       display: flex;
+			gap: 5px;
+			flex-wrap: wrap;
     }
   }
   &__filter{

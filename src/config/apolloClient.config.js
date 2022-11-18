@@ -60,3 +60,15 @@ export const iconFieldsPromise = (async () => {
 	const fields = res.data.data.__schema.types.find(type => type.name === 'Icon').fields
 	return fields
 })()
+
+export const newsColumnsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const columns = res.data.data.__schema.types
+		.find(type => type.name === 'News').fields
+		.filter(row => {
+			const columnsName = ['icon','UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts', 'UF_ACTIVE', 'UF_TITLE', 'UF_PREVIEW_TEXT', 'UF_TEXT']
+			return columnsName.includes(row.name) ? true : false
+		})
+
+	return columns
+})()

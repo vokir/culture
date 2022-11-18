@@ -82,12 +82,12 @@
 		  modelValue: Object,
       hideIcon: Boolean
     },
-		setup({ modelValue }, { emit }) {
+		setup(props , { emit }) {
 			const { isOpen, openModal, closeModal } = useModal()
       const radio = ref('icon')
 			const onLoadFiles = (value) => {
         emit('update:modelValue', {
-          ...modelValue,
+          ...props.modelValue,
           imgLandscape: {
             id: value.id[0],
             file: value.files.imgLandscape
@@ -100,7 +100,7 @@
 			}
 	    const saveBackground = (value) => {
         emit('update:modelValue', {
-          ...modelValue,
+          ...props.modelValue,
           image: {
             id: value.id[0],
             src: value.files.image,
@@ -114,7 +114,7 @@
       }
 			const saveIcon = (value) => {
         emit('update:modelValue', {
-          ...modelValue,
+          ...props.modelValue,
           image: {
             id: null,
             src: null,

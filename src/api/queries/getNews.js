@@ -71,6 +71,7 @@ query news(
       UF_TEXT
       UF_PHONE
       UF_CREATED_AT
+			UF_ACTIVE
       imgLandscape {
         SRC,
         ID,
@@ -156,6 +157,7 @@ query news(
         }
       }
       icon {
+				ID
         file {
           ID
           ORIGINAL_NAME

@@ -29,7 +29,7 @@ export default {
       required: false,
       default: 'primary',
       validator(value) {
-        return ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link'].includes(value)
+        return ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link', 'underline'].includes(value)
       }
     },
   },

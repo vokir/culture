@@ -49,6 +49,7 @@
               labelSelect="Контакты"
               label="FULL_NAME"
               placeholder="Выберите контакты"
+							@toggleOption="toggleOption"
             />
           </div>
         </v-card>
@@ -313,6 +314,10 @@ export default {
       addedLinks.value = links
     }
 
+		const toggleOption = (target,contacts) => {
+			form.value.contacts = contacts.filter(contact => contact.ID !== target.ID)
+		}
+
     return {
       form,
       types,
@@ -328,7 +333,8 @@ export default {
       onCancel,
       setBind,
       removeLinks,
-      addLinks
+      addLinks,
+			toggleOption
     }
   }
 }

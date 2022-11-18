@@ -31,8 +31,10 @@
 		</div>
 		<div class="news">
 			<v-loader v-if="store.loading" />
+			
 			<v-table
 				v-else
+				:key="tableKey"
 				:class="{'news--action': selected.length}"
 				:rows="store.news"
 			>
@@ -52,6 +54,7 @@
 						/>
 					</template>
 
+
 				</v-table-column>
 				<v-table-column
 					id="settings"
@@ -60,6 +63,7 @@
 				>
 					<template #header>
 						<svg
+							@click="openModalColumns"
 							fill="none"
 							height="17"
 							viewBox="0 0 16 17"
@@ -125,25 +129,17 @@
 						</VDropdown>
 					</template>
 				</v-table-column>
-				<v-table-column
-					id="icon"
-					title="icon"
-					width="30px"
-				>
-					<template v-slot="{ row }">
+
+				<template #columns>
+					<v-table-column v-for="col in columns" :id="col.id" :title="col.title" :width="col.width" :checked="col.checked">
+					<template v-if="col.id === 'icon'" v-slot="{ row }">
 						<img
 							v-if="row.icon"
 							:alt="row.icon.file.ORIGINAL_NAME"
 							:src="row.icon.file.SRC"
 						>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="UF_NAME"
-					title="Заголовок"
-					width="190px"
-				>
-					<template v-slot="{row}">
+					<template v-else-if="col.id === 'UF_NAME'" v-slot="{ row }">
 						<router-link
 							:to="{ name: 'news-detail', params: { id: row.ID } }"
 							class="link"
@@ -151,22 +147,10 @@
 							{{ row.UF_NAME }}
 						</router-link>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="UF_CREATED_AT"
-					title="Дата"
-					width="80px"
-				>
-					<template v-slot="{ row }">
+					<template v-else-if="col.id === 'UF_CREATED_AT'" v-slot="{ row }">
 						{{ dayjs(row.UF_CREATED_AT).format("DD.MM.YYYY hh:mm") }}
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="types"
-					title="Тип новости"
-					width="90px"
-				>
-					<template v-slot="{ row }">
+					<template v-else-if="col.id === 'types'" v-slot="{ row }">
 						<span
 							v-for="(type, index) of row.types"
 							:key="index"
@@ -174,13 +158,7 @@
 							{{ type.UF_TITLE }}
 						</span>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="priority"
-					title="Степень важности"
-					width="95px"
-				>
-					<template v-slot="{ row }">
+					<template v-else-if="col.id === 'degree'" v-slot="{ row }">
 						<v-badge
 							v-if="row.degree"
 							:text="row.degree.UF_TITLE"
@@ -188,13 +166,7 @@
 							:variant="priorityMap[row.degree.ID]"
 						/>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="complexes"
-					title="ЖК"
-					width="150px"
-				>
-					<template v-slot="{ row }">
+					<template v-else-if="col.id === 'complexes'" v-slot="{ row }">
 						<div
 							v-for="(complex, index) in row.complexes"
 							:key="index"
@@ -202,26 +174,14 @@
 							{{ complex.UF_NAME }}
 						</div>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="visibility"
-					title="Отображается для"
-					width="220px"
-				>
-					<template v-slot="{ row }">
+					<template  v-else-if="col.id === 'for'" v-slot="{ row }">
 						<span v-if="!row.houses.length && !row.approaches.length && !row.floors.length && !row.premises.length">Весь ЖК</span>
 						<bind-rows-column
 							v-else
 							:newsInfo="row"
 						/>
 					</template>
-				</v-table-column>
-				<v-table-column
-					id="visibility"
-					title="Контакты"
-					width="260px"
-				>
-					<template v-slot="{ row }">
+					<template v-else-if="col.id === 'contacts'" v-slot="{ row }">
 						<div class="badges-list-contacts">
 							<div
 								v-if="row.contacts.length"
@@ -247,7 +207,22 @@
 							</div>
 						</div>
 					</template>
+					<template v-else-if="col.id === 'UF_ACTIVE'" v-slot="{ row }">
+						<template  v-if="row.UF_ACTIVE">Да</template>
+						<template v-else>{{row.UF_ACTIVE}}</template>
+					</template>
+					<template v-else-if="col.id === 'UF_TITLE'" v-slot="{ row }">
+						{{ row.UF_TITLE }}
+					</template>
+					<template v-else-if="col.id === 'UF_PREVIEW_TEXT'" v-slot="{ row }">
+						{{ row.UF_PREVIEW_TEXT }}
+					</template>
+					<template v-else-if="col.id === 'UF_TEXT'" v-slot="{ row }">
+						{{ row.UF_TEXT }}
+					</template>
 				</v-table-column>
+				</template>
+
 			</v-table>
 			<transition name="slide-up">
 				<div
@@ -298,6 +273,12 @@
 		:id="formData.id"
 		@closeModal="closeEditModal"
 	/>
+	<news-select-columns
+		v-if="isOpenColumns"
+		v-model="columns"
+		@closeModal="closeModalColumns"
+		@updateTable="updateTable"
+	/>
 </template>
 
 <script>
@@ -306,7 +287,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import 'dayjs/locale/ru'
-import { computed, ref, toRef } from "vue";
+import { computed, ref, toRef, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useToast } from "vue-toastification";
 import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
@@ -329,7 +310,8 @@ import getFullFio from "../../helpers/getFullFio";
 import useModal from "../../hooks/useModal";
 import { useNewsStore } from "../../store/newsStore";
 import NewsFilter from '../../components/news/news-filter/news-filter.vue'
-import {newsFieldsPromise} from '../../config/apolloClient.config'
+import {newsFieldsPromise, newsColumnsPromise} from '../../config/apolloClient.config'
+import NewsSelectColumns from '../../components/news/news-select-columns/news-select-columns.vue'
 
 dayjs.extend(advancedFormat)
 dayjs.extend(IsoWeek)
@@ -354,9 +336,10 @@ export default {
 		BindRowsColumn,
 		NewsSearch,
 		VLoader,
-		NewsFilter
+		NewsFilter,
+		NewsSelectColumns
 	},
-	setup() {
+	setup(_,cnt) {
 		const priorityMap = {
 			1: 'gray-dark',
 			2: 'warning',
@@ -376,6 +359,7 @@ export default {
 		const { isOpen, openModal, closeModal } = useModal();
 		const { isOpen: editModal, openModal: openEditModal, closeModal: closeEditModal } = useModal();
 		const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
+		const { isOpen: isOpenColumns, openModal: openModalColumns, closeModal: closeModalColumns } = useModal();
 		const formData = ref({
 			title: '',
 			icon: {
@@ -403,6 +387,9 @@ export default {
 		})
 
 		const fields = ref([])
+		const columns = ref([])
+		const tableKey = ref(0)
+
 
 		onErrorDeleteNews(error => {
 			let e = JSON.parse(JSON.stringify(error))
@@ -723,6 +710,47 @@ export default {
 			fields.value = newFields
 		}
 
+		onMounted(()=>{
+			const columnsFromStorage = localStorage.getItem('news-columns')
+			if (!columnsFromStorage) {
+				newsColumnsPromise.then(schemaColumns => {
+					columns.value = []
+					const columnsName = ['icon', 'UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts', 'UF_ACTIVE', 'UF_TITLE', 'UF_PREVIEW_TEXT', 'UF_TEXT']
+					const defaultColumnsName = ['icon', 'UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts']
+					columnsName.map(name => {
+						let col = schemaColumns.find(column => name === column.name)
+						let newCol = {
+							id: col.name,
+							title: col.description,
+							// width: '30px', 
+							checked: true,
+							editting: false,
+							default: defaultColumnsName.includes(col.name)
+						}
+						newCol.id === 'icon' ? newCol.width = '30px' : null
+						newCol.id === 'UF_TEXT' ? newCol.checked = false : null
+						columns.value.push(newCol)
+					})
+					columns.value.push({
+						id: 'for',
+						title: 'Отображать для',
+						width: '30px',
+						checked: true,
+						default: true
+					})
+					localStorage.setItem('news-columns', JSON.stringify(columns.value))
+				})
+			}
+			else {
+				columns.value = JSON.parse(columnsFromStorage) 
+			}
+			tableKey.value++
+		})
+
+		const updateTable = () => {
+			localStorage.setItem('news-columns', JSON.stringify(columns.value))
+			tableKey.value++
+		}
 
 		return {
 			route,
@@ -748,7 +776,13 @@ export default {
 			clearFormData,
 			formData,
 			fields,
-			updateFields
+			updateFields,
+			isOpenColumns,
+			openModalColumns,
+			closeModalColumns,
+			columns,
+			tableKey,
+			updateTable
 		};
 	},
 };
