@@ -727,7 +727,7 @@ export default {
 							editting: false,
 							default: defaultColumnsName.includes(col.name)
 						}
-						newCol.id === 'icon' ? newCol.width = '30px' : null
+						// newCol.id === 'icon' ? newCol.width = '50px' : null
 						newCol.id === 'UF_TEXT' ? newCol.checked = false : null
 						columns.value.push(newCol)
 					})
