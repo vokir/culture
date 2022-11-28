@@ -165,6 +165,11 @@ export const useNewsStore = defineStore('news', () => {
         name: data.icon?.file?.ORIGINAL_NAME,
         src: data.icon?.file?.SRC,
       },
+			image: {
+        id: data.previewPicture?.ID,
+        name: data.previewPicture?.ORIGINAL_NAME,
+        src: data.previewPicture?.SRC,
+      },
       contacts: data.contacts,
     }
   }

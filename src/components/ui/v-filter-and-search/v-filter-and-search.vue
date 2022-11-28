@@ -396,7 +396,7 @@
 
 		<div :class="['search-btns', {'search-btns--transparent':variant === 'transparent'}]">
 			<button
-				:class="['search-btn search-btn--search',{'search-btn--to-left':fieldsWithValue.length || search.length}]"
+				:class="['search-btn search-btn--search',{'search-btn--to-left':fieldsWithValue?.length || search.length}]"
 				@click.stop="filterTable"
 			>
 				<svg
@@ -416,7 +416,7 @@
 				</svg>
 			</button>
 			<button
-				:class="['search-btn search-btn--clear',{'search-btn--to-left':fieldsWithValue.length || search.length}, {'search-btn--visible':fieldsWithValue.length || search.length}]"
+				:class="['search-btn search-btn--clear',{'search-btn--to-left':fieldsWithValue?.length || search.length}, {'search-btn--visible':fieldsWithValue.length || search.length}]"
 				v-if="clearBtn"
 				@click.stop="$emit('removeAllFieldsOrFilter')"
 			>
@@ -671,7 +671,7 @@ export default {
 
 		const computedfilterPlaceholder = computed(() => {
 			let filterPlaceholder
-			if (props.fieldsWithValue.length) {
+			if (props.fieldsWithValue?.length) {
 				filterPlaceholder = ''
 			}
 			else {

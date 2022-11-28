@@ -16,10 +16,13 @@ export default {
   },
   setup(props, { slots, emit }) {
     let columns = slots.default(props.rows)
-
-		slots.columns(props.row)[0].children
+		
+		if(slots.columns){
+			slots.columns(props.row)[0].children
 			.filter(child => child.props.checked)
 			.map(child => columns.push(child))
+		}
+
 
     return () => h('div', { class: 'table-wrapper' }, [
       h('table', { class: 'table' }, [

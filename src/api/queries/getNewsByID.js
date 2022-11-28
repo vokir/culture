@@ -95,12 +95,13 @@ query getNewsAt($newsID: Int) {
       }
     }
     icon {
-      file {
-        ID
-        ORIGINAL_NAME
-        SRC
-      }
-    }
+			ID
+			file {
+				ID
+				ORIGINAL_NAME
+				SRC
+			}
+		}
 	contacts{
     ID
     LAST_NAME
@@ -116,6 +117,11 @@ query getNewsAt($newsID: Int) {
   }
     UF_BTN_TEXT
     UF_BTN_LINK
+		previewPicture{
+			ID
+			ORIGINAL_NAME
+			SRC
+		}
   }
 }
 `;

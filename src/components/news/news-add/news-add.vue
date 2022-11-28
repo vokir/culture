@@ -62,8 +62,10 @@ export default {
         contacts: data.contacts.map(contact => contact.ID),
         priority: data.priority.ID,
         documents: data.docs.map(el => el.ID),
+				image: data.image?.id
       }
-			if(news.title.length && news.icon && news.priority){
+
+			if(news.title.length && (news.icon || news.image) && news.priority){
 				createNews(news).then((result) => {
 				if (result) {
 					let links = data.links
@@ -85,7 +87,7 @@ export default {
 			})
 			}
 			else{
-				toast.error("Заполните обязательные поля (степень важности, заголовок и иконка)")
+				toast.error("Заполните обязательные поля (степень важности, заголовок, иконка или изображение)")
 			}
 
 		}

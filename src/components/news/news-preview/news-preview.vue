@@ -15,7 +15,7 @@
                   <v-radio v-model="radio" value="image">Изображение</v-radio>
                 </div>
                 <select-icon v-if="radio === 'icon'" @saveIcon="saveIcon" v-bind="{ ...modelValue }"/>
-                <select-background-image v-if="radio === 'image'" @onLoadFiles="saveBackground" v-bind="{ ...modelValue }"/>
+                <select-background-image v-if="radio === 'image'" @onLoadFiles="saveBackground" @saveBackground="saveBackground" v-bind="{ ...modelValue }"/>
               </template>
               <amio-preview v-bind="{ ...modelValue }" :variant="radio"/>
             </v-tab>
@@ -99,32 +99,83 @@
         })
 			}
 	    const saveBackground = (value) => {
-        emit('update:modelValue', {
-          ...props.modelValue,
-          image: {
-            id: value.id[0],
+				let newModelValue = props.modelValue
+				
+				if(value.id !== null){
+					newModelValue.image = {
+            id: value?.id[0],
             src: value.files.image,
           },
-          icon: {
+					newModelValue.icon = {
             id: null,
             src: null,
             name: null
           }
-        })
-      }
-			const saveIcon = (value) => {
-        emit('update:modelValue', {
-          ...props.modelValue,
-          image: {
+					emit('update:modelValue',newModelValue)
+				// 	emit('update:modelValue', {
+        //   ...props.modelValue,
+        //   image: {
+        //     id: value?.id[0],
+        //     src: value.files.image,
+        //   },
+        //   icon: {
+        //     id: null,
+        //     src: null,
+        //     name: null
+        //   }
+        // })
+				}
+				else{
+					newModelValue.image = {
             id: null,
             src: null,
           },
-          icon: {
+					newModelValue.icon = {
+            id: null,
+            src: null,
+            name: null
+          }
+					emit('update:modelValue',newModelValue)
+				// 	emit('update:modelValue', {
+        //   ...props.modelValue,
+        //   image: {
+        //     id: null,
+        //     src: null,
+        //   },
+        //   icon: {
+        //     id: null,
+        //     src: null,
+        //     name: null
+        //   }
+        // })
+				}
+
+      }
+			const saveIcon = (value) => {
+				let newModelValue = props.modelValue
+				newModelValue.image = {
+            id: null,
+            src: null,
+          }
+				newModelValue.icon = {
             id: value.id,
             src: value.src,
             name: value.name
           }
-        })
+				emit('update:modelValue', newModelValue)
+					
+        // emit('update:modelValue', {
+        //   ...props.modelValue,
+        //   image: {
+        //     id: null,
+        //     src: null,
+        //   },
+        //   icon: {
+        //     id: value.id,
+        //     src: value.src,
+        //     name: value.name
+        //   }
+        // })
 			}
 
 			return {

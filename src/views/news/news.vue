@@ -734,7 +734,7 @@ export default {
 					columns.value.push({
 						id: 'for',
 						title: 'Отображать для',
-						width: '30px',
+						// width: '30px',
 						checked: true,
 						default: true
 					})

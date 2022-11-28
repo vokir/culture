@@ -64,6 +64,11 @@ query news(
 		dateFilter:{column:"UF_CREATED_AT", value: $date, type:$dateFilterType, range_value:$rangeValue}
   ) {
     data {
+			previewPicture{
+				ID
+				ORIGINAL_NAME
+				SRC
+			}
       ID
       UF_NAME
       UF_TITLE
@@ -164,6 +169,14 @@ query news(
           SRC
         }
       }
+			images {
+				ID
+        file {
+          ID
+          ORIGINAL_NAME
+          SRC
+        }
+      }
       contacts{
         ID
         LAST_NAME
@@ -182,6 +195,7 @@ query news(
       total
       perPage
     }
+
   }
 }
 `

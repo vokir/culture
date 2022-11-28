@@ -212,7 +212,12 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
-        contacts: []
+        contacts: [],
+				image:{
+          id: null,
+          src: null,
+          name: null
+        },
       })
     },
     closeModalProp: {
@@ -301,7 +306,12 @@ export default {
         approaches: [],
         floors: [],
         premises: [],
-        contacts: []
+        contacts: [],
+				image:{
+          id: null,
+          src: null,
+          name: null
+        },
       }
 
     }

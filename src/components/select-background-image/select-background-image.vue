@@ -59,7 +59,7 @@ import {imageFieldsPromise} from '../../config/apolloClient.config'
 export default {
   name: "select-background-image",
   components: { VImagePlaceholder, VPagination, VCropImage, VSelectImage, VImageFilter },
-  emits: ['onLoadFiles', 'closeModal'],
+  emits: ['onLoadFiles', 'closeModal', 'saveBackground'],
   inheritAttrs: false,
   props: {
     image: {
@@ -107,8 +107,8 @@ export default {
       }
       image.value = '/src/assets/images/storyPreview.png'
 
-      emit('saveIcon', active.value)
-      toast.success('Изображение удаленно')
+      emit('saveBackground', active.value)
+      toast.success('Изображение удалено')
     }
     const selectImage = (src) => {
       if (!isDirty.value) isDirty.value = true

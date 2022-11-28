@@ -7,7 +7,7 @@ export const CREATE_NEWS = gql`
     $UF_EXTERNAL_SYSTEM_ID: Int! = 1
     $active: Boolean! = true
     $priority: Int!
-    $icon: Int!
+    $icon: Int
     $desc: String
     $imgLandscape: Int
     $imgLibrary: Int
@@ -24,6 +24,7 @@ export const CREATE_NEWS = gql`
     $contacts: [Int]
     $images: [Int]
     $documents: [Int]
+		$image: Int
   ){
     createNews(
       UF_NAME: $title
@@ -32,6 +33,7 @@ export const CREATE_NEWS = gql`
       UF_ORDER: $UF_ORDER
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
       UF_ICON_ID: $icon
+			UF_PREVIEW_PICTURE_ID: $image
       UF_TITLE: $title
       UF_PREVIEW_TEXT: $desc
       UF_IMG_LANDSCAPE: $imgLandscape

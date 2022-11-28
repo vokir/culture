@@ -24,6 +24,7 @@ export const UPDATE_NEWS = gql`
     $contacts: [Int]
     $images: [Int]
     $documents: [Int],
+		$image: Int
   ){
     updateNews(
       id: $id
@@ -32,6 +33,7 @@ export const UPDATE_NEWS = gql`
       UF_DEGREE_ID: $priority
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
       UF_ICON_ID: $icon
+			UF_PREVIEW_PICTURE_ID: $image
       UF_TITLE: $title
       UF_PREVIEW_TEXT: $desc
       UF_IMG_LANDSCAPE: $imgLandscape

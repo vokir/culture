@@ -1,5 +1,5 @@
 <template>
-  <teleport to="#app">
+  <teleport to="body">
     <transition :name="centered || small ? 'fade-in' : 'slide' " appear @after-leave="$emit('closeModal')">
       <div
           :class="['modal-wrapper', {
@@ -83,4 +83,4 @@ export default {
 }
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss"/>

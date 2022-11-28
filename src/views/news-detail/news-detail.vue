@@ -149,7 +149,7 @@ import VCard from "../../components/ui/v-card/v-card.vue";
 import VButton from "../../components/ui/v-button/v-button.vue";
 import { GET_NEWS_BY_ID } from "../../api/queries/getNewsByID";
 import { useLazyQuery } from "@vue/apollo-composable";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import VLoader from "../../components/ui/v-loader/v-loader.vue";
 import computedDate from "../../helpers/dateFormat";
@@ -202,10 +202,15 @@ export default {
       floors: [],
       premises: [],
       contacts: [],
-      priority: {}
+      priority: {},
+			image: {
+        id: null,
+        src: null,
+        name: null
+      },
     });
 
-    const { result, load, onResult, loading } = useLazyQuery(GET_NEWS_BY_ID, {
+    const { result, load, onResult, loading, refetch } = useLazyQuery(GET_NEWS_BY_ID, {
       newsID: Number(route.params.id),
     });
     onResult((result) => {
@@ -226,9 +231,14 @@ export default {
       return string
     })
 
+		onBeforeMount(()=>{
+			load();
+		})
+
     onMounted(() => {
-      load();
+			refetch()
     })
+
 
     return {
       form,

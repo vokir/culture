@@ -88,8 +88,15 @@ export default {
         premises: data.premises.map(el => el.ID),
         priority: Object.keys(data.priority).length ? data.priority.ID : 1,
         documents: data.docs.map(el => el.ID),
+				image: data.image?.id
       }
-      updateNews(news)
+			if(news.title.length && (news.icon || news.image) && news.priority){
+				updateNews(news)
+			}
+			else{
+				toast.error("Заполните обязательные поля (степень важности, заголовок, иконка или изображение)")
+			}
+
     }
 
 		const onCancel = () => {
