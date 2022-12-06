@@ -44,10 +44,6 @@ export const newsFieldsPromise = (async () => {
     const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
 		const fields = res.data.data.__schema.types.find(type => type.name === 'News').fields
 		return fields
-
-    const schema = buildClientSchema(res.data.data)
-    const sdl = printSchema(schema)
-    console.log(sdl)
 })()
 
 export const imageFieldsPromise = (async () => {
@@ -55,9 +51,16 @@ export const imageFieldsPromise = (async () => {
 	const fields = res.data.data.__schema.types.find(type => type.name === 'Image').fields
 	return fields
 })()
+
 export const iconFieldsPromise = (async () => {
 	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
 	const fields = res.data.data.__schema.types.find(type => type.name === 'Icon').fields
+	return fields
+})()
+
+export const documentFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Document').fields
 	return fields
 })()
 

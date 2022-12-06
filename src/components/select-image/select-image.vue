@@ -37,10 +37,8 @@ import { computed, ref } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_IMAGES } from "../../api/queries/getImages";
 import { GET_IMAGE_CATEGORIES } from "../../api/queries/getImageCategories";
-import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
 import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
-import VFilterAndSearch from "../ui/v-filter-and-search/v-filter-and-search.vue";
 import VLoader from "../ui/v-loader/v-loader.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
 import VSelectImage from "../ui/v-select-image/v-select-image.vue";
@@ -54,6 +52,9 @@ export default {
   components: { VSelectImage, VLoader, VCropImage, VPagination, VImageFilter },
   emits: ['onLoadFiles', 'closeModal'],
   setup(_, { emit }) {
+		const toast = useToast();
+		const store = useNewsStore()
+
     const image = ref('/src/assets/images/storyPreview.png')
     const isDirty = ref(false)
     const cropperBig = ref(null)
@@ -63,20 +64,16 @@ export default {
       src: null,
       name: null
     })
-    const toast = useToast();
     const filter = ref([])
-
-		const store = useNewsStore()
 		const fields = ref([])
 
     const { currentPage, perPage, updatePage } = usePaginate(1, 20)
+
     const { result, loading, refetch } = useQuery(GET_IMAGES, {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
-    const images = computed(() => {
-      return result.value?.getImages.data ?? []
-    })
+
     const pageInfo = computed(() => {
       return result.value?.getImages.paginatorInfo ?? []
     })
@@ -177,7 +174,6 @@ export default {
     return {
 			store,
       currentPage,
-      images,
       loading,
       image,
       cropperBig,

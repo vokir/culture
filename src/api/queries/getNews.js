@@ -29,7 +29,7 @@ query news(
   $imgAlbum: [String] = []
   $imgBook: [String] = []
   $degrees: [String] = []
-	$dateFilterType: DateFilterType!
+	$dateFilterType: DateFilterType! = exact_date
 	$rangeValue: String
 ) {
   getNews(

@@ -161,6 +161,7 @@ import getSingular from "../../helpers/getSingular";
 import NewsForTable from "../../components/news/bind-rows/bind-rows-table.vue";
 import { useNewsStore } from "../../store/newsStore";
 
+
 export default {
   name: "news-detail",
   components: {
@@ -258,7 +259,5 @@ export default {
 
 };
 </script>
-
-
 
 <style lang="scss" src="./style.scss" scoped />

@@ -8,13 +8,14 @@
     :items="store.icons"
     :loading="loading"
     title="Выберите иконку"
-    @closeModal="closeModal"
+    @closeModal="onCloseModal"
     @onSelect="selectIcon"
     @onSubmit="submit"
   >
 	<template #filter>
 		<v-icon-filter
 			:fields="fields"
+			ref="filterRef"
 			@filterTable="filterTable"
 			@updateFields="newFields => updateFields(newFields)"
 		/>
@@ -37,7 +38,7 @@
 
 <script>
 import { useLazyQuery, useQuery } from "@vue/apollo-composable";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
 import { GET_IMAGE_CATEGORIES } from "../../api/queries/getImageCategories";
@@ -70,7 +71,6 @@ export default {
     const defaultImage = ref('/src/assets/images/storyPreview.png')
     const active = ref(props.icon)
     const filter = ref([])
-    const search = ref("")
     const { isOpen, openModal, closeModal } = useModal()
     const { currentPage, perPage, updatePage } = usePaginate(1, 28)
     const { result, loading, refetch, load } = useLazyQuery(GET_ICONS, {
@@ -131,6 +131,7 @@ export default {
 
 		const store = useNewsStore()
 		const fields = ref([])
+		const filterRef = ref()
 
 		iconFieldsPromise.then(schemaFields => {
 			const filtersName = ['UF_TITLE','category']
@@ -162,6 +163,7 @@ export default {
 				}
 			})
 		})
+		
 
 		const filterTable = (search) => {
 			store.variablesIcons.searchStr = search
@@ -173,6 +175,14 @@ export default {
 
 		const updateFields = (newFields) => {
 			fields.value = newFields
+		}
+
+		const onCloseModal = () => {
+			store.variablesIcons = {
+				currentPage: 1,
+				perPage: 100,
+			}
+			closeModal()
 		}
 
     return {
@@ -193,7 +203,9 @@ export default {
       filter,
 			updateFields,
 			fields,
-			store
+			store,
+			onCloseModal,
+			filterRef
     }
   }
 }

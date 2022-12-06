@@ -13,23 +13,22 @@ const useFilter = (entity = '', props, emit) => {
 		updateFilter,
 		loadFiltersImage,
 		loadFiltersNews,
-		loadFiltersIcon
+		loadFiltersIcon,
+		loadFiltersDocument
 	} = store
 
 	const filterEntity = computed(()=>{
 		switch (entity) {
 			case "news":
 				return store.filtersNews;
-				break;
 			case "image":
 				return store.filtersImage;
-				break;
 			case "icon":
 				return store.filtersIcon;
-				break;
+			case "document":
+				return store.filtersDocument;
 			default:
 				return [];
-				break;
 		}
 	})
 
@@ -605,7 +604,8 @@ const useFilter = (entity = '', props, emit) => {
 		cancelChangingFilter,
 		loadFiltersImage,
 		loadFiltersNews,
-		loadFiltersIcon
+		loadFiltersIcon,
+		loadFiltersDocument
 	}
 
 

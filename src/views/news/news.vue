@@ -337,7 +337,7 @@ export default {
 		NewsSearch,
 		VLoader,
 		NewsFilter,
-		NewsSelectColumns
+		NewsSelectColumns,
 	},
 	setup(_,cnt) {
 		const priorityMap = {
@@ -440,8 +440,6 @@ export default {
 			formData.value = createFormData(row)
 			openEditModal()
 		}
-
-
 
 		newsFieldsPromise.then(schemaFields => {
 			const filtersName = ['UF_NAME','UF_TITLE','UF_PREVIEW_TEXT','UF_TEXT','UF_ACTIVE','degree','UF_CREATED_AT','types','complexes']
@@ -782,15 +780,11 @@ export default {
 			closeModalColumns,
 			columns,
 			tableKey,
-			updateTable
+			updateTable,
 		};
 	},
 };
 </script>
-
-
-
-
 
 <style lang="scss" src="./style.scss" scoped/>
 

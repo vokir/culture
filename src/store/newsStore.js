@@ -26,7 +26,9 @@ import { GET_FILTERS } from "../api/queries/getFilters";
 import { GET_IMAGE_CATEGORIES } from "../api/queries/getImageCategories";
 import { GET_IMAGES } from "../api/queries/getImages";
 import { GET_ICONS } from "../api/queries/getIcons";
-
+import { GET_DOCUMENT_CATEGORIES } from "../api/queries/getDocumentCategories";
+import { GET_DOCUMENT_TYPES } from "../api/queries/getDocumentTypes";
+import { GET_DOCUMENTS } from "../api/queries/getDocuments";
 
 // useStore could be anything like useUser, useCart
 // the first argument is a unique id of the store across your application
@@ -41,15 +43,19 @@ export const useNewsStore = defineStore('news', () => {
   })
 
 
-	const { result: resultImages, loading: loadingImages, variables:variablesImages, refetch: refetchImages } = useQuery(GET_IMAGES, {
+	const { result: resultImages, loading: loadingImages, variables:variablesImages, refetch: refetchImages, query:queryImages, start: startImages } = useQuery(GET_IMAGES, {
     currentPage: currentPage.value,
     perPage: perPage.value,
   })
 
-	const { result: resultIcons, loading: loadingIcons, variables:variablesIcons, refetch: refetchIcons } = useQuery(GET_ICONS, {
+	const { result: resultIcons, loading: loadingIcons, variables:variablesIcons, refetch: refetchIcons, query:queryIcons, start: startIcons } = useQuery(GET_ICONS, {
     currentPage: currentPage.value,
     perPage: perPage.value,
   })
+	const { result: resultDocuments, loading: loadingDocuments, variables:variablesDocuments, refetch: refetchDocuments, query:queryDocuments, start: startDocuments } = useQuery(GET_DOCUMENTS, {
+    currentPage: currentPage.value,
+    perPage: 100,
+  },)
 
 	const { result: resultFiltersNews, load:loadFiltersNews, loading: loadingFiltersNews, refetch:refetchFiltersNews, onResult: onResultFiltersNews} = useLazyQuery(GET_FILTERS, {
 		entity: 'news'
@@ -62,6 +68,9 @@ export const useNewsStore = defineStore('news', () => {
 	const { result: resultFiltersIcon, load:loadFiltersIcon, loading: loadingFiltersIcon, refetch:refetchFiltersIcon, onResult: onResultFiltersIcon} = useLazyQuery(GET_FILTERS, {
 		entity: 'icon'
 	})
+	const { result: resultFiltersDocument, load:loadFiltersDocument, loading: loadingFiltersDocument, refetch:refetchFiltersDocument, onResult: onResultFiltersDocument} = useLazyQuery(GET_FILTERS, {
+		entity: 'document'
+	})
 
 
   const { result: resultTypes, loading: loadingTypes, load: loadTypes, } = useLazyQuery(GET_NEWS_TYPES)
@@ -72,6 +81,8 @@ export const useNewsStore = defineStore('news', () => {
 	const { result: resultFloors, loading: loadingFloors, load: loadFloors } = useLazyQuery(GET_FLOORS)
 	const { result: resultPremises, loading: loadingPremises, load: loadPremises } = useLazyQuery(GET_PREMISES)
 	const { result: resultImageCategories, loading: loadingImageCategories, load: loadImageCategories } = useLazyQuery(GET_IMAGE_CATEGORIES)
+	const { result: resultDocumentCategories, loading: loadingDocumentCategories, load: loadDocumentCategories } = useLazyQuery(GET_DOCUMENT_CATEGORIES)
+	const { result: resultDocumentTypes, loading: loadingDocumentTypes, load: loadDocumentTypes } = useLazyQuery(GET_DOCUMENT_TYPES)
 
   const newsTypes = computed(() => {
     return resultTypes.value?.getNewsTypes ?? [];
@@ -109,8 +120,17 @@ export const useNewsStore = defineStore('news', () => {
 	const filtersIcon = computed(() => {
     return resultFiltersIcon.value?.getFilters ?? [];
   });
+	const filtersDocument = computed(() => {
+    return resultFiltersDocument.value?.getFilters ?? [];
+  });
 	const imageCategories = computed(() => {
     return resultImageCategories.value?.getImageCategories ?? [];
+  });
+	const documentCategories = computed(() => {
+    return resultDocumentCategories.value?.getDocumentCategories ?? [];
+  });
+	const documentTypes = computed(() => {
+    return resultDocumentTypes.value?.getDocumentTypes ?? [];
   });
 	const images = computed(() => {
     return resultImages.value?.getImages.data ?? [];
@@ -118,10 +138,29 @@ export const useNewsStore = defineStore('news', () => {
 	const icons = computed(() => {
     return resultIcons.value?.getIcons.data ?? [];
   });
+	const documents = computed(() => {
+    return resultDocuments.value?.getDocuments.data ?? [];
+  });
 
   watch(query, (val)=>{
     if (!val) {
       start()
+    }
+  })
+
+	watch(queryDocuments, (val)=>{
+    if (!val) {
+      startDocuments()
+    }
+  })
+	watch(queryImages, (val)=>{
+    if (!val) {
+      startImages()
+    }
+  })
+	watch(queryIcons, (val)=>{
+    if (!val) {
+      startIcons()
     }
   })
 
@@ -284,6 +323,8 @@ export const useNewsStore = defineStore('news', () => {
     onResultFiltersIcon,
     imageCategories,
     loadImageCategories,
+		loadDocumentCategories,
+		loadDocumentTypes,			
     images,
     loadingImages,
     variablesImages,
@@ -291,11 +332,22 @@ export const useNewsStore = defineStore('news', () => {
     loadFiltersNews,
     loadFiltersImage,
     loadFiltersIcon,
+		loadFiltersDocument,
     resultIcons,
     loadingIcons,
     variablesIcons,
     refetchIcons,
-		icons
+		icons,
+		documentCategories,
+		documentTypes,
+		filtersDocument,
+		loadingFiltersDocument,
+		refetchFiltersDocument,
+		onResultFiltersDocument,
+		loadingDocuments,
+		variablesDocuments,
+		refetchDocuments,
+		documents,
   };
 
 })

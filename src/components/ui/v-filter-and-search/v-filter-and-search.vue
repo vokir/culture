@@ -95,6 +95,7 @@
 				:container="searchFilterContainer"
 				:distance="12"
 				:boundary="searchFilterContainer"
+				placement="bottom-start"
 			>
 				<template #popper>
 					<div class="search-popup" 
@@ -335,7 +336,7 @@
 							</template>
 								</draggable>
 								
-								<div class="search-right__item search-right__open-modal-fields">
+								<div v-if="customFields" class="search-right__item search-right__open-modal-fields">
 									<button
 										class="search-right__add-field-btn"
 										@click="popupListenerAddFields"
@@ -600,9 +601,8 @@
 
 </template>
 <script>
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, computed } from 'vue';
 import useModal from '../../../hooks/useModal';
-import { useEventListener } from '../../../hooks/useEventListeners';
 import useClickOutside from '../../../hooks/useClickOutside';
 import VSelect from '../v-select/v-select.vue';
 import VInput from '../v-input/v-input.vue';
@@ -654,6 +654,16 @@ export default {
 			required: false,
 			default: ''
 		},
+		maxWidth:{
+			type: Number,
+			required: false,
+			default: null
+		},
+		customFields:{
+			type: Boolean,
+			required: false,
+			default: true
+		}
 	},
 	setup(props, { emit }) {
 		const { isOpen: isOpened, openModal, closeModal } = useModal()
@@ -834,42 +844,7 @@ export default {
 		}
 	},
 };
+
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style lang="scss" src="./style.scss" scoped />

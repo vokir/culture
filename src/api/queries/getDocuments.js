@@ -2,16 +2,17 @@ import gql from "graphql-tag";
 
 export const GET_DOCUMENTS = gql`
   query documents(
-    $filterType: [String]
-    $filterCategories: [String]
+    $type: [String]
+    $category: [String]
     $search: String
+		$perPage: Int! = 20
   ) {
     getDocuments(
       currentPage: 1
-      perPage: 10
+      perPage: $perPage
       filterInn: [
-        { column: "UF_TITLE", value: $filterCategories, relation: "category" }
-        { column: "UF_TITLE", value: $filterType, relation: "type" }
+        { column: "ID", value: $category, relation: "category" }
+        { column: "ID", value: $type, relation: "type" }
       ]
       search: $search
     ) {
