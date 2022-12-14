@@ -136,12 +136,12 @@ export default {
 		}
 
 		const setSelectedDocs = ({ event, row }) => {
-			let isExists = selectedDocs.value.find(doc => doc.file.ID === row.file.ID) !== undefined
+			let isExists = selectedDocs.value.find(doc => doc.file?.ID === row.file?.ID) !== undefined
 			if (!(isExists)) {
 				selectedDocs.value.push({ ...row })
 			}
 			else {
-				selectedDocs.value = selectedDocs.value.filter(doc => doc.file.ID !== row.file.ID)
+				selectedDocs.value = selectedDocs.value.filter(doc => doc.file?.ID !== row.file?.ID)
 			}
 			emit('update:modelValue', selectedDocs)
 

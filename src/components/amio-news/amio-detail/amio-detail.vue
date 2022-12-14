@@ -65,7 +65,7 @@
             </div>
             <div class="docs-list__info">
               <span class="docs-list__info-name">{{ doc.UF_TITLE }}</span>
-              <span class="docs-list__info-ext">{{ doc.file.ORIGINAL_NAME.split('.').pop() }}, {{ humanFileSize(doc.file.FILE_SIZE) }}</span>
+              <span class="docs-list__info-ext">{{ doc.file?.ORIGINAL_NAME.split('.').pop() }}, {{ humanFileSize(doc.file?.FILE_SIZE) }}</span>
             </div>
           </li>
         </ul>
