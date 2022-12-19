@@ -31,7 +31,7 @@
             label="UF_NAME"
             placeholder="Выберите ЖК"
           />
-          <div class="show-for" v-if="form.complex" @click="openModal">
+          <div class="show-for" v-if="form.complex"  @click="form.complex.ID ? openModal() : {}">
             <div class="show-for__title">
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M6 4V0H4V4H0V6H4V10H6V6H10V4H6Z" fill="#333333"/>
@@ -344,7 +344,7 @@ export default {
       setBind,
       removeLinks,
       addLinks,
-			toggleOption
+			toggleOption,
     }
   }
 }

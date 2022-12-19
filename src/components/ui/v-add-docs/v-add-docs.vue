@@ -118,7 +118,7 @@ export default {
 		const modalRef = ref()
 
 		const docs = computed (()=>{
-			return store.documents.map(doc=> ({...doc,selected:!!(selectedDocs.value.find(sDoc => doc.file?.ID === sDoc.file?.ID))}))
+			return store.documents.map(doc=> ({...doc,selected:!!(selectedDocs.value.find(sDoc => doc.ID === sDoc.ID))}))
 		})
 
 		const filterTable = (search) => {
@@ -136,12 +136,12 @@ export default {
 		}
 
 		const setSelectedDocs = ({ event, row }) => {
-			let isExists = selectedDocs.value.find(doc => doc.file?.ID === row.file?.ID) !== undefined
+			let isExists = selectedDocs.value.find(doc => doc.ID === row.ID) !== undefined
 			if (!(isExists)) {
 				selectedDocs.value.push({ ...row })
 			}
 			else {
-				selectedDocs.value = selectedDocs.value.filter(doc => doc.file?.ID !== row.file?.ID)
+				selectedDocs.value = selectedDocs.value.filter(doc => doc.ID !== row.ID)
 			}
 			emit('update:modelValue', selectedDocs)
 

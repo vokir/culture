@@ -69,6 +69,7 @@
   width: 100%;
   grid-template-rows: repeat(2, min-content);
   align-content: end;
+	cursor: pointer;
 
   &__title {
     display: flex;

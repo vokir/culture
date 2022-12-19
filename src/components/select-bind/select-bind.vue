@@ -135,7 +135,7 @@ export default {
     }
 
     const { result: housesResult, loading: housesLoading } = useQuery(GET_HOUSES_BY_COMPLEX_ID, {
-      complexID: props.complexID.toString()
+      complexID: props.complexID?.toString()
     })
     const houses = computed(() => housesResult.value?.getHouses ?? [])
 
