@@ -1,4 +1,4 @@
-<template lang="">
+<template>
 	<div class="select-options-wrapper">
 		<div v-if="labelSelect" class="select-options-wrapper__label">
 				{{ labelSelect }}
@@ -6,7 +6,7 @@
 		<div class="select-options-wrapper__items">
 			<div class="select-options-wrapper__select">
 				<v-select
-				v-model="selectedOption"
+          v-model="localSelected"
 				name="dateOptions"
 				:options="options"
 				label="label"
@@ -28,8 +28,8 @@
 	</div>
 </template>
 <script>
-import { ref, computed, watch, onMounted } from "vue";
 import VSelect from '../v-select/v-select.vue'
+import {useVModel} from "@vueuse/core";
 
 export default {
 	name: "v-select-options",
@@ -53,6 +53,7 @@ export default {
 		}
 	},
 	setup(props, { emit }) {
+    const localSelected = useVModel(props, 'selectedOption', emit)
 
 		const updateModelValue = () => {
 			let selectedValue = props.selectedOption
@@ -107,7 +108,8 @@ export default {
 		}
 
 		return {
-			updateModelValue
+      updateModelValue,
+      localSelected
 		}
 	}
 }

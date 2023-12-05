@@ -5,7 +5,7 @@
       type="checkbox"
       :id="uid"
       :value="value"
-      v-model="modelValue"
+      v-model="localValue"
       v-bind="$attrs"
     >
     <span class="checkbox__check">
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-import { computed, getCurrentInstance } from "vue";
+import {computed, getCurrentInstance} from "vue";
+import {useVModel} from "@vueuse/core";
 
 export default {
   name: "v-checkbox",
@@ -32,13 +33,16 @@ export default {
       default: false
     },
   },
-  setup() {
+  emits: ['update:modelValue'],
+  setup(props, {emit}) {
+    const localValue = useVModel(props, 'modelValue', emit)
     const uid = computed(() => {
       let instance = getCurrentInstance()
       return instance.uid
     })
     return {
-      uid
+      uid,
+      localValue
     }
   }
 }

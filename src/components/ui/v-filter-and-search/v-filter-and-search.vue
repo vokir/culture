@@ -52,7 +52,7 @@
 				class="search-cell"
 				v-if="index === 2"
 			>
-				<div class="search-cell-text" :title="fieldsWithValue.filter((_,i) => i >= 2 ? true : false).map(field => field.displayValue)">и ещё {{fieldsWithValue.length-2}}</div>
+				<div class="search-cell-text" :title="fieldsWithValue.filter((_,i) => i >= 2).map(field => field.displayValue)">и ещё {{fieldsWithValue.length-2}}</div>
 				<button
 					@click.stop="$emit('clearLatestFields')"
 					class="search-cell-btn"
@@ -385,7 +385,7 @@
 				<input
 					@keyup.enter="filterTable"
 					@keyup.esc="clearFilter"
-					v-model="search"
+          v-model="localSearch"
 					@input="(e) => $emit('setSearch', e.target.value)"
 					:class="['search-input', {'search-input--transparent':variant === 'transparent'}]"
 					type="text"
@@ -601,7 +601,7 @@
 
 </template>
 <script>
-import { ref, computed } from 'vue';
+import {computed, ref} from 'vue';
 import useModal from '../../../hooks/useModal';
 import useClickOutside from '../../../hooks/useClickOutside';
 import VSelect from '../v-select/v-select.vue';
@@ -611,6 +611,7 @@ import VSelectDate from '../v-select-date/v-select-date.vue'
 import VSelectOptions from '../v-select-options/v-select-options.vue'
 import draggable from 'vuedraggable'
 import VLoader from '../../ui/v-loader/v-loader.vue'
+import {useVModel} from "@vueuse/core";
 
 export default {
 	name: 'v-filter-search',
@@ -673,6 +674,7 @@ export default {
 		const searchAddField = ref('')
 		const addingFilter = ref(false)
 		const newFilterName = ref('')
+    const localSearch = useVModel(props, 'search', emit)
 
 
 		const computedFilterItems = computed(() => {
@@ -694,7 +696,7 @@ export default {
 			if(props.selectedFilter){
 				// console.log(JSON.parse(JSON.stringify(selectedFilter.value.fields)))
 				// console.log(JSON.parse(JSON.stringify(props.fields)))
-				return JSON.stringify(props.selectedFilter.fields)  === JSON.stringify(props.fields)? true : false
+				return JSON.stringify(props.selectedFilter.fields) === JSON.stringify(props.fields)
 			}
 			return true
 		})
@@ -831,6 +833,7 @@ export default {
 			dragOptions,
 			checkedFieldsComputed,
 			filtersComputed,
+      localSearch,
 			filterTable,
 			popupListener,
 			popupListenerAddFields,

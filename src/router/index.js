@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import {createRouter, createWebHistory} from "vue-router"
 
 const News = () => import('../views/news/news.vue')
 const NewsDetail = () => import('../views/news-detail/news-detail.vue')
@@ -13,7 +13,6 @@ const routes = [
     component: News,
     meta: {
       pageTitle: 'Новости',
-      layout: 'layout-default'
     }
   },
   {
@@ -22,7 +21,6 @@ const routes = [
     component: NewsDetail,
     meta: {
       pageTitle: 'Новости',
-      layout: 'layout-default'
     }
   },
 ]
