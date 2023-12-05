@@ -1,11 +1,20 @@
 import { ApolloClient, ApolloLink, concat, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import axios from "axios";
+import { buildClientSchema, getIntrospectionQuery, printSchema } from 'graphql'
 
-const sessid = 'b3755b7c7a87d99cb8f3e368ed29b5c2' //BX.bitrix_sessid();
+let sessid = 'd7a0d89faf1977c72ab08842ec935cf2'
+
+if (process.env.NODE_ENV === 'production') {
+  sessid = BX.bitrix_sessid()
+}
+
+axios.defaults.params = {
+  sessid
+}
 
 // HTTP connection to the API
 const httpLink = createHttpLink({
-  uri: (process.env.NODE_ENV === 'development' ? '/api/management/graphql?sessid='
-      : 'https://bitrix-stage.culture-home.ru/api/management/graphql?sessid=') + sessid,
+  uri: '/api/v2/master-system/graphql?sessid=' + sessid,
 })
 
 const authMiddleware = new ApolloLink((operation, forward) => {
@@ -14,8 +23,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     headers: {
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Allow-Origin": "*",
-      Cookie: 'BITRIX_SM_TIME_ZONE=-300; BITRIX_SM_LOGIN=ip%40iit.company; BITRIX_SM_SALE_UID=19; _ym_uid=16585668221021474546; _ym_d=1658566822; _ym_isad=1; _ga=GA1.2.416211188.1658566822; _gid=GA1.2.1656555918.1658566822; BITRIX_CONVERSION_CONTEXT_s1=%7B%22ID%22%3A1%2C%22EXPIRE%22%3A1658609940%2C%22UNIQUE%22%3A%5B%22conversion_visit_day%22%5D%7D; PHPSESSID=RFuWsv2JfD3jrlewxCg4Js31Y0mNky4B; BITRIX_SM_SOUND_LOGIN_PLAYED=Y; BITRIX_SM_LAST_SETTINGS=',
-      sessid
+      sessid,
     },
   });
   return forward(operation);
@@ -25,6 +33,45 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 export const apolloClientConfig = new ApolloClient({
   link: concat(authMiddleware, httpLink),
   cache: new InMemoryCache(),
-
-  connectToDevTools: true
+  connectToDevTools: true,
 })
+
+//Get news fields from schema
+
+const ENDPOINT_URL = '/api/v2/master-system/graphql?sessid=' + sessid;
+
+export const newsFieldsPromise = (async () => {
+    const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+		const fields = res.data.data.__schema.types.find(type => type.name === 'News').fields
+		return fields
+})()
+
+export const imageFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Image').fields
+	return fields
+})()
+
+export const iconFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Icon').fields
+	return fields
+})()
+
+export const documentFieldsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const fields = res.data.data.__schema.types.find(type => type.name === 'Document').fields
+	return fields
+})()
+
+export const newsColumnsPromise = (async () => {
+	const res = await axios.post(ENDPOINT_URL, { query: getIntrospectionQuery() })
+	const columns = res.data.data.__schema.types
+		.find(type => type.name === 'News').fields
+		.filter(row => {
+			const columnsName = ['icon','UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts', 'UF_ACTIVE', 'UF_TITLE', 'UF_PREVIEW_TEXT', 'UF_TEXT']
+			return columnsName.includes(row.name) ? true : false
+		})
+
+	return columns
+})()

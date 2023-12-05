@@ -4,6 +4,7 @@
     :class="['btn', `btn--${variant}`, {
       'btn--disabled': disabled,
     }]"
+    :to="href"
     :disabled="disabled"
   >
     <slot></slot>
@@ -28,7 +29,7 @@ export default {
       required: false,
       default: 'primary',
       validator(value) {
-        return ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link'].includes(value)
+        return ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link', 'underline'].includes(value)
       }
     },
   },

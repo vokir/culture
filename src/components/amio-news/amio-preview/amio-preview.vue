@@ -1,9 +1,9 @@
 <template>
-  <div class="preview">
+  <div class="preview" :style="computedStyle">
     <div class="preview-header">
-      <div class="preview-header__icon">
-        <template v-if="icon && icon.file">
-          <img :src="icon.file" alt="title">
+      <div class="preview-header__icon" v-if="!(image && image.src)">
+        <template v-if="icon && icon.src">
+          <img :src="icon.src" alt="title">
         </template>
         <template v-else>
           <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -47,15 +47,15 @@
     <div class="preview-footer">
       <div class="preview-footer__date">
         <template v-if="date.length">
-          {{ computeDate(date) }}
+          {{ computedDate(date) }}
         </template>
         <template v-else>
           Сегодня 14:30
         </template>
       </div>
       <div class="preview-footer__type">
-        <template v-if="type.length">
-          {{ type }}
+        <template v-if="type && type.UF_TITLE">
+          {{ type.UF_TITLE }}
         </template>
         <template v-else>
           Новость
@@ -66,7 +66,8 @@
 </template>
 
 <script>
-import computeDate from "@/helpers/dateFormat";
+import computedDate from "../../../helpers/dateFormat";
+import { computed } from "vue";
 
 export default {
   name: "amio-preview",
@@ -76,7 +77,17 @@ export default {
       type: Object,
       required: false,
       default: () => ({
-        file: null,
+        src: null,
+        name: null,
+        id: null
+      })
+    },
+    image: {
+      type: Object,
+      required: false,
+      default: () => ({
+        src: null,
+        name: null,
         id: null
       })
     },
@@ -96,14 +107,19 @@ export default {
       default: ''
     },
     type: {
-      type: String,
+      type: Object,
       required: false,
-      default: ''
+      default: () => ([])
     }
   },
-  setup() {
+  setup(props) {
+    const computedStyle = computed(() => ({
+      backgroundImage: props.image && props.image.src ? 'url(' + props.image.src + ')' : ''
+    }))
+
     return {
-      computeDate
+      computedDate,
+      computedStyle
     }
   }
 }

@@ -1,27 +1,26 @@
-import { createRouter, createWebHistory } from "vue-router"
+import {createRouter, createWebHistory} from "vue-router"
 
 const News = () => import('../views/news/news.vue')
 const NewsDetail = () => import('../views/news-detail/news-detail.vue')
 
 const routes = [
   {
-    path: "/",
-    redirect: '/news/'
+    path: "/:pathMatch(.*)*",
+    redirect: '/master-system/news/'
   },
   {
-    name: 'news',
-    path: '/news/',
+    path: '/master-system/news/',
     component: News,
     meta: {
-      pageTitle: 'Новости'
+      pageTitle: 'Новости',
     }
   },
   {
-    path: '/news/:id',
+    path: '/master-system/news/:id',
     name: 'news-detail',
     component: NewsDetail,
     meta: {
-      pageTitle: 'Новости'
+      pageTitle: 'Новости',
     }
   },
 ]

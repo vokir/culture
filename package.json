@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vue/apollo-composable": "^4.0.0-alpha.19",
+    "@vueuse/core": "^10.7.0",
     "apollo-boost": "^0.4.9",
     "axios": "^0.27.2",
     "dayjs": "^1.11.4",
@@ -22,7 +23,8 @@
     "vue": "^3.2.25",
     "vue-router": "^4.0.16",
     "vue-the-mask": "^0.11.1",
-    "vue-toastification": "^2.0.0-rc.5"
+    "vue-toastification": "^2.0.0-rc.5",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@apollo/client": "^3.6.9",
@@ -39,9 +41,10 @@
     "babel-loader": "^8.2.5",
     "graphql": "^16.5.0",
     "graphql-tag": "^2.12.6",
+    "lodash": "^4.17.21",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2",
-    "vite": "^2.9.9",
+    "vite": "^5.0.5",
     "vue-advanced-cropper": "^2.8.3"
   }
 }

@@ -1,14 +1,38 @@
-* {
+#app * {
   box-sizing: border-box;
-  font-family: 'Halvetica', sans-serif
+  font-family: 'Helvetica', sans-serif
+}
+body {
+  scrollbar-width: thin
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  background: transparent;
 }
 
-body {
+::-webkit-scrollbar-thumb {
+  width: 10px;
+  background: var(--variable-5);
+
+  &:hover {
+    background: rgba(198, 205, 211, 0.8);
+  }
+}
+
+.dev {
   overflow-x: hidden;
   min-width: 320px;
   background-image: url("../images/mountain-air 1.jpg");
   background-size: cover;
   background-repeat: no-repeat;
+}
+.container-only-dev {
+  width: 100%;
+  max-width: 1252px;
+  margin-left: 52px;
+  margin-right: auto;
 }
 .pick-image {
   position: absolute;
@@ -39,13 +63,6 @@ body {
 img {
   width: 100%;
   max-height: 100%;
-}
-
-.container {
-  width: 100%;
-  max-width: 1252px;
-  margin-left: 52px;
-  margin-right: auto;
 }
 
 .link {

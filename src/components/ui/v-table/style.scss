@@ -1,6 +1,6 @@
 .table-wrapper {
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto;
+  position: relative;
 }
 
 .table {
@@ -20,7 +20,8 @@
   &__thead-th {
     font-weight: 400;
     color: var(--variable-13);
-    padding: 20px 10px;
+    padding: 20px 7.5px;
+    text-align: left;
   }
 
   &__thead-cell {
@@ -41,6 +42,10 @@
     &:last-child {
       padding-right: 30px;
     }
+  }
+
+  &__tbody-tr.selected {
+    background-color: var(--variable-12);
   }
 
   &__tbody-tr:hover {

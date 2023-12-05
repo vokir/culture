@@ -7,10 +7,22 @@ export default {
     rows: {
       type: Array,
       required: true
+    },
+    activeRowClass: {
+      type: String,
+      required: false,
+      default: 'table__tbody-tr--selected'
     }
   },
-  setup({ rows }, { slots }) {
-    const columns = slots.default(rows)
+  setup(props, { slots, emit }) {
+    let columns = slots.default(props.rows)
+		
+		if(slots.columns){
+			slots.columns(props.row)[0].children
+			.filter(child => child.props.checked)
+			.map(child => columns.push(child))
+		}
+
 
     return () => h('div', { class: 'table-wrapper' }, [
       h('table', { class: 'table' }, [
@@ -36,12 +48,12 @@ export default {
           ])
         ]),
         h('tbody', { class: 'table__tbody' }, [
-          Array.from(rows).map((row, index) => {
-            return h('tr', { class: 'table__tbody-tr', key: index }, [
+          Array.from(props.rows).map((row, index) => {
+            return h('tr', { class: ['table__tbody-tr', {[props.activeRowClass]: row.selected}], key: index, onClick(event) {emit('rowClick', { event, row })} }, [
               Array.from(columns).map((column, index) => {
                 return h('td', { class: 'table__tbody-td', key: index }, [
                   h('div', { class: 'table__thead-cell' }, [
-                    column.children ? column.children.default({ row, items: rows }) : row[column.props.id]
+                    column.children ? column.children.default({ row, items: props.rows }) : row[column.props.id]
                   ])
                 ])
               })
@@ -53,4 +65,5 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" src="./style.scss" scoped/>

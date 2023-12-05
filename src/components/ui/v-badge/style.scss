@@ -27,6 +27,29 @@
   &--teal {
     background: var(--material-8);
   }
+  &--lightblue {
+    background: var(--variable-23);
+    color: var(--variable-13)
+  }
+  &--gray {
+    background: var(--gray);
+    color: var(--variable-13)
+  }
+  &--gray-dark {
+    background: var(--variable-5);
+    color: var(--white)
+  }
+  &--danger {
+    background: var(--danger);
+    color: var(--white)
+  }
+  &--warning {
+    background: var(--material-13);
+    color: var(--white)
+  }
+  &--big {
+    padding: 5px;
+  }
 }
 
 .tooltip {
@@ -50,3 +73,5 @@
     visibility: visible;
   }
 }
+
+

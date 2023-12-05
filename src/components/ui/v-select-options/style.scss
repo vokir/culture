@@ -1,0 +1,51 @@
+.select-options-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 10px 0;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 150%;
+
+	&__label {
+		color: var(--gray-light);
+
+	}
+
+	&__items {
+		display: flex;
+		gap: 10px;
+	}
+
+	&__select {
+		flex: 1 1 auto;
+	}
+
+	&__optional{
+		flex: 0 0 25%;
+	}
+
+	&__input {
+		height: 100%;
+		border: 1px solid var(--variable-5);
+		padding: 10px;
+		transition: all .3s ease-in-out;
+
+		&:focus {
+			border-color: var(--input-border-hover);
+			outline: none;
+		}
+	}
+
+	&__exact-date{
+		flex: 0 0 25%;
+	}
+	
+	.big-line{
+		transform: translateX(-50%);
+		align-self: center;
+		width: 15px;
+		height: 4px;
+		background-color: var(--big-line);
+	}	
+}

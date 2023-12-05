@@ -25,7 +25,7 @@
 export default {
   name: 'v-input',
   inheritAttrs: false,
-  emits: ['update:modelValue', 'focus', 'blur'],
+  emits: ['update:modelValue', 'focus', 'blur', 'onInput'],
   props: {
     name: {
       type: String,
@@ -46,6 +46,7 @@ export default {
       } else {
         emit('update:modelValue', event.target.value)
       }
+			emit('onInput')
     }
     return {
       updateValue

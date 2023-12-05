@@ -22,6 +22,7 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 21px;
+		transition: all .3s ease-in-out;
 
     &::-webkit-calendar-picker-indicator {
       color: rgba(0, 0, 0, 0);
@@ -39,6 +40,7 @@
 
     &:focus {
       outline: none;
+			border-color: var(--input-border-hover);
     }
   }
 

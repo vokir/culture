@@ -1,8 +1,16 @@
 <template>
   <teleport to="body">
-    <transition :name="centered ? 'fade-in' : 'slide' " appear @after-leave="$emit('closeModal')">
-      <div class="modal-wrapper" v-if="isOpen" :class="{'modal-wrapper--centered': centered}" v-bind="$attrs">
-        <div class="modal-background" @click="closeModal"></div>
+    <transition :name="centered || small ? 'fade-in' : 'slide' " appear @after-leave="$emit('closeModal')">
+      <div
+          :class="['modal-wrapper', {
+            'modal-wrapper--centered': centered,
+            'modal-wrapper--small': small,
+            'modal-wrapper--bordered': border
+          }]"
+          v-if="isOpen"
+          v-bind="$attrs"
+      >
+        <div class="modal-background" v-if="!hideOverflow" @click="closeModal" />
         <div class="modal">
           <div class="modal__close" @click="closeModal">
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none"
@@ -23,7 +31,7 @@
 </template>
 
 <script>
-import { getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue'
 import { useEventListener } from '../../../hooks/useEventListeners'
 import useModal from "../../../hooks/useModal";
 import { useModalStore } from "../../../store/modalStore";
@@ -33,13 +41,26 @@ export default {
   emits: ['closeModal'],
   inheritAttrs: false,
   props: {
-    centered: Boolean
+    centered: Boolean,
+    border: Boolean,
+    small: Boolean,
+    hideOverflow: Boolean,
+    container: HTMLElement | String,
+    closeModalProp: Boolean
   },
-  setup(_, { emit }) {
+  setup(props) {
     const store = useModalStore()
     const { addModalState, removeModalState } = store
     const id = getCurrentInstance().uid
     const { isOpen, openModal, closeModal } = useModal()
+
+    watch(() => props.closeModalProp, (value) => {
+			console.log(value);
+      if (value) {
+        closeModal()
+      }
+    })
+
     onMounted(() => {
       openModal()
       addModalState(id)
@@ -62,4 +83,4 @@ export default {
 }
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss"/>

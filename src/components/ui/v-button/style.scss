@@ -13,6 +13,7 @@
   font-family: 'OpenSans', sans-serif;
   color: var(--variable-15);
   text-transform: uppercase;
+  text-decoration: none;
 
   &:hover,
   &:focus-visible {
@@ -55,6 +56,22 @@
     border: 1px solid var(--variable-5);
     color: var(--main-black);
     font-weight: 700;
+  }
+
+	&--underline {
+		background-color: transparent;
+		text-transform: none;
+    color: var(--main-black);
+		padding: 0;
+		color: var(--gray-5);
+		opacity: 0.8;
+		font-size: 13px;
+		line-height: 0%;
+		text-decoration: underline dashed;
+		text-underline-offset: 4px;
+		&:hover{
+			opacity: 1;
+		}
   }
 
   &--w100 {

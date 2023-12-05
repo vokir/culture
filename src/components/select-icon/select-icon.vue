@@ -1,80 +1,79 @@
 <template>
   <div class="select-icon">
-    <v-tags-list v-if="!isDirty" label="Добавить иконку" @openModal="openModal"/>
-    <div class="select-icon__load" v-else>
-      <div class="select-icon__label">
-        Добавить иконку
-      </div>
-      <div class="select-icon__preview">
-        <div class="select-icon__preview-icon">
-          <img :src="active.icon" :alt="active.name">
-        </div>
-        <div class="select-icon__preview-name">
-          {{ active.name }}
-        </div>
-        <div class="select-icon__preview-delete" @click="deleteIcon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
-            <path d="M7.91406 2.0835L2.08075 7.91681" stroke="#9E9E9E" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M2.08594 2.0835L7.91925 7.91681" stroke="#9E9E9E" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      </div>
-    </div>
+    <v-image-placeholder :image="active" label="Добавить иконку" @deleteImage="deleteIcon" @openModal="openModal"/>
   </div>
-  <v-modal v-if="isOpen" class="modal-select-icon" centered @closeModal="closeModal">
-    <div class="modal-title">Выберите изображение</div>
-    <div class="select-icon-container">
-      <v-loader v-if="loading"/>
-      <div v-else class="select-icon-images">
-        <div :class="['icon-item', { 'icon-item--active': active.id ===  icon.file.ID }]" v-for="icon of icons"
-             :key="icon.file.ID">
-          <img :src="icon.file.SRC" :alt="icon.UF_TITLE" @click="selectIcon(icon.file)">
-          <span>{{ icon.UF_TITLE }}</span>
-        </div>
+  <v-select-image
+    v-if="isOpen"
+    v-model="active"
+    :items="store.icons"
+    :loading="loading"
+    title="Выберите иконку"
+    @closeModal="onCloseModal"
+    @onSelect="selectIcon"
+    @onSubmit="submit"
+  >
+	<template #filter>
+		<v-icon-filter
+			:fields="fields"
+			ref="filterRef"
+			@filterTable="filterTable"
+			@updateFields="newFields => updateFields(newFields)"
+		/>
+      </template>
+    <template #cropper>
+      <div class="select-icon__icon">
+        <img :src="defaultImage" alt="icon">
       </div>
-      <div class="select-icon-crop">
-        <v-crop-image ref="cropperSmall" :img="icon" class="cropper-icons"/>
-      </div>
-      <div class="select-icon-actions">
-        <v-pagination v-if="pageInfo.perPage < pageInfo.total" v-model="currentPage" :perPage="pageInfo.perPage"
-                      :total="pageInfo.total"/>
-        <v-button variant="link" @click="$emit('closeModal')">Отменить</v-button>
-        <v-button variant="success" @click="submit">ВЫБРАТЬ ИЗОБРАЖЕНИЕ</v-button>
-      </div>
-    </div>
-  </v-modal>
+    </template>
+    <template #pagination>
+      <v-pagination
+        v-if="pageInfo.perPage < pageInfo.total"
+        v-model="currentPage"
+        :perPage="pageInfo.perPage"
+        :total="pageInfo.total"
+      />
+    </template>
+  </v-select-image>
 </template>
 
 <script>
-import { useQuery } from "@vue/apollo-composable";
-import { computed, ref } from "vue";
+import { useLazyQuery, useQuery } from "@vue/apollo-composable";
+import { computed, ref, watch, onMounted } from "vue";
 import { useToast } from "vue-toastification";
 import { GET_ICONS } from "../../api/queries/getIcons";
+import { GET_IMAGE_CATEGORIES } from "../../api/queries/getImageCategories";
 import useModal from "../../hooks/useModal";
 import usePaginate from "../../hooks/usePaginate";
-import VButton from "../ui/v-button/v-button.vue";
-import VCropImage from "../ui/v-crop-image/v-crop-image.vue";
-import VLoader from "../ui/v-loader/v-loader.vue";
-import VModal from "../ui/v-modal/v-modal.vue";
+import VImagePlaceholder from "../ui/v-image-placeholder/v-image-placeholder.vue";
 import VPagination from "../ui/v-pagination/v-pagination.vue";
-import VTagsList from "../ui/v-tags-list/v-tags-list.vue";
+import VSelectImage from "../ui/v-select-image/v-select-image.vue";
+import VIconFilter from "../news/icon-filter/icon-filter.vue"
+import { useNewsStore } from "../../store/newsStore";
+import {iconFieldsPromise} from '../../config/apolloClient.config'
 
 export default {
   name: "select-icon",
-  components: { VTagsList, VLoader, VCropImage, VButton, VPagination, VModal },
+  components: { VSelectImage, VImagePlaceholder, VPagination, VIconFilter },
   emits: ['saveIcon'],
-  setup(_, { emit }) {
+  inheritAttrs: false,
+  props: {
+    icon: {
+      type: Object,
+      default: () => ({
+        id: null,
+        src: null,
+        name: null
+      })
+    }
+  },
+  setup(props, { emit }) {
     const toast = useToast();
-    const icon = ref('/src/assets/images/storyPreview.png')
-    const isDirty = ref(false)
-    const active = ref({
-      id: null,
-      icon: null,
-      name: null
-    })
+    const defaultImage = ref('/src/assets/images/storyPreview.png')
+    const active = ref(props.icon)
+    const filter = ref([])
     const { isOpen, openModal, closeModal } = useModal()
-    const { currentPage, perPage, updatePage } = usePaginate(1, 2)
-    const { result, loading, refetch } = useQuery(GET_ICONS, {
+    const { currentPage, perPage, updatePage } = usePaginate(1, 28)
+    const { result, loading, refetch, load } = useLazyQuery(GET_ICONS, {
       currentPage: currentPage.value,
       perPage: perPage.value
     })
@@ -83,56 +82,130 @@ export default {
       perPage: perPage.value
     }))
 
-    const selectIcon = (file) => {
-      if (!isDirty.value) isDirty.value = true
-      active.value = {
-        id: file.ID,
-        icon: file.SRC,
-        name: file.ORIGINAL_NAME
-      }
-      icon.value = file.SRC
+    const selectIcon = (src) => {
+      defaultImage.value = src
     }
 
     const deleteIcon = () => {
       active.value = {
         id: null,
-        icon: null,
+        src: null,
         name: null
       }
-      icon.value = '/src/assets/images/storyPreview.png'
-      isDirty.value = false
+      defaultImage.value = '/src/assets/images/storyPreview.png'
+
       emit('saveIcon', active.value)
       toast.success('Иконка удалена')
     }
 
     const submit = () => {
-      if (isDirty.value && active.value) {
+      if (active.value && active.value.src) {
         emit('saveIcon', active.value)
-        toast.success('Иконка выбрано')
+        toast.success('Иконка выбрана')
       }
     }
 
     const icons = computed(() => {
-      return result.value ? result.value.getIcons.data : false
+      return result.value?.getIcons.data ?? []
     })
     const pageInfo = computed(() => {
-      return result.value ? result.value.getIcons.paginatorInfo : false
+      return result.value?.getIcons.paginatorInfo ?? []
     })
+
+    const { result: resultImgCategories } = useQuery(GET_IMAGE_CATEGORIES)
+
+    const imgCategories = computed(() => {
+      return resultImgCategories.value?.getImageCategories ?? [];
+    });
+
+    watch(isOpen, () => {
+      if (!icons.value.length) {
+        load()
+      }
+    })
+
+    watch(() => props.icon, (value) => {
+      active.value = value
+      defaultImage.value = value.src ?? '/src/assets/images/storyPreview.png'
+    })
+
+		const store = useNewsStore()
+		const fields = ref([])
+		const filterRef = ref()
+
+		iconFieldsPromise.then(schemaFields => {
+			const filtersName = ['UF_TITLE','category']
+			schemaFields.map(field => {
+				if(filtersName.includes(field.name)){
+					let newField = {
+						name: field.name,
+						label: field.description,
+						checked: false,
+						order: fields.value.length
+					}
+					switch (field.name) {
+						case 'UF_TITLE':
+							newField.type = 'string'
+							newField.value = ""
+							newField.checked = true
+							break;
+						case 'category':
+							newField.type = 'multi-select',
+								newField.load = store.loadImageCategories,
+								newField.result = computed(() => store.imageCategories),
+								newField.value = []
+								newField.checked = true
+							break;
+						default:
+							break;
+					}
+					fields.value.push(newField)
+				}
+			})
+		})
+		
+
+		const filterTable = (search) => {
+			store.variablesIcons.searchStr = search
+			store.variablesIcons.name = fields.value.find(field => field.name === 'UF_TITLE')?.value
+			store.variablesIcons.categories = fields.value
+				.filter(field => field.name === 'category' && field.value?.length)
+				.map(field => field.value.map(value => value.ID.toString()))[0]
+		}
+
+		const updateFields = (newFields) => {
+			fields.value = newFields
+		}
+
+		const onCloseModal = () => {
+			store.variablesIcons = {
+				currentPage: 1,
+				perPage: 100,
+			}
+			closeModal()
+		}
 
     return {
       isOpen,
       icons,
-      icon,
+      defaultImage,
       pageInfo,
       currentPage,
       loading,
       active,
-      isDirty,
       openModal,
       closeModal,
       selectIcon,
       deleteIcon,
       submit,
+      imgCategories,
+      filterTable,
+      filter,
+			updateFields,
+			fields,
+			store,
+			onCloseModal,
+			filterRef
     }
   }
 }

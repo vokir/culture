@@ -6,8 +6,8 @@
 
 <script>
 export default {
-  name: "v-card"
-}
+  name: "v-card",
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

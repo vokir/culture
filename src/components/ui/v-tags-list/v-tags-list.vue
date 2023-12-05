@@ -5,7 +5,7 @@
 		</div>
 		<ul class="tags-wrapper__list">
 			<li class="tags-wrapper__item" v-for="(tag, index) of tags" >
-				{{ tag.name }}
+				{{ tag.name || tag.UF_TITLE }}
 				<div class="tags-wrapper__remove" @click="$emit('removeTag', index)">
 					<svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9" fill="none" >
 						<path d="M7.125 1.875L1.87502 7.12498" stroke="#868D95" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
