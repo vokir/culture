@@ -1,23 +1,20 @@
 <template>
-  <div :class="['select']" >
-    <div
-      v-if="labelSelect"
-      class="select__label"
-    >
+  <div :class="['select']">
+    <div v-if="labelSelect" class="select__label">
       {{ labelSelect }}
     </div>
-    <div ref="selectRef" :class="['select__select', {'select__select--active': isOpened}]" v-on="variant === 'checkbox' ? {click: ()=> popupListener()} : {}">
+    <div
+      ref="selectRef"
+      :class="['select__select', { 'select__select--active': isOpened }]"
+      v-on="variant === 'checkbox' ? { click: () => popupListener() } : {}"
+    >
       <div class="select__select-content">
-        <div
-          class="select__cell"
-          v-if="modelValue.length"
-          v-for="item in modelValue"
-        >
-          <div class="select__text">{{item.name || item.FULL_NAME}}</div>
+        <div v-for="item in modelValue" v-if="modelValue.length" class="select__cell">
+          <div class="select__text">{{ item.name || item.FULL_NAME }}</div>
           <button
-            @click.stop="$emit('toggleOption',item, modelValue)"
             :data-id="item.ID"
             class="select__cell-btn select__btn"
+            @click.stop="$emit('toggleOption', item, modelValue)"
           >
             <svg
               width="11"
@@ -43,73 +40,75 @@
             </svg>
           </button>
         </div>
-        <div class="select__add-btn" v-if="variant === 'primary'" @click="openModal">
+        <div v-if="variant === 'primary'" class="select__add-btn" @click="openModal">
           + Добавить
         </div>
       </div>
-      <div v-if="variant === 'checkbox'" class="select-wrapper__toggle" @mousedown.prevent="toggleOptions">
+      <div
+        v-if="variant === 'checkbox'"
+        class="select-wrapper__toggle"
+        @mousedown.prevent="toggleOptions"
+      >
         <svg xmlns="http://www.w3.org/2000/svg" width="9" height="7" viewBox="0 0 9 7" fill="none">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M7.74305 0.5L4.49947 3.88092L1.25695 0.5L0 1.80955L3.24358 5.19047L4.50053 6.5L5.75749 5.19047L9 1.80955L7.74305 0.5Z" fill="#C6CDD3" />
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M7.74305 0.5L4.49947 3.88092L1.25695 0.5L0 1.80955L3.24358 5.19047L4.50053 6.5L5.75749 5.19047L9 1.80955L7.74305 0.5Z"
+            fill="#C6CDD3"
+          />
         </svg>
       </div>
-      <div
-        class="select__container"
-        ref="select"
-      >
+      <div ref="select" class="select__container">
         <v-dropdown
           class="select__filter"
-          :delay="{show: 0,hide: 0}"
+          :delay="{ show: 0, hide: 0 }"
           :triggers="[]"
-          :popperTriggers="[]"
+          :popper-triggers="[]"
           :shown="isOpened"
-          :autoHide="false"
+          :auto-hide="false"
           :container="select"
           :distance="1"
           :boundary="select"
         >
-          <template #popper v-if="variant === 'primary'">
+          <template v-if="variant === 'primary'" #popper>
             <input
-              class="select__input"
-              v-model="searchStr"
               v-if="isOpened"
+              v-model="searchStr"
+              class="select__input"
               placeholder="Поиск"
               type="text"
             />
             <div class="select-popup">
               <ul class="select__list">
                 <li
-                  :class="['select__item',{'active':selectedList.includes(option.UF_TITLE)}]"
                   v-for="option in optionsFiltered"
+                  :class="['select__item', { active: selectedList.includes(option.UF_TITLE) }]"
                   :data-id="option.ID"
                   @click.stop="addOption(option)"
                 >
-                  {{option.FULL_NAME}}
+                  {{ option.FULL_NAME }}
                 </li>
               </ul>
             </div>
           </template>
-          <template #popper v-if="variant === 'checkbox'">
+          <template v-if="variant === 'checkbox'" #popper>
             <div class="select-popup">
-							<div class="select__list">
-								<label
-									class="select__item"
-									v-for="option in optionsFiltered"
-								>
-									<input
-										class="select__checkbox"
-										@click="toggleOption(option)"
-										:checked="modelValue.find(row => row.ID === option.ID)"
-										type="checkbox"
-										:id="option.label"
-									/>
-									{{option.name}}
-								</label>
-							</div>
+              <div class="select__list">
+                <label v-for="option in optionsFiltered" class="select__item">
+                  <input
+                    :id="option.label"
+                    class="select__checkbox"
+                    :checked="modelValue.find((row) => row.ID === option.ID)"
+                    type="checkbox"
+                    @click="toggleOption(option)"
+                  />
+                  {{ option.name }}
+                </label>
+              </div>
             </div>
           </template>
         </v-dropdown>
       </div>
-
     </div>
   </div>
 </template>
@@ -119,8 +118,7 @@ import useModal from '../../../hooks/useModal';
 import useClickOutside from '../../../hooks/useClickOutside';
 
 export default {
-  name: "v-multi-select",
-  emits: ["update:modelValue", "toggleOption"],
+  name: 'VMultiSelect',
   inheritAttrs: false,
   props: {
     options: Array,
@@ -129,7 +127,7 @@ export default {
       required: false,
       default: 'primary',
       validator(value) {
-        return ['primary', 'checkbox'].includes(value)
+        return ['primary', 'checkbox'].includes(value);
       }
     },
 
@@ -138,77 +136,79 @@ export default {
     label: String,
     placeholder: {
       type: String,
-      default: "Выберите опцию",
+      default: 'Выберите опцию'
     },
     modelValue: {
       type: null,
-      default: () => ([]),
-    },
+      default: () => []
+    }
   },
+  emits: ['update:modelValue', 'toggleOption'],
   setup(props, { emit }) {
-    let search = ref('')
-    const { isOpen: isOpened, openModal, closeModal } = useModal()
-    const selectedList = ref([])
-    const select = ref()
-    const searchStr = ref("")
-		const selectRef = ref()
+    let search = ref('');
+    const { isOpen: isOpened, openModal, closeModal } = useModal();
+    const selectedList = ref([]);
+    const select = ref();
+    const searchStr = ref('');
+    const selectRef = ref();
 
     const optionsFiltered = computed(() => {
-      if(props.variant === 'checkbox'){
-        return props.options
+      if (props.variant === 'checkbox') {
+        return props.options;
+      } else {
+        return props.options.filter(
+          (option) =>
+            !props.modelValue.find((item) => option.ID === item.ID) &&
+            option.FULL_NAME.includes(searchStr.value)
+        );
       }
-      else{
-        return props.options.filter(option => !props.modelValue.find(item => option.ID === item.ID) && option.FULL_NAME.includes(searchStr.value))
-      }
-    })
+    });
 
     const addOption = (option) => {
-			if(props.variant === 'checkbox'){
-				selectedList.value.push(option)
-      emit("update:modelValue", selectedList.value);
-			}
-			else if(props.variant === 'primary'){
-				let newModelValue = JSON.parse(JSON.stringify(props.modelValue)) 
-				newModelValue.push(option)
-				emit("update:modelValue", newModelValue);
-			}
-			closeModal()
-      searchStr.value = ""
-    }
+      if (props.variant === 'checkbox') {
+        selectedList.value.push(option);
+        emit('update:modelValue', selectedList.value);
+      } else if (props.variant === 'primary') {
+        let newModelValue = JSON.parse(JSON.stringify(props.modelValue));
+        newModelValue.push(option);
+        emit('update:modelValue', newModelValue);
+      }
+      closeModal();
+      searchStr.value = '';
+    };
 
-    const removeOption = (option,options) => {
-      emit("removeOption", option, options);
-    }
+    const removeOption = (option, options) => {
+      emit('removeOption', option, options);
+    };
 
     const popupListener = () => {
       if (isOpened.value) {
-        closeModal()
+        closeModal();
+      } else {
+        openModal();
       }
-      else {
-        openModal()
-      }
-    }
+    };
 
     const selectValue = (options) => {
       if (options?.length) {
-        options.forEach(item => {
-          selectedList.value.push(item)
+        options.forEach((item) => {
+          selectedList.value.push(item);
         });
       }
-      emit("update:modelValue", selectedList.value);
+      emit('update:modelValue', selectedList.value);
     };
 
-		const toggleOption = (option)=>{
-			emit('toggleOption',option)
-		}
+    const toggleOption = (option) => {
+      emit('toggleOption', option);
+    };
 
     onMounted(() => {
-      selectValue(props.modelValue)
-    })
+      selectValue(props.modelValue);
+    });
 
-		useClickOutside(selectRef, ()=>{
-			closeModal()
-		})
+    useClickOutside(selectRef, () => {
+      closeModal();
+    });
 
     return {
       search,
@@ -221,15 +221,11 @@ export default {
       selectedList,
       optionsFiltered,
       searchStr,
-			toggleOption,
-			selectRef
-    }
-  },
+      toggleOption,
+      selectRef
+    };
+  }
 };
 </script>
-
-
-
-
 
 <style lang="scss" src="./style.scss" scoped />

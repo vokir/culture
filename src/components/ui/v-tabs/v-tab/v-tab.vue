@@ -1,14 +1,14 @@
 <template>
   <div :class="['tabs-list__content', { 'tabs-list__content--active': title === selectedTitle }]">
-    <slot/>
+    <slot />
   </div>
 </template>
 
 <script>
-import { inject } from "vue";
+import { inject } from 'vue';
 
 export default {
-  name: "v-tab",
+  name: 'VTab',
   props: {
     title: {
       type: String,
@@ -16,13 +16,13 @@ export default {
     }
   },
   setup() {
-    const selectedTitle = inject('selectedTitle')
+    const selectedTitle = inject('selectedTitle');
 
     return {
       selectedTitle
-    }
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

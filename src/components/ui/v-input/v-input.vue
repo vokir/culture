@@ -1,10 +1,6 @@
 <template>
   <div class="input-wrapper">
-    <label
-      class="input-wrapper__label"
-      v-if="label"
-      :for="name"
-    >{{ label }}</label>
+    <label v-if="label" class="input-wrapper__label" :for="name">{{ label }}</label>
     <input
       :id="name"
       :name="name"
@@ -16,16 +12,16 @@
       @focus="$emit('focus')"
       @blur="$emit('blur')"
     />
-    <span class="input-wrapper__count" v-if="maxLength">{{ modelValue.length }} / {{ maxLength }}</span>
+    <span v-if="maxLength" class="input-wrapper__count"
+      >{{ modelValue.length }} / {{ maxLength }}</span
+    >
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'v-input',
+  name: 'VInput',
   inheritAttrs: false,
-  emits: ['update:modelValue', 'focus', 'blur', 'onInput'],
   props: {
     name: {
       type: String,
@@ -33,26 +29,27 @@ export default {
     },
     label: String,
     modelValue: String,
-    maxLength: String,
+    maxLength: String
   },
+  emits: ['update:modelValue', 'focus', 'blur', 'onInput'],
   setup({ maxLength }, { emit }) {
     const updateValue = (event) => {
       if (maxLength) {
         if (event.target.value.length <= maxLength) {
-          emit('update:modelValue', event.target.value)
+          emit('update:modelValue', event.target.value);
         } else {
           event.target.value = event.target.value.substring(0, maxLength);
         }
       } else {
-        emit('update:modelValue', event.target.value)
+        emit('update:modelValue', event.target.value);
       }
-			emit('onInput')
-    }
+      emit('onInput');
+    };
     return {
       updateValue
-    }
+    };
   }
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

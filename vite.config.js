@@ -1,7 +1,7 @@
-import {defineConfig} from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
 import createSvgSpritePlugin from 'vite-plugin-svg-sprite';
-import {fileURLToPath, URL} from 'node:url';
+import { fileURLToPath, URL } from 'node:url';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,24 +10,24 @@ export default defineConfig({
     proxy: {
       '/api/v2/': {
         target: 'https://bitrix-stage.culture-home.ru/',
-        changeOrigin: true,
+        changeOrigin: true
       },
       '/upload': {
         target: 'https://bitrix-stage.culture-home.ru/',
-        changeOrigin: true,
-      },
+        changeOrigin: true
+      }
     }
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
   plugins: [
     vue(),
     createSvgSpritePlugin({
       include: '**/icons/**/*.svg',
-      symbolId: '[name]',
+      symbolId: '[name]'
     })
   ],
   css: {
@@ -36,5 +36,5 @@ export default defineConfig({
         additionalData: '@import "./src/assets/style/_mixins.scss";'
       }
     }
-  },
-})
+  }
+});

@@ -1,17 +1,12 @@
 <template>
-  <svg
-      :height="height"
-      :width="width"
-      aria-hidden="true"
-      class="icon"
-  >
-    <use :xlink:href="`#${name}`"/>
+  <svg :height="height" :width="width" aria-hidden="true" class="icon">
+    <use :xlink:href="`#${name}`" />
   </svg>
 </template>
 
 <script>
 export default {
-  name: 'v-icon',
+  name: 'VIcon',
   props: {
     width: {
       type: [String, Number],
@@ -29,4 +24,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped src="./v-icon.scss"/>
+<style lang="scss" scoped src="./v-icon.scss" />

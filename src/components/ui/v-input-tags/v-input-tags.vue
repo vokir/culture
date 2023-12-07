@@ -3,31 +3,17 @@
     :label="label"
     :max-tags="maxTags"
     :tags="tags"
-    @removeTag="removeTag"
-    @openModal="openModal"
+    @remove-tag="removeTag"
+    @open-modal="openModal"
   >
-    <v-modal
-      v-if="isOpen"
-      @closeModal="closeModal"
-      centered
-      class="modal-tags"
-    >
+    <v-modal v-if="isOpen" centered class="modal-tags" @close-modal="closeModal">
       <div class="tags-wrapper__actions">
-        <v-input
-          v-model="currentTag.name"
-          name="text"
-          :label="inputLabel"
-        />
-        <v-input
-          class="input-link"
-          v-model="currentTag.link"
-          name="link"
-          :label="inputLabelLink"
-        />
+        <v-input v-model="currentTag.name" name="text" :label="inputLabel" />
+        <v-input v-model="currentTag.link" class="input-link" name="link" :label="inputLabelLink" />
         <div
+          v-if="currentTag.name && currentTag.link"
           class="tags-wrapper__actions-add"
           @click="addTag"
-          v-if="currentTag.name && currentTag.link"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -50,66 +36,65 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import useModal from "../../../hooks/useModal";
-import VCard from "../v-card/v-card.vue";
-import VInput from "../v-input/v-input.vue";
-import VModal from "../v-modal/v-modal.vue";
-import VTagsList from "../v-tags-list/v-tags-list.vue";
+import { ref } from 'vue';
+import useModal from '../../../hooks/useModal';
+import VCard from '../v-card/v-card.vue';
+import VInput from '../v-input/v-input.vue';
+import VModal from '../v-modal/v-modal.vue';
+import VTagsList from '../v-tags-list/v-tags-list.vue';
 
 export default {
-  name: "v-input-tags",
-  emits: ['update:modelValue', 'onRemove', 'onAdd'],
+  name: 'VInputTags',
   components: { VTagsList, VModal, VCard, VInput },
   props: {
     label: String,
     modelValue: [Array, Object, String],
     inputLabel: String,
     inputLabelLink: String,
-    maxTags: Number,
+    maxTags: Number
   },
+  emits: ['update:modelValue', 'onRemove', 'onAdd'],
   setup({ modelValue }, { emit }) {
-    const { isOpen, openModal, closeModal } = useModal()
+    const { isOpen, openModal, closeModal } = useModal();
 
-    const tags = ref(modelValue)
+    const tags = ref(modelValue);
 
     const currentTag = ref({
       name: '',
       link: '',
       id: null
-    })
+    });
 
-    const addedTags = ref([])
-    const removedTags = ref([])
+    const addedTags = ref([]);
+    const removedTags = ref([]);
 
     const addTag = () => {
-      tags.value.push(currentTag.value)
-      addedTags.value.push(currentTag.value)
-      emit('onAdd', addedTags.value)
-      emit('update:modelValue', tags.value)
+      tags.value.push(currentTag.value);
+      addedTags.value.push(currentTag.value);
+      emit('onAdd', addedTags.value);
+      emit('update:modelValue', tags.value);
 
       currentTag.value = {
         name: '',
         link: '',
         id: null
-      }
-      closeModal()
-    }
+      };
+      closeModal();
+    };
     const removeTag = (index) => {
-      let removedItem = tags.value[index]
-      let isExists = addedTags.value.find(item => item === removedItem) !== undefined
+      let removedItem = tags.value[index];
+      let isExists = addedTags.value.find((item) => item === removedItem) !== undefined;
       if (isExists) {
-        addedTags.value.splice(addedTags.value.indexOf(removedItem), 1)
-        emit('onAdd', addedTags.value)
-        tags.value.splice(index, 1)
+        addedTags.value.splice(addedTags.value.indexOf(removedItem), 1);
+        emit('onAdd', addedTags.value);
+        tags.value.splice(index, 1);
+      } else {
+        removedItem = tags.value.splice(index, 1);
+        removedTags.value.push(removedItem[0]);
+        emit('onRemove', removedTags.value);
       }
-      else {
-        removedItem = tags.value.splice(index, 1)
-        removedTags.value.push(removedItem[0])
-        emit('onRemove', removedTags.value)
-      }
-      emit('update:modelValue', tags.value)
-    }
+      emit('update:modelValue', tags.value);
+    };
 
     return {
       tags,
@@ -118,12 +103,10 @@ export default {
       openModal,
       closeModal,
       addTag,
-      removeTag,
-    }
+      removeTag
+    };
   }
-}
+};
 </script>
 
-
-
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

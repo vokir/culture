@@ -2,11 +2,7 @@
   <layout-default>
     <div class="container-content">
       <div class="container-header">
-        <v-button
-          href="/master-system/news/"
-          transparent
-          variant="transparent"
-        >
+        <v-button href="/master-system/news/" transparent variant="transparent">
           <svg
             class="btn--transparent__svg"
             fill="none"
@@ -27,39 +23,34 @@
         <div class="container-header__title">Новости</div>
       </div>
       <div class="news-detail">
-        <v-loader v-if="loading"/>
-        <div
-          v-else
-          class="news-detail__info"
-        >
+        <v-loader v-if="loading" />
+        <div v-else class="news-detail__info">
           <v-card class="news-detail__top">
             <p
               v-if="form.type && form.type.UF_TITLE"
-              :class="['news-detail__type', {'news-detail__type--news':form.type.UF_TITLE === 'Новости','news-detail__type--actions':form.type.UF_TITLE === 'Акции','news-detail__type--alerts':form.type.UF_TITLE === 'Оповещения'}]"
+              :class="[
+                'news-detail__type',
+                {
+                  'news-detail__type--news': form.type.UF_TITLE === 'Новости',
+                  'news-detail__type--actions': form.type.UF_TITLE === 'Акции',
+                  'news-detail__type--alerts': form.type.UF_TITLE === 'Оповещения'
+                }
+              ]"
             >
               {{ form.type.UF_TITLE }}
             </p>
             <p class="news-detail__title">{{ form.title }}</p>
             <p class="news-detail__date">{{ computedDate(form.date) }}</p>
             <p class="news-detail__subtitle">{{ form.desc }}</p>
-            <p
-              class="news-detail__text"
-              v-html="form.fullDesc"
-            ></p>
+            <p class="news-detail__text" v-html="form.fullDesc"></p>
             <div class="news-detail__links">
-              <div
-                v-if="form.complex.length"
-                class="news-detail__row"
-              >
+              <div v-if="form.complex.length" class="news-detail__row">
                 <span class="news-detail__name news-detail__name-zhk">ЖК</span>
                 <span class="news-detail__value news-detail__value-zhk">
-                {{ computedZhk }}
-              </span>
+                  {{ computedZhk }}
+                </span>
               </div>
-              <div
-                v-if="form.links.length"
-                class="news-detail__row"
-              >
+              <div v-if="form.links.length" class="news-detail__row">
                 <span class="news-detail__name news-detail__name-links">Ссылки</span>
                 <ul class="news-detail__list">
                   <a
@@ -72,10 +63,7 @@
                   </a>
                 </ul>
               </div>
-              <div
-                v-if="form.docs?.length"
-                class="news-detail__row"
-              >
+              <div v-if="form.docs?.length" class="news-detail__row">
                 <span class="news-detail__name news-detail__name-docs">Документы</span>
                 <ul class="news-detail__list">
                   <a
@@ -89,21 +77,12 @@
                   </a>
                 </ul>
               </div>
-              <div
-                v-if="form.phone"
-                class="news-detail__row"
-              >
+              <div v-if="form.phone" class="news-detail__row">
                 <span class="news-detail__name news-detail__name-tel">Телефон</span>
-                <a
-                  class="news-detail__value"
-                  href="tel:"
-                >{{ form.phone }}</a>
+                <a class="news-detail__value" href="tel:">{{ form.phone }}</a>
               </div>
             </div>
-            <div
-              class="news-detail__edit"
-              @click="openModal"
-            >
+            <div class="news-detail__edit" @click="openModal">
               <svg
                 fill="none"
                 height="21"
@@ -123,50 +102,45 @@
             </div>
           </v-card>
           <v-card
-            v-if="form.houses.length || form.approaches.length || form.floors.length || form.premises.length"
+            v-if="
+              form.houses.length ||
+              form.approaches.length ||
+              form.floors.length ||
+              form.premises.length
+            "
             class="news-detail__bottom"
           >
             <p class="news-detail__label">Отображается для</p>
-            <news-for-table :newsInfo="news"/>
+            <news-for-table :news-info="news" />
           </v-card>
         </div>
-        <news-preview
-          v-model="form"
-          hideIcon
-        />
+        <news-preview v-model="form" hide-icon />
       </div>
     </div>
-    <news-edit
-      v-if="isOpen"
-      :id="route.params.id"
-      :formData="form"
-      @closeModal="closeModal"
-    />
+    <news-edit v-if="isOpen" :id="route.params.id" :form-data="form" @close-modal="closeModal" />
   </layout-default>
 </template>
 
 <script>
-import NewsEdit from "../../components/news/news-edit/news-edit.vue";
-import VCard from "../../components/ui/v-card/v-card.vue";
-import VButton from "../../components/ui/v-button/v-button.vue";
-import {GET_NEWS_BY_ID} from "@/api/queries/getNewsByID";
-import {useLazyQuery} from "@vue/apollo-composable";
-import {computed, onBeforeMount, onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
-import VLoader from "../../components/ui/v-loader/v-loader.vue";
-import computedDate from "../../helpers/dateFormat";
-import NewsPreview from "../../components/news/news-preview/news-preview.vue";
-import useModal from "../../hooks/useModal";
-import NewsForm from "../../components/news/news-form/news-form.vue";
-import computePhone from "../../helpers/phoneFormat";
-import getSingular from "../../helpers/getSingular";
-import NewsForTable from "../../components/news/bind-rows/bind-rows-table.vue";
-import {useNewsStore} from "@/store/newsStore";
-import LayoutDefault from "@/layout/layout-default/layout-default.vue";
-
+import NewsEdit from '../../components/news/news-edit/news-edit.vue';
+import VCard from '../../components/ui/v-card/v-card.vue';
+import VButton from '../../components/ui/v-button/v-button.vue';
+import { GET_NEWS_BY_ID } from '@/api/queries/getNewsByID';
+import { useLazyQuery } from '@vue/apollo-composable';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import VLoader from '../../components/ui/v-loader/v-loader.vue';
+import computedDate from '../../helpers/dateFormat';
+import NewsPreview from '../../components/news/news-preview/news-preview.vue';
+import useModal from '../../hooks/useModal';
+import computePhone from '../../helpers/phoneFormat';
+import getSingular from '../../helpers/getSingular';
+import NewsForTable from '../../components/news/bind-rows/bind-rows-table.vue';
+import { useNewsStore } from '@/store/newsStore';
+import LayoutDefault from '@/layout/layout-default/layout-default.vue';
 
 export default {
-  name: "news-detail",
+  name: 'NewsDetail',
   components: {
     LayoutDefault,
     NewsEdit,
@@ -174,15 +148,12 @@ export default {
     VCard,
     VButton,
     NewsPreview,
-    NewsForm,
-    NewsForTable,
+    NewsForTable
   },
   setup() {
     const route = useRoute();
-    const store = useNewsStore()
-    const{
-      createFormData
-    } = store
+    const store = useNewsStore();
+    const { createFormData } = store;
     const { isOpen, openModal, closeModal } = useModal();
     const form = ref({
       title: '',
@@ -208,20 +179,20 @@ export default {
       premises: [],
       contacts: [],
       priority: {},
-			image: {
+      image: {
         id: null,
         src: null,
         name: null
-      },
+      }
     });
 
     const { result, load, onResult, loading, refetch } = useLazyQuery(GET_NEWS_BY_ID, {
-      newsID: Number(route.params.id),
+      newsID: Number(route.params.id)
     });
     onResult((result) => {
-      let data = result.data?.getNewsAt
+      let data = result.data?.getNewsAt;
       if (data) {
-       form.value = createFormData(data)
+        form.value = createFormData(data);
       }
     });
 
@@ -229,26 +200,25 @@ export default {
 
     const getComplexName = (name) => name.split(/[«»]/)[1];
     const computedZhk = computed(() => {
-      let string = form.value.complex.UF_NAME
+      let string = form.value.complex.UF_NAME;
       if (form.value.houses?.length === 0) {
-        string += " / Все";
+        string += ' / Все';
       }
-      return string
-    })
+      return string;
+    });
 
-		onBeforeMount(()=>{
-			load();
-		})
+    onBeforeMount(() => {
+      load();
+    });
 
     onMounted(() => {
-			refetch()
-    })
-
+      refetch();
+    });
 
     return {
       form,
       news,
-			isOpen,
+      isOpen,
       computedZhk,
       loading,
       route,
@@ -259,9 +229,8 @@ export default {
       closeModal,
       getSingular
     };
-  },
-
+  }
 };
 </script>
 
-<style lang="scss" scoped src="./style.scss"/>
+<style lang="scss" scoped src="./style.scss" />

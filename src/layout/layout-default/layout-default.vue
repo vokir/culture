@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <slot/>
+    <slot />
   </div>
 </template>
 
 <script>
 export default {
-  name: "layout-default"
-}
+  name: 'LayoutDefault'
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

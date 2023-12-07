@@ -1,5 +1,3 @@
-
-
 .select {
   position: relative;
   display: flex;
@@ -13,7 +11,7 @@
     color: var(--gray-light);
   }
 
-  &__cell{
+  &__cell {
     white-space: nowrap;
     font-size: 14px;
     line-height: 150%;
@@ -26,11 +24,11 @@
     border-radius: 2px;
     background-color: var(--variable-23);
     margin-right: 6px;
-    &-btn{
-      & svg{
+    &-btn {
+      & svg {
         pointer-events: none;
-        & path{
-          stroke: var(--variable-7);  
+        & path {
+          stroke: var(--variable-7);
         }
       }
       width: 10px;
@@ -38,7 +36,7 @@
     }
   }
 
-  &__input{
+  &__input {
     // position: absolute;
     top: 0;
     left: 0;
@@ -48,7 +46,7 @@
     border: 1px solid var(--variable-5);
   }
 
-  &__select{
+  &__select {
     position: relative;
     border-radius: 3px;
     border: 1px solid var(--variable-5);
@@ -60,29 +58,31 @@
     flex-wrap: wrap;
     gap: 5px;
     justify-content: space-between;
-		transition: all .3s ease-in-out;
-		cursor: pointer;
-		&--active{
-			border-color: var(--input-border-hover);
-		}
-    &-content{
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    &--active {
+      border-color: var(--input-border-hover);
+    }
+    &-content {
       display: flex;
-			gap: 5px;
-			flex-wrap: wrap;
+      gap: 5px;
+      flex-wrap: wrap;
     }
   }
-  &__filter{
+  &__filter {
     width: 100%;
-    &-container{
-      flex:1 1 auto;
+    &-container {
+      flex: 1 1 auto;
       padding: 0px;
     }
     flex: 1 1 auto;
   }
 
-  &__list{
+  &__list {
     overflow-y: scroll;
-    box-shadow: 0 7px 21px rgb(83 92 105 / 12%), 0 -1px 6px 0 rgb(83 92 105 / 6%);
+    box-shadow:
+      0 7px 21px rgb(83 92 105 / 12%),
+      0 -1px 6px 0 rgb(83 92 105 / 6%);
     margin: 0;
     padding: 0;
     flex: 1 1 auto;
@@ -94,7 +94,7 @@
     max-height: 300px;
   }
 
-  &__item{
+  &__item {
     color: var(--variable-13);
     font-weight: 400;
     font-size: 14px;
@@ -102,39 +102,38 @@
     padding: 0 15px;
     cursor: pointer;
     transition: all 0.3s ease;
-    &:hover{
+    &:hover {
       color: black;
       background: var(--gray-hover);
     }
-    &.active{
-      color:#fff;
-      background-color: var(--variable-12);;
+    &.active {
+      color: #fff;
+      background-color: var(--variable-12);
     }
   }
-  &__checkbox{
+  &__checkbox {
     margin-right: 5px;
   }
-  &__container{
+  &__container {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    
   }
 
-  &__btn{
+  &__btn {
     margin: 0;
     padding: 0;
     background-color: transparent;
     border: none;
     cursor: pointer;
-    & svg path{
+    & svg path {
       transition: all 0.3s ease;
-      fill:var(--variable-7)
+      fill: var(--variable-7);
     }
   }
 
-  &__add-btn{
+  &__add-btn {
     font-size: 12px;
     color: var(--variable-14);
     cursor: pointer;
@@ -142,11 +141,9 @@
   }
 }
 
-:global(.select .v-popper__popper){
-	width: 100%;
+:global(.select .v-popper__popper) {
+  width: 100%;
 }
-:global(.v-popper__inner){
+:global(.v-popper__inner) {
   overflow: hidden;
 }
-
-

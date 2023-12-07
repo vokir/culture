@@ -1,55 +1,56 @@
 <template>
   <v-filter-and-search
-      :changingSettings="changingSettings"
-      :checkedFields="checkedFields"
-      :fields="computedFields"
-      :fieldsWithValue="fieldsWithValue"
-      :filterPlaceholderProp="'Фильтр'"
-      :filters="filtersTemp"
-      :search="search"
-      :searchPlaceholderProp="'поиск'"
-      :selectedFilter="selectedFilter"
-      :variant="'transparent'"
-      @addFilter="addFilter"
-      @addingFilter="addingFilter"
-      @cancelChangingFilter="cancelChangingFilter"
-      @changeDraggableList="changeDraggableList"
-      @clearFieldValue="field => clearFieldValue(field,true)"
-      @clearLatestFields="clearLatestFields"
-      @disableFilter="removeAllFieldsOrFilter"
-      @filterTable="filterTable"
-      @removeAllFieldsOrFilter="removeAllFieldsOrFilter"
-      @removeFilter="removeFilter"
-      @resetField="resetField"
-      @resetFields="resetFields"
-      @returnFilterFields="returnFilterFields"
-      @returnFilters="returnFilters"
-      @saveFilters="saveFilters"
-      @selectFilter="selectFilter"
-      @setPin="setPin"
-      @setSearch="setSearch"
-      @toggleAddField="toggleAddField"
-      @toggleChangingSettings="bool => toggleChangingSettings(bool)"
-      @toggleOption="toggleOption"
+    :changing-settings="changingSettings"
+    :checked-fields="checkedFields"
+    :fields="computedFields"
+    :fields-with-value="fieldsWithValue"
+    :filter-placeholder-prop="'Фильтр'"
+    :filters="filtersTemp"
+    :search="search"
+    :search-placeholder-prop="'поиск'"
+    :selected-filter="selectedFilter"
+    :variant="'transparent'"
+    @add-filter="addFilter"
+    @adding-filter="addingFilter"
+    @cancel-changing-filter="cancelChangingFilter"
+    @change-draggable-list="changeDraggableList"
+    @clear-field-value="(field) => clearFieldValue(field, true)"
+    @clear-latest-fields="clearLatestFields"
+    @disable-filter="removeAllFieldsOrFilter"
+    @filter-table="filterTable"
+    @remove-all-fields-or-filter="removeAllFieldsOrFilter"
+    @remove-filter="removeFilter"
+    @reset-field="resetField"
+    @reset-fields="resetFields"
+    @return-filter-fields="returnFilterFields"
+    @return-filters="returnFilters"
+    @save-filters="saveFilters"
+    @select-filter="selectFilter"
+    @set-pin="setPin"
+    @set-search="setSearch"
+    @toggle-add-field="toggleAddField"
+    @toggle-changing-settings="(bool) => toggleChangingSettings(bool)"
+    @toggle-option="toggleOption"
   />
 </template>
 <script>
-
-import VFilterAndSearch from '../../ui/v-filter-and-search/v-filter-and-search.vue'
-import useFilter from '../../../hooks/useFilter'
-
+import VFilterAndSearch from '../../ui/v-filter-and-search/v-filter-and-search.vue';
+import useFilter from '../../../hooks/useFilter';
 
 export default {
-  name: 'news-filter',
-  emits: ['filterTable', 'updateFields'],
+  name: 'NewsFilter',
   components: {
-    VFilterAndSearch,
+    VFilterAndSearch
   },
   props: {
-    fields: Array
+    fields: {
+      type: Array,
+      default: () => []
+    }
   },
-  setup(props, {emit}) {
-    const filterUse = useFilter('news', props, emit)
+  emits: ['filterTable', 'updateFields'],
+  setup(props, { emit }) {
+    const filterUse = useFilter('news', props, emit);
 
     const {
       filterEntity,
@@ -86,9 +87,9 @@ export default {
       cancelChangingFilter,
       loadFiltersNews,
       defaultFields
-    } = filterUse
+    } = filterUse;
 
-    loadFiltersNews()
+    loadFiltersNews();
     return {
       defaultFields,
       filterEntity,
@@ -123,10 +124,9 @@ export default {
       returnFilters,
       removeAllFieldsOrFilter,
       cancelChangingFilter
-    }
+    };
   }
-}
+};
 </script>
 
-
-<style lang="scss" scoped src="./style.scss"/>
+<style lang="scss" scoped src="./style.scss" />

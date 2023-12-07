@@ -1,10 +1,10 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const GET_NEWS_DEGREES = gql`
   query newsDegrees {
     getNewsDegrees {
-      ID,
+      ID
       UF_TITLE
     }
   }
-`
+`;

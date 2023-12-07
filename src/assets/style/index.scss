@@ -1,10 +1,10 @@
 #app * {
   box-sizing: border-box;
-  font-family: 'Helvetica', sans-serif
+  font-family: 'Helvetica', sans-serif;
 }
 
 body {
-  scrollbar-width: thin
+  scrollbar-width: thin;
 }
 
 ::-webkit-scrollbar {
@@ -26,7 +26,7 @@ body {
 .dev {
   overflow-x: hidden;
   min-width: 320px;
-  background-image: url("../images/mountain-air 1.jpg");
+  background-image: url('../images/mountain-air 1.jpg');
   background-size: cover;
   background-repeat: no-repeat;
 }
@@ -56,7 +56,6 @@ body {
 
   svg path {
     transition: all 0.25s ease-in-out;
-
   }
 
   &:hover {
@@ -78,7 +77,8 @@ img {
   text-decoration: none;
 }
 
-.slide-up-enter-active, .slide-up-leave-active {
+.slide-up-enter-active,
+.slide-up-leave-active {
   transition: all 0.3s ease-in-out;
 }
 

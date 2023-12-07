@@ -1,24 +1,23 @@
 <template>
   <label :for="uid" class="radio">
     <input
-      class="radio__input"
       :id="uid"
+      class="radio__input"
       type="radio"
       :value="value"
       :checked="isChecked"
       @change="$emit('update:modelValue', $event.target.value)"
-    >
+    />
     <span class="radio__checkmark"></span>
-    <slot/>
+    <slot />
   </label>
 </template>
 
 <script>
-import { computed, getCurrentInstance } from "vue";
+import { computed, getCurrentInstance } from 'vue';
 
 export default {
-  name: "v-radio",
-  emits: ["update:modelValue"],
+  name: 'VRadio',
   inheritAttrs: false,
   props: {
     modelValue: {
@@ -30,20 +29,21 @@ export default {
       default: undefined
     }
   },
+  emits: ['update:modelValue'],
   setup(props) {
     const isChecked = computed(() => {
-      return props.modelValue === props.value
-    })
+      return props.modelValue === props.value;
+    });
     const uid = computed(() => {
-      let instance = getCurrentInstance()
-      return 'radio-' + instance.uid
-    })
+      let instance = getCurrentInstance();
+      return 'radio-' + instance.uid;
+    });
     return {
       uid,
       isChecked
-    }
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

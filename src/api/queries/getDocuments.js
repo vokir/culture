@@ -1,12 +1,7 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const GET_DOCUMENTS = gql`
-  query documents(
-    $type: [String]
-    $category: [String]
-    $search: String
-		$perPage: Int! = 20
-  ) {
+  query documents($type: [String], $category: [String], $search: String, $perPage: Int! = 20) {
     getDocuments(
       currentPage: 1
       perPage: $perPage

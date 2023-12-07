@@ -39,7 +39,7 @@
     border: 1px solid var(--variable-5);
     border-radius: 2px;
     overflow: hidden;
-    transition: all .3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     cursor: pointer;
     background: var(--white);
 
@@ -75,7 +75,9 @@
     z-index: var(--z-index-modal);
     width: 100%;
     background: var(--white);
-    box-shadow: 0 7px 21px rgb(83 92 105 / 12%), 0 -1px 6px 0 rgb(83 92 105 / 6%);
+    box-shadow:
+      0 7px 21px rgb(83 92 105 / 12%),
+      0 -1px 6px 0 rgb(83 92 105 / 6%);
     overflow: auto;
     max-height: 230px;
     margin: 0;
