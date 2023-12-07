@@ -1,10 +1,12 @@
 #app * {
   box-sizing: border-box;
-  font-family: 'Helvetica', sans-serif
+  font-family: 'Helvetica', sans-serif;
 }
+
 body {
-  scrollbar-width: thin
+  scrollbar-width: thin;
 }
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -24,16 +26,18 @@ body {
 .dev {
   overflow-x: hidden;
   min-width: 320px;
-  background-image: url("../images/mountain-air 1.jpg");
+  background-image: url('../images/mountain-air 1.jpg');
   background-size: cover;
   background-repeat: no-repeat;
 }
+
 .container-only-dev {
   width: 100%;
   max-width: 1252px;
   margin-left: 52px;
   margin-right: auto;
 }
+
 .pick-image {
   position: absolute;
   top: 29px;
@@ -49,17 +53,20 @@ body {
   gap: 10px;
   cursor: pointer;
   transition: all 0.25s ease-in-out;
+
   svg path {
     transition: all 0.25s ease-in-out;
-
   }
+
   &:hover {
     color: var(--variable-12);
+
     svg path {
       stroke: var(--variable-12);
     }
   }
 }
+
 img {
   width: 100%;
   max-height: 100%;
@@ -70,33 +77,24 @@ img {
   text-decoration: none;
 }
 
-.container-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 25px 0;
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease-in-out;
+}
 
-  &__title {
-    font-family: 'OpenSans', sans-serif;
-    font-style: normal;
-    font-weight: 300;
-    font-size: 26px;
-    line-height: 150%;
-    color: var(--white);
-    margin-right: 30px;
-    display: flex;
-    align-items: center;
-    gap: 0 15px;
-  }
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease-in-out;
+}
 
-  &__search {
-    width: 100%;
-    margin-right: 20px;
-  }
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
 
-  &__action {
-    min-width: 204px;
-  }
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateX(0);
 }
 
 @import './imports';

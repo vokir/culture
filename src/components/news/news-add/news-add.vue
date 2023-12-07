@@ -1,52 +1,44 @@
 <template>
   <news-form
-    :closeModalProp="closeModalProp"
-    @onSave="create($event, true)"
-    @onCopy="create"
-		@onCancel="onCancel"
+    :close-modal-prop="closeModalProp"
+    @on-save="create($event, true)"
+    @on-copy="create"
+    @on-cancel="onCancel"
   />
 </template>
 
 <script>
-import { useMutation } from "@vue/apollo-composable";
-import { ref } from "vue";
-import { useToast } from "vue-toastification";
-import { CREATE_NEWS } from "../../../api/mutations/createNews";
-import { useNewsStore } from "../../../store/newsStore";
+import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+import { useNewsStore } from '../../../store/newsStore';
 
-import NewsForm from "../news-form/news-form.vue";
-
+import NewsForm from '../news-form/news-form.vue';
 
 export default {
-  name: "news-add",
+  name: 'NewsAdd',
   components: { NewsForm },
   emits: ['onCreate'],
   setup(_, { emit }) {
     const toast = useToast();
-    const closeModalProp = ref(false)
-    const store = useNewsStore()
-    const {
-      createNews,
-      onDoneCreateNews,
-      onErrorCreateNews,
-      createNewsLink
-    } = store
+    const closeModalProp = ref(false);
+    const store = useNewsStore();
+    const { createNews, onDoneCreateNews, onErrorCreateNews, createNewsLink } = store;
 
     onDoneCreateNews(() => {
-      toast.success('Новость успешно создана')
-      emit('onCreate')
-    })
+      toast.success('Новость успешно создана');
+      emit('onCreate');
+    });
 
-    onErrorCreateNews(response => {
-      let error = JSON.parse(JSON.stringify(response))
-      toast.error(error.message)
-    })
+    onErrorCreateNews((response) => {
+      let error = JSON.parse(JSON.stringify(response));
+      toast.error(error.message);
+    });
 
     const create = (data, closeModal = false) => {
       const news = {
         title: data.title,
         icon: data.icon?.id,
-        types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
+        types: Object.keys(data.type).length ? [data.type].map((type) => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,
         imgLibrary: data.imgLibrary?.id ?? null,
@@ -54,53 +46,55 @@ export default {
         phone: data.phone,
         btnLink: data.button.length ? data.button[0].link : '',
         btnText: data.button.length ? data.button[0].name : '',
-        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : [],
-        houses: data.houses.map(el => el.ID),
-        approaches: data.approaches.map(el => el.ID),
-        floors: data.floors.map(el => el.ID),
-        premises: data.premises.map(el => el.ID),
-        contacts: data.contacts.map(contact => contact.ID),
+        complexes: Object.keys(data.complex).length
+          ? [data.complex].map((complex) => complex.ID)
+          : [],
+        houses: data.houses.map((el) => el.ID),
+        approaches: data.approaches.map((el) => el.ID),
+        floors: data.floors.map((el) => el.ID),
+        premises: data.premises.map((el) => el.ID),
+        contacts: data.contacts.map((contact) => contact.ID),
         priority: data.priority.ID,
-        documents: data.docs.map(el => el.ID),
-				image: data.image?.id
+        documents: data.docs.map((el) => el.ID),
+        image: data.image?.id
+      };
+
+      if (news.title.length && (news.icon || news.image) && news.priority) {
+        createNews(news).then((result) => {
+          if (result) {
+            let links = data.links;
+            let linksArr = [];
+
+            links.forEach((link) => {
+              const newLink = {
+                title: link.name,
+                link: link.link,
+                newsID: result.data.createNews.ID
+              };
+              let newID = createNewsLink(newLink);
+              linksArr.push(newID);
+            });
+            if (closeModal) {
+              closeModalProp.value = true;
+            }
+          }
+        });
+      } else {
+        toast.error(
+          'Заполните обязательные поля (степень важности, заголовок, иконка или изображение)'
+        );
       }
+    };
 
-			if(news.title.length && (news.icon || news.image) && news.priority){
-				createNews(news).then((result) => {
-				if (result) {
-					let links = data.links
-					let linksArr = []
-
-					links.forEach((link) => {
-						const newLink = {
-							title: link.name,
-							link: link.link,
-							newsID: result.data.createNews.ID
-						}
-						let newID = createNewsLink(newLink)
-						linksArr.push(newID)
-					})
-					if (closeModal) {
-						closeModalProp.value = true
-					}
-				}
-			})
-			}
-			else{
-				toast.error("Заполните обязательные поля (степень важности, заголовок, иконка или изображение)")
-			}
-
-		}
-
-		const onCancel = () => {
-			closeModalProp.value = true
-		}
+    const onCancel = () => {
+      closeModalProp.value = true;
+    };
 
     return {
       closeModalProp,
       create,
-			onCancel
-    }
+      onCancel
+    };
   }
-}
+};
 </script>

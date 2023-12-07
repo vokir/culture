@@ -1,15 +1,14 @@
 .container {
-
-  &-header{
+  &-header {
     justify-content: flex-start;
     gap: 50px;
 
-    &__title{
+    &__title {
       font-size: 26px;
     }
   }
 
-  &-content{
+  &-content {
     display: grid;
     gap: 19px;
   }
@@ -21,7 +20,6 @@
   }
 }
 
-
 .news-detail {
   display: grid;
   grid-template-columns: 1fr 406px;
@@ -31,12 +29,12 @@
     display: grid;
     gap: 20px;
   }
-  &__top{
+  &__top {
     position: relative;
     height: max-content;
   }
 
-  &__type{
+  &__type {
     font-size: 14px;
     line-height: 150%;
     display: inline-block;
@@ -45,13 +43,13 @@
     color: var(--variable-19);
     border-radius: 5px;
     margin: 0 0 12px;
-    &--news{
+    &--news {
       background-color: var(--blue);
     }
-    &--actions{
+    &--actions {
       background-color: var(--red);
     }
-    &--alerts{
+    &--alerts {
       background-color: #ff9500;
     }
   }
@@ -93,7 +91,7 @@
     position: relative;
     color: var(--variable-7);
     &::after {
-      content: url("../../assets/images/icons/info.svg");
+      content: url('../../assets/images/icons/info.svg');
       display: inline-block;
       position: relative;
       top: -4px;
@@ -120,7 +118,7 @@
     list-style: none;
   }
 
-  &__value:not(.news__value-zhk){
+  &__value:not(.news__value-zhk) {
     font-size: 14px;
     display: block;
     margin-bottom: 4px;
@@ -160,13 +158,7 @@
     margin: 0 0 20px;
   }
 
-  &-add__preview{
-    flex: 0 0 400px
+  &-add__preview {
+    flex: 0 0 400px;
   }
 }
-
-
-
-
-
-

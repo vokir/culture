@@ -1,0 +1,9 @@
+.complexes {
+  :deep(.select-wrapper__select) {
+    min-width: 80px;
+  }
+
+  :deep(.input-wrapper__input) {
+    min-width: 250px;
+  }
+}

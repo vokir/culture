@@ -1,9 +1,13 @@
 <template>
   <component
     :is="computeComponent"
-    :class="['btn', `btn--${variant}`, {
-      'btn--disabled': disabled,
-    }]"
+    :class="[
+      'btn',
+      `btn--${variant}`,
+      {
+        'btn--disabled': disabled
+      }
+    ]"
     :to="href"
     :disabled="disabled"
   >
@@ -11,10 +15,10 @@
   </component>
 </template>
 <script>
-import { computed } from "vue";
+import { computed } from 'vue';
 
 export default {
-  name: 'v-button',
+  name: 'VButton',
   props: {
     href: {
       type: String,
@@ -22,28 +26,36 @@ export default {
     },
     disabled: {
       type: Boolean,
-      required: false,
+      required: false
     },
     variant: {
       type: String,
       required: false,
       default: 'primary',
       validator(value) {
-        return ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link', 'underline'].includes(value)
+        return [
+          'primary',
+          'danger',
+          'success',
+          'transparent',
+          'bordered',
+          'gray',
+          'link',
+          'underline'
+        ].includes(value);
       }
-    },
+    }
   },
   setup({ href }) {
-
     const computeComponent = computed(() => {
-      return href ? 'router-link' : 'button'
-    })
+      return href ? 'router-link' : 'button';
+    });
 
     return {
-      computeComponent,
-    }
+      computeComponent
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

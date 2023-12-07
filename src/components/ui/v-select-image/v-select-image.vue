@@ -1,18 +1,26 @@
 <template>
-  <v-modal class="modal-images" :closeModalProp="closeModalProp" centered @closeModal="onCloseModal">
+  <v-modal
+    class="modal-images"
+    :close-modal-prop="closeModalProp"
+    centered
+    @close-modal="onCloseModal"
+  >
     <div v-if="title" class="modal-images__title">{{ title }}</div>
     <div class="images-container">
       <div class="modal-images__filter">
         <slot name="filter"></slot>
       </div>
-      <v-loader v-if="loading"/>
+      <v-loader v-if="loading" />
       <div v-else class="modal-images__list">
         <div
           v-for="item of items"
           :key="item.file.ID"
-          :class="['modal-images__item', { 'modal-images__item--active': modelValue.id ===  item.ID }]"
+          :class="[
+            'modal-images__item',
+            { 'modal-images__item--active': modelValue.id === item.ID }
+          ]"
         >
-          <img :alt="item.UF_TITLE" :src="item.file.SRC" @click="selectImage(item)">
+          <img :alt="item.UF_TITLE" :src="item.file.SRC" @click="selectImage(item)" />
           <span>{{ item.UF_TITLE }}</span>
         </div>
       </div>
@@ -29,15 +37,14 @@
 </template>
 
 <script>
-import { ref } from "vue";
-import VButton from "../v-button/v-button.vue";
-import VLoader from "../v-loader/v-loader.vue";
-import VModal from "../v-modal/v-modal.vue";
-import { useNewsStore } from "../../../store/newsStore";
+import { ref } from 'vue';
+import VButton from '../v-button/v-button.vue';
+import VLoader from '../v-loader/v-loader.vue';
+import VModal from '../v-modal/v-modal.vue';
+import { useNewsStore } from '../../../store/newsStore';
 
 export default {
-  name: "v-select-image",
-  emits: ['update:modelValue', 'closeModal', 'onSubmit', 'onCancel', 'onSelect'],
+  name: 'VSelectImage',
   components: { VModal, VLoader, VButton },
   props: {
     title: {
@@ -53,7 +60,7 @@ export default {
     items: {
       type: [Array, Object],
       required: true,
-      default: () => ([])
+      default: () => []
     },
     modelValue: {
       type: Object,
@@ -65,39 +72,40 @@ export default {
       })
     }
   },
+  emits: ['update:modelValue', 'closeModal', 'onSubmit', 'onCancel', 'onSelect'],
   setup(_, { emit }) {
-		const store = useNewsStore()
-    const closeModalProp = ref(false)
+    const store = useNewsStore();
+    const closeModalProp = ref(false);
 
     const cancel = () => {
-      emit('onCancel')
-      closeModalProp.value = true
-    }
+      emit('onCancel');
+      closeModalProp.value = true;
+    };
 
     const selectImage = (item) => {
       emit('update:modelValue', {
         id: item.ID,
         src: item.file.SRC,
         name: item.file.ORIGINAL_NAME
-      })
-      emit('onSelect', item.file.SRC)
-    }
-		const onCloseModal = () => {
-			emit('closeModal')
-			store.variablesImages = {
-				currentPage: 1,
-				perPage: 100,
-			}
-		}
+      });
+      emit('onSelect', item.file.SRC);
+    };
+    const onCloseModal = () => {
+      emit('closeModal');
+      store.variablesImages = {
+        currentPage: 1,
+        perPage: 100
+      };
+    };
 
     return {
       closeModalProp,
       cancel,
       selectImage,
-			onCloseModal
-    }
+      onCloseModal
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" src="./style.scss" scoped />

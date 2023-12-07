@@ -1,22 +1,25 @@
-import App from './App.vue'
-import FloatingVue from 'floating-vue'
-import router from "./router"
-import { apolloClientConfig } from "./config/apolloClient.config";
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import { provideApolloClient } from "@vue/apollo-composable";
+import App from './App.vue';
+import FloatingVue from 'floating-vue';
+import router from './router';
+import { apolloClientConfig } from './config/apolloClient.config';
+import { createApp } from 'vue';
+import { provideApolloClient } from '@vue/apollo-composable';
 
-import Toast from "vue-toastification";
-import "vue-toastification/dist/index.css";
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
+import pinia from '@/store/index.js';
 
-const app = createApp(App)
-const store = createPinia()
+const modules = import.meta.glob('./assets/icons/*.svg');
 
-app.use(router)
-app.use(store)
-app.use(FloatingVue)
+Object.values(modules).forEach(async (el) => await el());
+
+const app = createApp(App);
+
+app.use(router);
+app.use(pinia);
+app.use(FloatingVue);
 app.use(Toast);
 
-provideApolloClient(apolloClientConfig)
+provideApolloClient(apolloClientConfig);
 
-app.mount('#app')
+app.mount('#app');

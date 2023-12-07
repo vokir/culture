@@ -1,6 +1,6 @@
 <template>
   <div class="input-wrapper">
-    <label class="input-wrapper__label" v-if="label" :for="name">
+    <label v-if="label" class="input-wrapper__label" :for="name">
       {{ label }}
     </label>
     <textarea
@@ -12,32 +12,32 @@
       :maxlength="maxLength"
       @input="updateValue"
     />
-    <span class="input-wrapper__count" v-if="maxLength">
+    <span v-if="maxLength" class="input-wrapper__count">
       {{ modelValue.length }} / {{ maxLength }}
     </span>
   </div>
 </template>
 
 <script>
-import VInput from "../v-input/v-input.vue";
+import VInput from '../v-input/v-input.vue';
 
 export default {
+  name: 'VTextarea',
   extends: VInput,
   inheritAttrs: false,
-  emits: ["update:modelValue"],
-  name: "v-textarea",
+  emits: ['update:modelValue'],
   setup({ maxLength }, { emit }) {
     const updateValue = (event) => {
       if (event.target.value.length <= maxLength) {
-        emit("update:modelValue", event.target.value);
+        emit('update:modelValue', event.target.value);
       } else {
         event.target.value = event.target.value.substring(0, maxLength);
       }
     };
     return {
-      updateValue,
+      updateValue
     };
-  },
+  }
 };
 </script>
 

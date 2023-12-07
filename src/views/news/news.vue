@@ -1,69 +1,33 @@
 <template>
   <layout-default>
     <div class="container-content">
-      <div class="container-header">
-        <div class="container-header__title">
-          {{ route.meta.pageTitle }}
-          <div class="container-header__title-favorite">
-            <svg
-              fill="none"
-              height="22"
-              viewBox="0 0 23 22"
-              width="23"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M11.5 2L14.4358 8.25387L21 9.25718L16.25 14.1256L17.3711 21L11.5 17.7539L5.62893 21L6.75 14.1256L2 9.25718L8.5642 8.25387L11.5 2Z"
-                stroke="white"
-                stroke-opacity="0.5"
-              />
-            </svg>
-          </div>
-        </div>
-        <div class="container-header__search">
-          <news-filter :fields="fields" @filterTable="filterTable"
-                       @updateFields="newFields => updateFields(newFields)"></news-filter>
-        </div>
-        <div class="container-header__action">
-          <v-button
-            class="btn--w100"
-            @click="openModal"
-          >Добавить новость
-          </v-button>
-        </div>
-      </div>
+      <page-header
+        :fields="fields"
+        action-text="Добавить новость"
+        title="Новости"
+        @button-action="openModal"
+        @filter-table="filterTable"
+        @update-fields="updateFields"
+      />
       <div class="news">
-        <v-loader v-if="store.loading"/>
+        <v-loader v-if="store.loading" />
 
         <v-table
           v-else
           :key="tableKey"
-          :class="{'news--action': selected.length}"
+          :class="{ 'news--action': selected.length }"
           :rows="store.news"
         >
-          <v-table-column
-            id="choice"
-            class="table__thead-th-check"
-            title="check"
-          >
+          <v-table-column id="choice" class="table__thead-th-check" title="check">
             <template #header>
-              <v-checkbox v-model="selectAll"/>
+              <v-checkbox v-model="selectAll" />
             </template>
 
-            <template v-slot="{ row, items }">
-              <v-checkbox
-                v-model="selected"
-                :value="row"
-              />
+            <template #default="{ row }">
+              <v-checkbox v-model="selected" :value="row" />
             </template>
-
-
           </v-table-column>
-          <v-table-column
-            id="settings"
-            class="table__thead-th-settings"
-            title="settings"
-          >
+          <v-table-column id="settings" class="table__thead-th-settings" title="settings">
             <template #header>
               <svg
                 fill="none"
@@ -79,12 +43,12 @@
                 />
               </svg>
             </template>
-            <template v-slot="{ row }">
+            <template #default="{ row }">
               <VDropdown
                 :distance="10"
                 :skidding="-10"
                 placement="right-start"
-                popperClass="settings-popup"
+                popper-class="settings-popup"
               >
                 <div class="settings-button">
                   <svg
@@ -105,25 +69,13 @@
                 <template #popper>
                   <div class="settings">
                     <ul class="settings__list">
-                      <li
-                        v-close-popper
-                        class="settings__item"
-                        @click="editNews(row)"
-                      >
+                      <li v-close-popper class="settings__item" @click="editNews(row)">
                         Редактировать
                       </li>
-                      <li
-                        v-close-popper
-                        class="settings__item"
-                        @click="copyNews(row)"
-                      >
+                      <li v-close-popper class="settings__item" @click="copyNews(row)">
                         Копировать
                       </li>
-                      <li
-                        v-close-popper
-                        class="settings__item"
-                        @click="deleteSingleNews(row.ID)"
-                      >
+                      <li v-close-popper class="settings__item" @click="deleteSingleNews(row.ID)">
                         Удалить
                       </li>
                     </ul>
@@ -134,35 +86,31 @@
           </v-table-column>
 
           <template #columns>
-            <v-table-column v-for="col in columns" :id="col.id" :checked="col.checked" :title="col.title"
-                            :width="col.width">
-              <template v-if="col.id === 'icon'" v-slot="{ row }">
-                <img
-                  v-if="row.icon"
-                  :alt="row.icon.file.ORIGINAL_NAME"
-                  :src="row.icon.file.SRC"
-                >
+            <v-table-column
+              v-for="col in columns"
+              :id="col.id"
+              :key="col.id"
+              :checked="col.checked"
+              :title="col.title"
+              :width="col.width"
+            >
+              <template v-if="col.id === 'icon'" #default="{ row }">
+                <img v-if="row.icon" :alt="row.icon.file.ORIGINAL_NAME" :src="row.icon.file.SRC" />
               </template>
-              <template v-else-if="col.id === 'UF_NAME'" v-slot="{ row }">
-                <router-link
-                  :to="{ name: 'news-detail', params: { id: row.ID } }"
-                  class="link"
-                >
+              <template v-else-if="col.id === 'UF_NAME'" #default="{ row }">
+                <router-link :to="{ name: 'news-detail', params: { id: row.ID } }" class="link">
                   {{ row.UF_NAME }}
                 </router-link>
               </template>
-              <template v-else-if="col.id === 'UF_CREATED_AT'" v-slot="{ row }">
-                {{ dayjs(row.UF_CREATED_AT).format("DD.MM.YYYY hh:mm") }}
+              <template v-else-if="col.id === 'UF_CREATED_AT'" #default="{ row }">
+                {{ dayjs(row.UF_CREATED_AT).format('DD.MM.YYYY hh:mm') }}
               </template>
-              <template v-else-if="col.id === 'types'" v-slot="{ row }">
-						<span
-              v-for="(type, index) of row.types"
-              :key="index"
-            >
-							{{ type.UF_TITLE }}
-						</span>
+              <template v-else-if="col.id === 'types'" #default="{ row }">
+                <span v-for="(type, index) of row.types" :key="index">
+                  {{ type.UF_TITLE }}
+                </span>
               </template>
-              <template v-else-if="col.id === 'degree'" v-slot="{ row }">
+              <template v-else-if="col.id === 'degree'" #default="{ row }">
                 <v-badge
                   v-if="row.degree"
                   :text="row.degree.UF_TITLE"
@@ -170,29 +118,29 @@
                   big
                 />
               </template>
-              <template v-else-if="col.id === 'complexes'" v-slot="{ row }">
-                <div
-                  v-for="(complex, index) in row.complexes"
-                  :key="index"
-                >
+              <template v-else-if="col.id === 'complexes'" #default="{ row }">
+                <div v-for="(complex, index) in row.complexes" :key="index">
                   {{ complex.UF_NAME }}
                 </div>
               </template>
-              <template v-else-if="col.id === 'for'" v-slot="{ row }">
-                <span v-if="!row.houses.length && !row.approaches.length && !row.floors.length && !row.premises.length">Весь ЖК</span>
-                <bind-rows-column
-                  v-else
-                  :newsInfo="row"
-                />
+              <template v-else-if="col.id === 'for'" #default="{ row }">
+                <span
+                  v-if="
+                    !row.houses.length &&
+                    !row.approaches.length &&
+                    !row.floors.length &&
+                    !row.premises.length
+                  "
+                  >Весь ЖК</span
+                >
+                <bind-rows-column v-else :news-info="row" />
               </template>
-              <template v-else-if="col.id === 'contacts'" v-slot="{ row }">
+              <template v-else-if="col.id === 'contacts'" #default="{ row }">
                 <div class="badges-list-contacts">
-                  <div
-                    v-if="row.contacts.length"
-                    class="badges-list__column"
-                  >
+                  <div v-if="row.contacts.length" class="badges-list__column">
                     <div
                       v-for="(contact, index) in row.contacts.slice(0, 3)"
+                      :key="index"
                       class="badges-list__column-wrapper"
                     >
                       <v-badge
@@ -205,45 +153,33 @@
                         v-if="row.contacts.slice(0, 3).length - 1 === index"
                         :class="{ 'visibility-hidden': contactsPopup }"
                         :contacts="row.contacts"
-                        @togglePopup="contactsPopup = !contactsPopup"
+                        @toggle-popup="contactsPopup = !contactsPopup"
                       />
                     </div>
                   </div>
                 </div>
               </template>
-              <template v-else-if="col.id === 'UF_ACTIVE'" v-slot="{ row }">
+              <template v-else-if="col.id === 'UF_ACTIVE'" #default="{ row }">
                 <template v-if="row.UF_ACTIVE">Да</template>
                 <template v-else>{{ row.UF_ACTIVE }}</template>
               </template>
-              <template v-else-if="col.id === 'UF_TITLE'" v-slot="{ row }">
+              <template v-else-if="col.id === 'UF_TITLE'" #default="{ row }">
                 {{ row.UF_TITLE }}
               </template>
-              <template v-else-if="col.id === 'UF_PREVIEW_TEXT'" v-slot="{ row }">
+              <template v-else-if="col.id === 'UF_PREVIEW_TEXT'" #default="{ row }">
                 {{ row.UF_PREVIEW_TEXT }}
               </template>
-              <template v-else-if="col.id === 'UF_TEXT'" v-slot="{ row }">
+              <template v-else-if="col.id === 'UF_TEXT'" #default="{ row }">
                 {{ row.UF_TEXT }}
               </template>
             </v-table-column>
           </template>
-
         </v-table>
         <transition name="slide-up">
-          <div
-            v-if="selected.length"
-            class="table-action"
-          >
+          <div v-if="selected.length" class="table-action">
             <div class="table-action__buttons">
-              <v-button
-                variant="danger"
-                @click="deleteNewsArray"
-              >Удалить
-              </v-button>
-              <v-button
-                variant="link"
-                @click="selected = []"
-              >Отмена
-              </v-button>
+              <v-button variant="danger" @click="deleteNewsArray">Удалить</v-button>
+              <v-button variant="link" @click="selected = []">Отмена</v-button>
             </div>
             <div class="table-action__selected">
               Отмечено: <span>{{ selected.length }} / {{ store.news.length }}</span>
@@ -251,549 +187,569 @@
           </div>
         </transition>
       </div>
-      <div class="news-controls">
-        <v-pagination
-          v-model="store.currentPage"
-          :perPage="store.pageInfo.perPage"
-          :total="store.pageInfo.total"
-        />
-        <div class="news-controls__page">
-          На странице:
-          <v-select
-            v-model="store.perPage"
-            :options="[5, 10, 20, 50, 100]"
-          />
-        </div>
-      </div>
-
+      <table-pagination
+        v-model:current-page="store.currentPage"
+        v-model:per-page="store.pageInfo.perPage"
+        :total="store.pageInfo.total"
+      />
     </div>
     <news-add
       v-if="isOpen"
-      :formData="formData"
-      @closeModal="closeModal"
-      @onCreate="formData = clearFormData()"
+      :form-data="formData"
+      @close-modal="closeModal"
+      @on-create="formData = clearFormData()"
     />
     <news-edit
       v-if="editModal"
       :id="formData.id"
-      :formData="formData"
-      @closeModal="closeEditModal"
+      :form-data="formData"
+      @close-modal="closeEditModal"
     />
     <news-select-columns
       v-if="isOpenColumns"
       v-model="columns"
-      @closeModal="closeModalColumns"
-      @updateTable="updateTable"
+      @close-modal="closeModalColumns"
+      @update-table="updateTable"
     />
   </layout-default>
 </template>
 
 <script>
-import dayjs from "dayjs";
-import advancedFormat from 'dayjs/plugin/advancedFormat'
-import updateLocale from 'dayjs/plugin/updateLocale'
-import IsoWeek from 'dayjs/plugin/isoWeek'
-import 'dayjs/locale/ru'
-import {computed, onMounted, ref} from "vue";
-import {useRoute} from "vue-router";
-import {useToast} from "vue-toastification";
-import BindRowsColumn from "../../components/news/bind-rows/bind-rows-column.vue";
-import NewsAdd from "../../components/news/news-add/news-add.vue";
-import NewsEdit from "../../components/news/news-edit/news-edit.vue";
-import NewsForm from "../../components/news/news-form/news-form.vue";
-import NewsSearch from "../../components/news/news-search/news-search.vue";
-import VBadge from "../../components/ui/v-badge/v-badge.vue";
-import VButton from "../../components/ui/v-button/v-button.vue";
-import VCheckbox from "../../components/ui/v-checkbox/v-checkbox.vue";
-import VCropImage from "../../components/ui/v-crop-image/v-crop-image.vue";
-import VLoader from "../../components/ui/v-loader/v-loader.vue";
-import VModal from "../../components/ui/v-modal/v-modal.vue";
-import VPagination from "../../components/ui/v-pagination/v-pagination.vue";
-import VPopup from "../../components/ui/v-popup/v-popup.vue";
-import VSelect from "../../components/ui/v-select/v-select.vue";
-import VTableColumn from "../../components/ui/v-table/v-table-column.vue";
-import VTable from "../../components/ui/v-table/v-table.vue";
-import getFullFio from "../../helpers/getFullFio";
-import useModal from "../../hooks/useModal";
-import {useNewsStore} from "@/store/newsStore";
-import NewsFilter from '../../components/news/news-filter/news-filter.vue'
-import {newsColumnsPromise, newsFieldsPromise} from '@/config/apolloClient.config'
-import NewsSelectColumns from '../../components/news/news-select-columns/news-select-columns.vue'
-import LayoutDefault from "@/layout/layout-default/layout-default.vue";
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import IsoWeek from 'dayjs/plugin/isoWeek';
+import 'dayjs/locale/ru';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { useToast } from 'vue-toastification';
+import BindRowsColumn from '../../components/news/bind-rows/bind-rows-column.vue';
+import NewsAdd from '../../components/news/news-add/news-add.vue';
+import NewsEdit from '../../components/news/news-edit/news-edit.vue';
+import VBadge from '../../components/ui/v-badge/v-badge.vue';
+import VButton from '../../components/ui/v-button/v-button.vue';
+import VCheckbox from '../../components/ui/v-checkbox/v-checkbox.vue';
+import VLoader from '../../components/ui/v-loader/v-loader.vue';
+import VPopup from '../../components/ui/v-popup/v-popup.vue';
+import VTableColumn from '../../components/ui/v-table/v-table-column.vue';
+import VTable from '../../components/ui/v-table/v-table.vue';
+import getFullFio from '../../helpers/getFullFio';
+import useModal from '../../hooks/useModal';
+import { useNewsStore } from '@/store/newsStore';
+import { newsColumnsPromise, newsFieldsPromise } from '@/config/apolloClient.config';
+import NewsSelectColumns from '../../components/news/news-select-columns/news-select-columns.vue';
+import LayoutDefault from '@/layout/layout-default/layout-default.vue';
+import PageHeader from '@/components/general/page-header/page-header.vue';
+import TablePagination from '@/components/ui/v-table-new/table-pagination/table-pagination.vue';
 
-dayjs.extend(advancedFormat)
-dayjs.extend(IsoWeek)
-dayjs.extend(updateLocale)
+dayjs.extend(advancedFormat);
+dayjs.extend(IsoWeek);
+dayjs.extend(updateLocale);
 
 export default {
-	name: 'news',
-	components: {
+  name: 'News',
+  components: {
+    TablePagination,
+    PageHeader,
     LayoutDefault,
-		NewsEdit,
-		NewsAdd,
-		VSelect,
-		VPagination,
-		VCropImage,
-		NewsForm,
-		VBadge,
-		VTable,
-		VCheckbox,
-		VTableColumn,
-		VButton,
-		VModal,
-		VPopup,
-		BindRowsColumn,
-		NewsSearch,
-		VLoader,
-		NewsFilter,
-		NewsSelectColumns,
-	},
-	setup(_) {
-		const priorityMap = {
-			1: 'gray-dark',
-			2: 'warning',
-			3: 'danger',
-		}
-		const store = useNewsStore()
-		const {
-			deleteNews,
-			onErrorDeleteNews,
-			createFormData,
-			clearFormData,
-		} = store
+    NewsEdit,
+    NewsAdd,
+    VBadge,
+    VTable,
+    VCheckbox,
+    VTableColumn,
+    VButton,
+    VPopup,
+    BindRowsColumn,
+    VLoader,
+    NewsSelectColumns
+  },
+  setup() {
+    const priorityMap = {
+      1: 'gray-dark',
+      2: 'warning',
+      3: 'danger'
+    };
+    const store = useNewsStore();
+    const { deleteNews, onErrorDeleteNews, createFormData, clearFormData } = store;
 
-		const toast = useToast();
-		const route = useRoute();
-		const selected = ref([]);
-		const { isOpen, openModal, closeModal } = useModal();
-		const { isOpen: editModal, openModal: openEditModal, closeModal: closeEditModal } = useModal();
-		const { isOpen: contactsPopup, openModal: openContactsPopup, closeModal: closeContactsPopup } = useModal();
-		const { isOpen: isOpenColumns, openModal: openModalColumns, closeModal: closeModalColumns } = useModal();
-		const formData = ref({
-			title: '',
-			icon: {
-				id: null,
-				src: null,
-				name: null
-			},
-			desc: '',
-			imgLandscape: null,
-			imgLibrary: null,
-			fullDesc: '',
-			phone: '',
-			date: '',
-			type: {},
-			complex: {},
-			priority: {},
-			docs: [],
-			links: [],
-			button: [],
-			houses: [],
-			approaches: [],
-			floors: [],
-			premises: [],
-			contacts: []
-		})
+    const toast = useToast();
+    const route = useRoute();
+    const selected = ref([]);
+    const { isOpen, openModal, closeModal } = useModal();
+    const { isOpen: editModal, openModal: openEditModal, closeModal: closeEditModal } = useModal();
+    const {
+      isOpen: contactsPopup,
+      openModal: openContactsPopup,
+      closeModal: closeContactsPopup
+    } = useModal();
+    const {
+      isOpen: isOpenColumns,
+      openModal: openModalColumns,
+      closeModal: closeModalColumns
+    } = useModal();
+    const formData = ref({
+      title: '',
+      icon: {
+        id: null,
+        src: null,
+        name: null
+      },
+      desc: '',
+      imgLandscape: null,
+      imgLibrary: null,
+      fullDesc: '',
+      phone: '',
+      date: '',
+      type: {},
+      complex: {},
+      priority: {},
+      docs: [],
+      links: [],
+      button: [],
+      houses: [],
+      approaches: [],
+      floors: [],
+      premises: [],
+      contacts: []
+    });
 
-		const fields = ref([])
-		const columns = ref([])
-		const tableKey = ref(0)
+    const fields = ref([]);
+    const columns = ref([]);
+    const tableKey = ref(0);
 
+    onErrorDeleteNews((error) => {
+      let e = JSON.parse(JSON.stringify(error));
+      toast.error(e.message);
+    });
 
-		onErrorDeleteNews(error => {
-			let e = JSON.parse(JSON.stringify(error))
-			toast.error(e.message)
-		})
+    const selectAll = computed({
+      get() {
+        return selected.value.length === store.news.length;
+      },
+      set(value) {
+        selected.value = [];
 
-		const selectAll = computed({
-			get() {
-				return selected.value.length === store.news.length;
-			},
-			set(value) {
-				selected.value = [];
+        if (value) {
+          store.news.forEach((select) => {
+            selected.value.push(select);
+          });
+        }
+      }
+    });
+    const deleteSingleNews = (id) => {
+      deleteNews({ id }).then(() => {
+        toast.success('Новость удалена');
+      });
+    };
+    const deleteNewsArray = () => {
+      if (!selected.value.length) return;
+      let promises = [];
+      selected.value.forEach((news) => {
+        promises.push(
+          new Promise((resolve) => {
+            deleteNews({ id: news.ID }).then(() => {
+              resolve();
+            });
+          })
+        );
+      });
 
-				if (value) {
-					store.news.forEach((select) => {
-						selected.value.push(select);
-					});
-				}
-			},
-		});
-		const deleteSingleNews = (id) => {
-			deleteNews({ id }).then(() => {
-				toast.success('Новость удалена')
-			})
-		}
-		const deleteNewsArray = () => {
-			if (!selected.value.length) return
-			let promises = []
-			selected.value.forEach(news => {
-				promises.push(new Promise((resolve) => {
-					deleteNews({ id: news.ID }).then(() => {
-						resolve()
-					})
-				}))
-			})
+      Promise.all(promises).then(() => {
+        toast.success('Новости удалены');
+        selected.value = [];
+      });
+    };
 
-			Promise.all(promises).then(() => {
-				toast.success('Новости удалены')
-				selected.value = []
-			})
-		}
+    const copyNews = (row) => {
+      formData.value = createFormData(row);
+      openModal();
+    };
+    const editNews = (row) => {
+      formData.value = createFormData(row);
+      openEditModal();
+    };
 
-		const copyNews = (row) => {
-			formData.value = createFormData(row)
-			openModal()
-		}
-		const editNews = (row) => {
-			formData.value = createFormData(row)
-			openEditModal()
-		}
+    newsFieldsPromise.then((schemaFields) => {
+      const filtersName = [
+        'UF_NAME',
+        'UF_TITLE',
+        'UF_PREVIEW_TEXT',
+        'UF_TEXT',
+        'UF_ACTIVE',
+        'degree',
+        'UF_CREATED_AT',
+        'types',
+        'complexes'
+      ];
+      schemaFields.map((field) => {
+        if (filtersName.includes(field.name)) {
+          let newField = {
+            name: field.name,
+            label: field.description,
+            checked: false,
+            order: fields.value.length
+          };
+          switch (field.name) {
+            case 'UF_NAME':
+              newField.type = 'string';
+              newField.value = '';
+              newField.checked = true;
+              break;
+            case 'UF_TITLE':
+              newField.type = 'string';
+              newField.value = '';
+              break;
+            case 'UF_PREVIEW_TEXT':
+              newField.type = 'string';
+              newField.value = '';
+              break;
+            case 'UF_TEXT':
+              newField.type = 'string';
+              newField.value = '';
+              break;
 
-		newsFieldsPromise.then(schemaFields => {
-			const filtersName = ['UF_NAME','UF_TITLE','UF_PREVIEW_TEXT','UF_TEXT','UF_ACTIVE','degree','UF_CREATED_AT','types','complexes']
-			schemaFields.map(field => {
-				if(filtersName.includes(field.name)){
-					let newField = {
-						name: field.name,
-						label: field.description,
-						checked: false,
-						order: fields.value.length
-					}
-					switch (field.name) {
-						case 'UF_NAME':
-							newField.type = 'string'
-							newField.value = ""
-							newField.checked = true
-							break;
-						case 'UF_TITLE':
-							newField.type = 'string'
-							newField.value = ""
-							break;
-						case 'UF_PREVIEW_TEXT':
-							newField.type = 'string'
-							newField.value = ""
-							break;
-						case 'UF_TEXT':
-							newField.type = 'string'
-							newField.value = ""
-							break;
-							
-						case 'UF_ACTIVE':
-							newField.type = 'select'
-							newField.value = null
-							newField.computedResult = [
-								{
-									UF_TITLE:"Нет",
-									name:"Нет",
-									value:["0"]
-								},
-								{
-									UF_TITLE:"Да",
-									name:"Да",
-									value:["1"]
-								},
-							]
+            case 'UF_ACTIVE':
+              newField.type = 'select';
+              newField.value = null;
+              newField.computedResult = [
+                {
+                  UF_TITLE: 'Нет',
+                  name: 'Нет',
+                  value: ['0']
+                },
+                {
+                  UF_TITLE: 'Да',
+                  name: 'Да',
+                  value: ['1']
+                }
+              ];
 
-							break;
-						case 'degree':
-							newField.type = 'select'
-							newField.load = store.loadDegrees
-							newField.result = computed(() => store.newsDegrees)
-							newField.value = null
-							newField.checked = true
-							break;
-						case 'UF_CREATED_AT':
-							newField.type = 'select-options'
-							newField.value = {
-									name: 'any',
-									label: 'Любая дата',
-									value: null,
-								}
-							newField.options = [
-								{
-									name: 'any',
-									label: 'Любая дата',
-									value: null,
-								},
-								{
-									name: 'exact_date',
-									label: 'Точная дата',
-									value: null,
-									cells: [
-										{
-											name: 'date',
-											type: 'date',
-											value: null
-										}
-									],
-								},
-								{
-									name: 'range',
-									label: 'Диапазон',
-									value: 'Диапазон',
-									cells: [
-										{
-											name: 'dateFrom',
-											type: 'date',
-											value: null
-										},
-										{
-											name: 'dateTo',
-											type: 'date',
-											value: null
-										}
-									],
-								},
-								{
-									name: 'month',
-									label: 'Месяц',
-									value: 'Месяц',
-									type: 'date',
-									cells: [
-										{
-											name: 'month',
-											type: 'select',
-											options: [{
-												name: 'January',
-												label: 'Январь',
-												value: '01'
-											},
-											{
-												name: 'February',
-												label: 'Февраль',
-												value: '02'
-											},
-											{
-												name: 'March',
-												label: 'Март',
-												value: '03'
-											},
-											{
-												name: 'April',
-												label: 'Апрель',
-												value: '04'
-											},
-											{
-												name: 'May',
-												label: 'Май',
-												value: '05'
-											},
-											{
-												name: 'June',
-												label: 'Июнь',
-												value: '06'
-											},
-											{
-												name: 'July',
-												label: 'Июль',
-												value: '07'
-											},
-											{
-												name: 'August',
-												label: 'Август',
-												value: '08'
-											},
-											{
-												name: 'September',
-												label: 'Сентябрь',
-												value: '09'
-											},
-											{
-												name: 'October',
-												label: 'Октябрь',
-												value: '10'
-											},
-											{
-												name: 'November',
-												label: 'Ноябрь',
-												value: '11'
-											},
-											{
-												name: 'December',
-												label: 'Декабрь',
-												value: '12'
-											},
-											],
-											value: null
-										},
-									],
-								},
-								{
-									name: 'year',
-									label: 'Год',
-									value: 'Год',
-									type: 'date',
-									cells: [
-										{
-											name: 'year',
-											type: 'select',
-											options: [{
-												name: '2022',
-												label: '2022',
-												value: 2022
-											}, {
-												name: '2021',
-												label: '2021',
-												value: 2021
-											}, {
-												name: '2020',
-												label: '2020',
-												value: 2020
-											}],
-											value: null
-										}
-									],
-								},
-								{
-									name: 'last_n_days',
-									label: 'Последние N дней',
-									value: 'Последние N дней',
-									template: 'Последние var0 (дня/дней)',
-									cells: [
-										{
-											name: 'days',
-											type: 'number'
-										}
-									],
-								},
-							]
-							newField.checked = true
-							newField.selectedOption = null
-							break;
-						case 'types':
-							newField.type = 'multi-select'
-								newField.load = store.loadTypes
-								newField.result = computed(() => store.newsTypes)
-								newField.value = []
-								newField.checked = true
-							break;
-						case 'complexes':
-							newField.type = 'multi-select'
-								newField.load = store.loadComplexes
-								newField.result = computed(() => store.complexes)
-								newField.value = []
-								newField.checked = true
-							break;
-						default:
-							break;
-					}
-					fields.value.push(newField)
-				}
-			})
-		})
+              break;
+            case 'degree':
+              newField.type = 'select';
+              newField.load = store.loadDegrees;
+              newField.result = computed(() => store.newsDegrees);
+              newField.value = null;
+              newField.checked = true;
+              break;
+            case 'UF_CREATED_AT':
+              newField.type = 'select-options';
+              newField.value = {
+                name: 'any',
+                label: 'Любая дата',
+                value: null
+              };
+              newField.options = [
+                {
+                  name: 'any',
+                  label: 'Любая дата',
+                  value: null
+                },
+                {
+                  name: 'exact_date',
+                  label: 'Точная дата',
+                  value: null,
+                  cells: [
+                    {
+                      name: 'date',
+                      type: 'date',
+                      value: null
+                    }
+                  ]
+                },
+                {
+                  name: 'range',
+                  label: 'Диапазон',
+                  value: 'Диапазон',
+                  cells: [
+                    {
+                      name: 'dateFrom',
+                      type: 'date',
+                      value: null
+                    },
+                    {
+                      name: 'dateTo',
+                      type: 'date',
+                      value: null
+                    }
+                  ]
+                },
+                {
+                  name: 'month',
+                  label: 'Месяц',
+                  value: 'Месяц',
+                  type: 'date',
+                  cells: [
+                    {
+                      name: 'month',
+                      type: 'select',
+                      options: [
+                        {
+                          name: 'January',
+                          label: 'Январь',
+                          value: '01'
+                        },
+                        {
+                          name: 'February',
+                          label: 'Февраль',
+                          value: '02'
+                        },
+                        {
+                          name: 'March',
+                          label: 'Март',
+                          value: '03'
+                        },
+                        {
+                          name: 'April',
+                          label: 'Апрель',
+                          value: '04'
+                        },
+                        {
+                          name: 'May',
+                          label: 'Май',
+                          value: '05'
+                        },
+                        {
+                          name: 'June',
+                          label: 'Июнь',
+                          value: '06'
+                        },
+                        {
+                          name: 'July',
+                          label: 'Июль',
+                          value: '07'
+                        },
+                        {
+                          name: 'August',
+                          label: 'Август',
+                          value: '08'
+                        },
+                        {
+                          name: 'September',
+                          label: 'Сентябрь',
+                          value: '09'
+                        },
+                        {
+                          name: 'October',
+                          label: 'Октябрь',
+                          value: '10'
+                        },
+                        {
+                          name: 'November',
+                          label: 'Ноябрь',
+                          value: '11'
+                        },
+                        {
+                          name: 'December',
+                          label: 'Декабрь',
+                          value: '12'
+                        }
+                      ],
+                      value: null
+                    }
+                  ]
+                },
+                {
+                  name: 'year',
+                  label: 'Год',
+                  value: 'Год',
+                  type: 'date',
+                  cells: [
+                    {
+                      name: 'year',
+                      type: 'select',
+                      options: [
+                        {
+                          name: '2022',
+                          label: '2022',
+                          value: 2022
+                        },
+                        {
+                          name: '2021',
+                          label: '2021',
+                          value: 2021
+                        },
+                        {
+                          name: '2020',
+                          label: '2020',
+                          value: 2020
+                        }
+                      ],
+                      value: null
+                    }
+                  ]
+                },
+                {
+                  name: 'last_n_days',
+                  label: 'Последние N дней',
+                  value: 'Последние N дней',
+                  template: 'Последние var0 (дня/дней)',
+                  cells: [
+                    {
+                      name: 'days',
+                      type: 'number'
+                    }
+                  ]
+                }
+              ];
+              newField.checked = true;
+              newField.selectedOption = null;
+              break;
+            case 'types':
+              newField.type = 'multi-select';
+              newField.load = store.loadTypes;
+              newField.result = computed(() => store.newsTypes);
+              newField.value = [];
+              newField.checked = true;
+              break;
+            case 'complexes':
+              newField.type = 'multi-select';
+              newField.load = store.loadComplexes;
+              newField.result = computed(() => store.complexes);
+              newField.value = [];
+              newField.checked = true;
+              break;
+            default:
+              break;
+          }
+          fields.value.push(newField);
+        }
+      });
+    });
 
-		const filterTable = (search) => {
-			store.variables.searchStr = search
-			store.variables.name = fields.value.find(field => field.name === 'UF_NAME')?.value
-			store.variables.active = fields.value.find(field => field.name === 'UF_ACTIVE' && field.value)?.value?.value
-			const dateValue = fields.value.find(field => field.name === 'UF_CREATED_AT')?.value
-			if (dateValue) {
-				if (dateValue.name === 'range') {
-					let splittedValue = dateValue.value.split(' ')
-					store.variables.date = splittedValue[0]
-					store.variables.rangeValue = splittedValue[1]
-				}
-				else {
-					store.variables.date = dateValue.value
-				}
-				store.variables.dateFilterType = dateValue.name === 'any' ? 'exact_date' : dateValue.name
-			}
-			store.variables.types = fields.value
-				.filter(field => field.name === 'types' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-			store.variables.complexes = fields.value
-				.filter(field => field.name === 'complexes' && field.value?.length)
-				.map(field => field.value.map(value => value.ID.toString()))[0]
-			store.variables.title = fields.value.find(field => field.name === 'UF_TITLE').value
-			store.variables.preview = fields.value.find(field => field.name === 'UF_PREVIEW_TEXT').value
-			store.variables.text = fields.value.find(field => field.name === 'UF_TEXT').value
-			store.variables.degrees = fields.value
-				.filter(field => field.name === 'degree' && field.value)
-				.map(field => field.value.ID.toString())
-		}
+    const filterTable = (search) => {
+      store.variables.searchStr = search;
+      store.variables.name = fields.value.find((field) => field.name === 'UF_NAME')?.value;
+      store.variables.active = fields.value.find(
+        (field) => field.name === 'UF_ACTIVE' && field.value
+      )?.value?.value;
+      const dateValue = fields.value.find((field) => field.name === 'UF_CREATED_AT')?.value;
+      if (dateValue) {
+        if (dateValue.name === 'range') {
+          let splittedValue = dateValue.value.split(' ');
+          store.variables.date = splittedValue[0];
+          store.variables.rangeValue = splittedValue[1];
+        } else {
+          store.variables.date = dateValue.value;
+        }
+        store.variables.dateFilterType = dateValue.name === 'any' ? 'exact_date' : dateValue.name;
+      }
+      store.variables.types = fields.value
+        .filter((field) => field.name === 'types' && field.value?.length)
+        .map((field) => field.value.map((value) => value.ID.toString()))[0];
+      store.variables.complexes = fields.value
+        .filter((field) => field.name === 'complexes' && field.value?.length)
+        .map((field) => field.value.map((value) => value.ID.toString()))[0];
+      store.variables.title = fields.value.find((field) => field.name === 'UF_TITLE').value;
+      store.variables.preview = fields.value.find(
+        (field) => field.name === 'UF_PREVIEW_TEXT'
+      ).value;
+      store.variables.text = fields.value.find((field) => field.name === 'UF_TEXT').value;
+      store.variables.degrees = fields.value
+        .filter((field) => field.name === 'degree' && field.value)
+        .map((field) => field.value.ID.toString());
+    };
 
-		const updateFields = (newFields) => {
-			fields.value = newFields
-		}
+    const updateFields = (newFields) => {
+      fields.value = newFields;
+    };
 
-		onMounted(()=>{
-			const columnsFromStorage = localStorage.getItem('news-columns')
-			if (!columnsFromStorage) {
-				newsColumnsPromise.then(schemaColumns => {
-					columns.value = []
-					const columnsName = ['icon', 'UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts', 'UF_ACTIVE', 'UF_TITLE', 'UF_PREVIEW_TEXT', 'UF_TEXT']
-					const defaultColumnsName = ['icon', 'UF_NAME', 'UF_CREATED_AT', 'degree', 'types', 'complexes', 'contacts']
-					columnsName.map(name => {
-						let col = schemaColumns.find(column => name === column.name)
-						let newCol = {
-							id: col.name,
-							title: col.description,
-							// width: '30px', 
-							checked: true,
-							editting: false,
-							default: defaultColumnsName.includes(col.name)
-						}
-						// newCol.id === 'icon' ? newCol.width = '50px' : null
-						newCol.id === 'UF_TEXT' ? newCol.checked = false : null
-						columns.value.push(newCol)
-					})
-					columns.value.push({
-						id: 'for',
-						title: 'Отображать для',
-						// width: '30px',
-						checked: true,
-						default: true
-					})
-					localStorage.setItem('news-columns', JSON.stringify(columns.value))
-				})
-			}
-			else {
-				columns.value = JSON.parse(columnsFromStorage) 
-			}
-			tableKey.value++
-		})
+    onMounted(() => {
+      const columnsFromStorage = localStorage.getItem('news-columns');
+      if (!columnsFromStorage) {
+        newsColumnsPromise.then((schemaColumns) => {
+          columns.value = [];
+          const columnsName = [
+            'icon',
+            'UF_NAME',
+            'UF_CREATED_AT',
+            'degree',
+            'types',
+            'complexes',
+            'contacts',
+            'UF_ACTIVE',
+            'UF_TITLE',
+            'UF_PREVIEW_TEXT',
+            'UF_TEXT'
+          ];
+          const defaultColumnsName = [
+            'icon',
+            'UF_NAME',
+            'UF_CREATED_AT',
+            'degree',
+            'types',
+            'complexes',
+            'contacts'
+          ];
+          columnsName.map((name) => {
+            let col = schemaColumns.find((column) => name === column.name);
+            let newCol = {
+              id: col.name,
+              title: col.description,
+              // width: '30px',
+              checked: true,
+              editting: false,
+              default: defaultColumnsName.includes(col.name)
+            };
+            // newCol.id === 'icon' ? newCol.width = '50px' : null
+            newCol.id === 'UF_TEXT' ? (newCol.checked = false) : null;
+            columns.value.push(newCol);
+          });
+          columns.value.push({
+            id: 'for',
+            title: 'Отображать для',
+            // width: '30px',
+            checked: true,
+            default: true
+          });
+          localStorage.setItem('news-columns', JSON.stringify(columns.value));
+        });
+      } else {
+        columns.value = JSON.parse(columnsFromStorage);
+      }
+      tableKey.value++;
+    });
 
-		const updateTable = () => {
-			localStorage.setItem('news-columns', JSON.stringify(columns.value))
-			tableKey.value++
-		}
+    const updateTable = () => {
+      localStorage.setItem('news-columns', JSON.stringify(columns.value));
+      tableKey.value++;
+    };
 
-		return {
-			route,
-			isOpen,
-			openModal,
-			closeModal,
-			dayjs,
-			selectAll,
-			selected,
-			getFullFio,
-			contactsPopup,
-			openContactsPopup,
-			closeContactsPopup,
-			filterTable,
-			deleteNewsArray,
-			store,
-			priorityMap,
-			deleteSingleNews,
-			editModal,
-			closeEditModal,
-			editNews,
-			copyNews,
-			clearFormData,
-			formData,
-			fields,
-			updateFields,
-			isOpenColumns,
-			openModalColumns,
-			closeModalColumns,
-			columns,
-			tableKey,
-			updateTable,
-		};
-	},
+    return {
+      route,
+      isOpen,
+      openModal,
+      closeModal,
+      dayjs,
+      selectAll,
+      selected,
+      getFullFio,
+      contactsPopup,
+      openContactsPopup,
+      closeContactsPopup,
+      filterTable,
+      deleteNewsArray,
+      store,
+      priorityMap,
+      deleteSingleNews,
+      editModal,
+      closeEditModal,
+      editNews,
+      copyNews,
+      clearFormData,
+      formData,
+      fields,
+      updateFields,
+      isOpenColumns,
+      openModalColumns,
+      closeModalColumns,
+      columns,
+      tableKey,
+      updateTable
+    };
+  }
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
-
+<style lang="scss" scoped src="./style.scss" />

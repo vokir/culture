@@ -1,35 +1,40 @@
 <template>
-    <div class="for__titles">
-      <p>Дом</p>
-      <p v-if="newsInfo.approaches.length || newsInfo.floors.length || newsInfo.premises.length">
-        Подъезд
-      </p>
-      <p v-if="newsInfo.floors?.length || newsInfo.premises?.length">Этаж</p>
-      <p v-if="newsInfo.premises?.length">Помещение</p>
+  <div class="for__titles">
+    <p>Дом</p>
+    <p v-if="newsInfo.approaches.length || newsInfo.floors.length || newsInfo.premises.length">
+      Подъезд
+    </p>
+    <p v-if="newsInfo.floors?.length || newsInfo.premises?.length">Этаж</p>
+    <p v-if="newsInfo.premises?.length">Помещение</p>
+  </div>
+  <div v-for="(row, i) in rows" :key="i" ref="rowsDiv" class="for__row">
+    <div v-for="(cell, k) in row" :key="k" class="for__cell">
+      <span
+        v-for="(value, j) in cell"
+        :key="j"
+        :class="[{ 'value-selected': value.isSelected }]"
+        :data-id="value.id"
+        class="for__value"
+      >
+        <template v-if="true"> {{ value.name }} </template>
+        <template v-if="cell[j + 1]">, </template>
+      </span>
     </div>
-    <div class="for__row" v-for="row in rows" ref="rowsDiv">
-      <div v-for="cell in row" class="for__cell">
-        <span v-for="(value, i) in cell" class="for__value" :class="[{'value-selected':value.isSelected}]" :data-id="value.id">
-            <template v-if="true"> {{ value.name}} </template>
-            <template v-if="cell[i + 1]">, </template>
-        </span>
-      </div>
-    </div>
+  </div>
 </template>
 <script>
-
-import bindRowsLogic from "./bindRowsLogic";
+import bindRowsLogic from './bindRowsLogic';
 
 export default {
-  props: ["newsInfo"],
-  name: "news-for-table",
+  name: 'NewsForTable',
+  props: ['newsInfo'],
   setup({ newsInfo }) {
-    const rows = bindRowsLogic(newsInfo)
-    
+    const rows = bindRowsLogic(newsInfo);
+
     return {
-      rows,
+      rows
     };
-  },
+  }
 };
 </script>
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

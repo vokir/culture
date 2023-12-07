@@ -2,32 +2,37 @@
 
 Для запуска проекта в локальной среде следующие требования:
 
-* Node js 16.14.0 версии или выше
-* Пакетный менеджер yarn. Установка: https://yarnpkg.com/getting-started/install
+- Node js 16.14.0 версии или выше
+- Пакетный менеджер yarn. Установка: https://yarnpkg.com/getting-started/install
 
 ## Используемые команды
 
 Установка зависимостей:
+
 ```
 yarn install
 ```
 
 Запуск локального сервера:
+
 ```
 yarn dev
 ```
 
 Запуск билда:
+
 ```
 yarn build
 ```
 
 Запуск локального сервера storybook:
+
 ```
 yarn storybook
 ```
 
 Запуск билда storybook:
+
 ```
 yarn build-storybook
 ```
@@ -73,7 +78,7 @@ yarn build-storybook
 
 ```
 ui-button
-├── style.scss # Стили главного комонента 
+├── style.scss # Стили главного комонента
 ├── v-button.vue # Код главного компонента
 └── v-button.stories.js # Документация компонентов через Storybook
 ```
@@ -88,25 +93,29 @@ ui-button
 import VButton from './v-button.vue';
 
 const Template = (args) => ({
-    components: { VButton },
-    setup() { return { args }; },
-    template: '<v-button v-bind="args">Кнопка</v-button>',
+  components: { VButton },
+  setup() {
+    return { args };
+  },
+  template: '<v-button v-bind="args">Кнопка</v-button>'
 });
 
 export const Primary = Template.bind({});
 Primary.args = {
-    disabled: false,
-    variant: 'primary'
+  disabled: false,
+  variant: 'primary'
 };
 export default {
-    title: 'UI Components/v-button',
-    component: { 'ui-button': UIButton },
-    decorators: [() => ({ template: '<div style="padding: 3em; background: #F2F4F5;"><story/></div>' })],
-    argTypes: {
-        variant: {
-            control: 'select',
-            options: ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link']
-        },
-    },
+  title: 'UI Components/v-button',
+  component: { 'ui-button': UIButton },
+  decorators: [
+    () => ({ template: '<div style="padding: 3em; background: #F2F4F5;"><story/></div>' })
+  ],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['primary', 'danger', 'success', 'transparent', 'bordered', 'gray', 'link']
+    }
+  }
 };
 ```

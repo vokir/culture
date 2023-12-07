@@ -1,35 +1,44 @@
 <template>
   <div class="badges-list td-for">
-    <div class="badges-list__row" v-for="row in newsInfo">
-      <template v-for="column in row">
-        <template v-for="cell in column">
+    <div v-for="(row, idx) in newsInfo" :key="idx" class="badges-list__row">
+      <template v-for="(column, i) in row" :key="i">
+        <template v-for="(cell, k) in column" :key="k">
           <v-badge
             v-if="cell.isSelected > 0 && cell.type === 'house'"
-            variant="blue"
             :text="cell.name"
-            tooltip
             :tooltip-text="'Дом ' + cell.name"
+            tooltip
+            variant="blue"
           />
-					<v-badge
+          <v-badge
             v-if="cell.isSelected > 0 && cell.type === 'approach'"
-            variant="purple"
             :text="cell.name"
-            tooltip
             :tooltip-text="cell.name + ', Дом ' + cell.house"
+            tooltip
+            variant="purple"
           />
-					<v-badge
+          <v-badge
             v-if="cell.isSelected > 0 && cell.type === 'floor'"
+            :text="cell.name"
+            :tooltip-text="cell.name + ', ' + cell.approache + ', Дом ' + cell.house"
+            tooltip
             variant="orange"
-            :text="cell.name"
-            tooltip
-            :tooltip-text="cell.name + ', ' + cell.approache +', Дом ' + cell.house"
           />
-					<v-badge
+          <v-badge
             v-if="cell.isSelected > 0 && cell.type === 'premise'"
-            variant="teal"
             :text="cell.name"
+            :tooltip-text="
+              'Помещение ' +
+              cell.name +
+              ', ' +
+              cell.floor +
+              ', ' +
+              cell.approache +
+              ', Дом ' +
+              cell.house
+            "
             tooltip
-            :tooltip-text="'Помещение ' + cell.name +  ', ' + cell.floor + ', ' + cell.approache +', Дом ' + cell.house"
+            variant="teal"
           />
         </template>
       </template>
@@ -37,22 +46,25 @@
   </div>
 </template>
 <script>
-import bindRowsLogic from "./bindRowsLogic";
-import VBadge from "../../ui/v-badge/v-badge.vue";
+import bindRowsLogic from './bindRowsLogic';
+import VBadge from '../../ui/v-badge/v-badge.vue';
 
 export default {
-  props: ["newsInfo"],
   components: {
-    VBadge,
+    VBadge
+  },
+  props: {
+    newsInfo: {
+      type: Array,
+      default: () => []
+    }
   },
   setup(props) {
     const newsInfo = bindRowsLogic(props.newsInfo);
     return {
-      newsInfo,
+      newsInfo
     };
-  },
-
+  }
 };
 </script>
-<style lang="scss" src="./style.scss" scoped />
-
+<style lang="scss" scoped src="./style.scss" />

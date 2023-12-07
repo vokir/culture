@@ -1,32 +1,38 @@
 <template>
-  <nav class="pagination" v-if="perPage < total">
+  <nav v-if="perPage < total" class="pagination">
     <ul class="pagination-list">
       <li class="pagination-list__item">
-        <button class="pagination-list__button pagination-list__item--prev" @click="prevPage"
-                :disabled="modelValue === 1">
+        <button
+          :disabled="modelValue === 1"
+          class="pagination-list__button pagination-list__item--prev"
+          @click="prevPage"
+        >
           &lt;
         </button>
       </li>
-      <li class="pagination-list__item" v-for="page of pageCount" @click="toPage(page)" :key="page">
-        <button :class="['pagination-list__button', {'pagination-list__button--active': page === modelValue}]">
+      <li v-for="page of pageCount" :key="page" class="pagination-list__item" @click="toPage(page)">
+        <button
+          :class="[
+            'pagination-list__button',
+            { 'pagination-list__button--active': page === modelValue }
+          ]"
+        >
           {{ page }}
         </button>
       </li>
       <li class="pagination-list__item pagination-list__item--next" @click="nextPage">
-        <button class="pagination-list__button" :disabled="modelValue >= pageCount">
-          &gt;
-        </button>
+        <button :disabled="modelValue >= pageCount" class="pagination-list__button">&gt;</button>
       </li>
     </ul>
   </nav>
 </template>
 
 <script>
-import { computed, watch } from "vue";
+import { computed, watch } from 'vue';
+import { useVModel } from '@vueuse/core';
 
 export default {
-  name: "v-pagination",
-  emits: ['update:modelValue'],
+  name: 'VPagination',
   props: {
     modelValue: {
       type: Number,
@@ -41,40 +47,43 @@ export default {
       type: Number,
       default: 20,
       required: true
-    },
+    }
   },
+  emits: ['update:modelValue'],
   setup(props, { emit }) {
+    const localValue = useVModel(props, 'modelValue', emit);
 
     const nextPage = () => {
-      emit('update:modelValue', props.modelValue + 1)
-    }
+      localValue.value++;
+    };
 
     const prevPage = () => {
-      emit('update:modelValue', props.modelValue - 1)
-    }
+      localValue.value--;
+    };
 
     const toPage = (page) => {
-      emit('update:modelValue', page)
-    }
+      localValue.value = page;
+    };
 
     const pageCount = computed(() => {
       return Math.ceil(props.total / props.perPage);
-    })
+    });
 
     watch(pageCount, (value) => {
       if (value < props.modelValue) {
-        emit('update:modelValue', 1)
+        emit('update:modelValue', 1);
       }
-    })
+    });
 
     return {
       pageCount,
+      localValue,
       nextPage,
       prevPage,
       toPage
-    }
+    };
   }
-}
+};
 </script>
 
-<style lang="scss" src="./style.scss" scoped/>
+<style lang="scss" scoped src="./style.scss" />

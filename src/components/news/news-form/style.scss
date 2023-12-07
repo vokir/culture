@@ -27,7 +27,7 @@
     padding: 15px 40px;
   }
   &__form {
-		height: fit-content;
+    height: fit-content;
     display: grid;
     gap: 20px;
   }
@@ -62,14 +62,13 @@
   }
 }
 
-
 .show-for {
   display: grid;
   gap: 10px;
   width: 100%;
   grid-template-rows: repeat(2, min-content);
   align-content: end;
-	cursor: pointer;
+  cursor: pointer;
 
   &__title {
     display: flex;

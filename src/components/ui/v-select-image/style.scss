@@ -11,7 +11,7 @@
   &__title {
     position: absolute;
     top: 30px;
-    font-family: "Helvetica", sans-serif;
+    font-family: 'Helvetica', sans-serif;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -19,7 +19,7 @@
     display: flex;
     align-items: center;
     color: var(--variable-13);
-    &--grey{
+    &--grey {
       color: var(--variable-7);
     }
   }
@@ -93,5 +93,3 @@
   gap: 15px;
   margin-top: 20px;
 }
-
-

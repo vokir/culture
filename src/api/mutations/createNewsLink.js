@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const CREATE_NEWS_LINK = gql`
   mutation createNewsLink($title: String!, $link: String!, $newsID: Int!) {

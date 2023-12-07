@@ -1,0 +1,128 @@
+.table-container {
+  position: relative;
+  overflow: hidden;
+  height: 660px;
+  background: var(--variable-17);
+
+  &--action {
+    padding-bottom: 70px;
+  }
+}
+
+.table-wrapper {
+  overflow: auto;
+  position: relative;
+  height: 100%;
+}
+
+.table {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  min-width: 100%;
+  height: fit-content;
+  background: var(--variable-17);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 150%;
+  color: var(--variable-13);
+  table-layout: auto;
+  border-spacing: 0;
+
+  &__thead-th {
+    font-weight: 400;
+    color: var(--variable-13);
+    padding: 20px 7.5px;
+    text-align: left;
+  }
+
+  &__thead-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: inherit;
+    flex-wrap: wrap;
+  }
+
+  &__thead-th,
+  &__tbody-td {
+    &:first-child {
+      padding-left: 30px;
+    }
+
+    &:last-child {
+      padding-right: 30px;
+    }
+  }
+
+  &__tbody-tr--selected {
+    background-color: var(--yellow);
+  }
+
+  &__tbody-tr {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: var(--yellow);
+    }
+  }
+
+  &__tbody-td {
+    padding: 15px 10px;
+    border-top: 1px solid var(--variable-5);
+
+    .table__thead-cell {
+      min-height: 42px;
+    }
+  }
+
+  &__thead-th-check {
+    width: 15px;
+  }
+
+  &__thead-th-settings {
+    width: 16px;
+  }
+}
+
+.table-action {
+  position: absolute;
+  bottom: 0;
+  background: #f2f4f5;
+  box-shadow: 0px -4px 1px rgb(140 140 140 / 15%);
+  border-radius: 15px 0 0 0;
+  width: 100%;
+  display: flex;
+  height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 17px 0 24px;
+
+  &::before {
+    content: '';
+    height: 100%;
+    width: 100%;
+    background: #f2f4f5;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+  }
+
+  &__buttons {
+    display: flex;
+  }
+
+  &__selected {
+    font-family: 'Helvetica', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--variable-8);
+
+    span {
+      color: var(--variable-13);
+    }
+  }
+}

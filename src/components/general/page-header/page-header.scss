@@ -1,0 +1,29 @@
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0;
+
+  &__title {
+    font-family: 'OpenSans', sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 26px;
+    line-height: 150%;
+    color: var(--white);
+    margin-right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 0 15px;
+    flex: 1 0 auto;
+  }
+
+  &__search {
+    width: 100%;
+    margin-right: 20px;
+  }
+
+  &__action {
+    min-width: 204px;
+  }
+}

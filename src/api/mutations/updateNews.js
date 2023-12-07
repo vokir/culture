@@ -1,4 +1,4 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const UPDATE_NEWS = gql`
   mutation updateNews(
@@ -23,9 +23,9 @@ export const UPDATE_NEWS = gql`
     $premises: [Int]
     $contacts: [Int]
     $images: [Int]
-    $documents: [Int],
-		$image: Int
-  ){
+    $documents: [Int]
+    $image: Int
+  ) {
     updateNews(
       id: $id
       UF_NAME: $title
@@ -33,7 +33,7 @@ export const UPDATE_NEWS = gql`
       UF_DEGREE_ID: $priority
       UF_EXTERNAL_SYSTEM_ID: $UF_EXTERNAL_SYSTEM_ID
       UF_ICON_ID: $icon
-			UF_PREVIEW_PICTURE_ID: $image
+      UF_PREVIEW_PICTURE_ID: $image
       UF_TITLE: $title
       UF_PREVIEW_TEXT: $desc
       UF_IMG_LANDSCAPE: $imgLandscape
@@ -53,4 +53,4 @@ export const UPDATE_NEWS = gql`
       documents: $documents
     )
   }
-`
+`;

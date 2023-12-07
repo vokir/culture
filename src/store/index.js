@@ -1,7 +1,5 @@
-import { defineStore } from 'pinia'
+import { createPinia } from 'pinia';
 
-// useStore could be anything like useUser, useCart
-// the first argument is a unique id of the store across your application
-export const useStore = defineStore('main', () => {
+const pinia = createPinia();
 
-})
+export default pinia;

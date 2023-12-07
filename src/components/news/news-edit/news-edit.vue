@@ -1,36 +1,34 @@
 <template>
-	<news-form
-		edit
-		title="Редактировать новость"
-		:closeModalProp="closeModalProp"
-		@onSave="update"
-		@onCancel="onCancel"
-	/>
-	
+  <news-form
+    edit
+    title="Редактировать новость"
+    :close-modal-prop="closeModalProp"
+    @on-save="update"
+    @on-cancel="onCancel"
+  />
 </template>
 
 <script>
+import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
+import { useNewsStore } from '../../../store/newsStore';
 
-import { ref } from 'vue'
-import { useToast } from "vue-toastification";
-import { useNewsStore } from "../../../store/newsStore";
-
-import NewsForm from "../news-form/news-form.vue";
+import NewsForm from '../news-form/news-form.vue';
 
 export default {
-  name: "news-edit",
+  name: 'NewsEdit',
   components: { NewsForm },
-  emits: ['onDone'],
   props: {
     id: {
       type: [String, Number],
       required: true
     }
   },
-  setup ({ id }, { emit }) {
+  emits: ['onDone'],
+  setup({ id }, { emit }) {
     const toast = useToast();
-		const closeModalProp = ref(false)
-    const store = useNewsStore()
+    const closeModalProp = ref(false);
+    const store = useNewsStore();
     const {
       updateNews,
       onDoneUpdateNews,
@@ -38,18 +36,18 @@ export default {
       refetch,
       createNewsLink,
       deleteNewsLink
-    } = store
+    } = store;
 
     onDoneUpdateNews(() => {
-      toast.success('Новость успешно обновлена')
-      emit('onDone')
-      refetch()
-    })
+      toast.success('Новость успешно обновлена');
+      emit('onDone');
+      refetch();
+    });
 
-    onErrorUpdateNews(response => {
-      let error = JSON.parse(JSON.stringify(response))
-      toast.error(error.message)
-    })
+    onErrorUpdateNews((response) => {
+      let error = JSON.parse(JSON.stringify(response));
+      toast.error(error.message);
+    });
 
     const update = (data, addedLinks, removedLinks) => {
       addedLinks.forEach((link) => {
@@ -57,22 +55,22 @@ export default {
           title: link.name,
           link: link.link,
           newsID: Number(id)
-        }
-        createNewsLink(newLink)
-      })
+        };
+        createNewsLink(newLink);
+      });
 
       removedLinks.forEach((link) => {
         const newLink = {
-          id:link.id
-        }
-        deleteNewsLink(newLink)
-      })
+          id: link.id
+        };
+        deleteNewsLink(newLink);
+      });
 
       const news = {
         id: Number(id),
         title: data.title,
         icon: data.icon?.id,
-        types: Object.keys(data.type).length ? [data.type].map(type => type.ID) : [],
+        types: Object.keys(data.type).length ? [data.type].map((type) => type.ID) : [],
         desc: data.desc,
         imgLandscape: data.imgLandscape?.id ?? null,
         imgLibrary: data.imgLibrary?.id ?? null,
@@ -80,34 +78,36 @@ export default {
         phone: data.phone,
         btnLink: data.button.length ? data.button[0].link : '',
         btnText: data.button.length ? data.button[0].name : '',
-        complexes: Object.keys(data.complex).length ? [data.complex].map(complex => complex.ID) : [],
-        contacts: data.contacts.map(contact => contact.ID),
-        houses: data.houses.map(el => el.ID),
-        approaches: data.approaches.map(el => el.ID),
-        floors: data.floors.map(el => el.ID),
-        premises: data.premises.map(el => el.ID),
+        complexes: Object.keys(data.complex).length
+          ? [data.complex].map((complex) => complex.ID)
+          : [],
+        contacts: data.contacts.map((contact) => contact.ID),
+        houses: data.houses.map((el) => el.ID),
+        approaches: data.approaches.map((el) => el.ID),
+        floors: data.floors.map((el) => el.ID),
+        premises: data.premises.map((el) => el.ID),
         priority: Object.keys(data.priority).length ? data.priority.ID : 1,
-        documents: data.docs.map(el => el.ID),
-				image: data.image?.id
+        documents: data.docs.map((el) => el.ID),
+        image: data.image?.id
+      };
+      if (news.title.length && (news.icon || news.image) && news.priority) {
+        updateNews(news);
+      } else {
+        toast.error(
+          'Заполните обязательные поля (степень важности, заголовок, иконка или изображение)'
+        );
       }
-			if(news.title.length && (news.icon || news.image) && news.priority){
-				updateNews(news)
-			}
-			else{
-				toast.error("Заполните обязательные поля (степень важности, заголовок, иконка или изображение)")
-			}
+    };
 
-    }
-
-		const onCancel = () => {
-			closeModalProp.value = true
-		}
+    const onCancel = () => {
+      closeModalProp.value = true;
+    };
 
     return {
-			closeModalProp,
+      closeModalProp,
       update,
-			onCancel,
-    }
+      onCancel
+    };
   }
-}
+};
 </script>

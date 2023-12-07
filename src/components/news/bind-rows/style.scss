@@ -13,7 +13,7 @@
   display: flex;
   gap: 10px;
   margin-bottom: 5px;
-  .for__cell{
+  .for__cell {
     font-size: 12px;
     padding: 7px 17px;
     line-height: 150%;
@@ -23,15 +23,13 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    flex-wrap:wrap;
-    gap:2px;
-    & .value-selected{
-      color:var(--variable-13)
+    flex-wrap: wrap;
+    gap: 2px;
+    & .value-selected {
+      color: var(--variable-13);
     }
   }
-
 }
-
 
 .badges-list {
   display: flex;
@@ -43,4 +41,3 @@
     flex-wrap: wrap;
   }
 }
-

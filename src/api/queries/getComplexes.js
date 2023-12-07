@@ -1,9 +1,10 @@
-import gql from "graphql-tag";
+import gql from 'graphql-tag';
 
 export const GET_COMPLEXES = gql`
   query complexes {
-    getComplexes  {
-      ID,
+    getComplexes {
+      ID
       UF_NAME
     }
-  }`
+  }
+`;

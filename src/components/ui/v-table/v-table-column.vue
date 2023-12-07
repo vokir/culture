@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'v-table-column',
+  name: 'VTableColumn',
   props: {
     id: {
       type: String,

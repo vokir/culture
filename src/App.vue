@@ -1,9 +1,7 @@
 <template>
-  <router-view/>
+  <router-view />
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style lang="scss" src="./assets/style/index.scss"/>
+<style lang="scss" src="./assets/style/index.scss" />

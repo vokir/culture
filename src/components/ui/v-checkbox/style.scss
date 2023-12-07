@@ -12,8 +12,8 @@
       background: var(--variable-14);
       border: 1px solid var(--variable-14);
 
-      svg {
-        fill: white;
+      .icon {
+        opacity: 1;
       }
     }
   }
@@ -30,8 +30,8 @@
     border-radius: 1px;
     transition: all 0.2s ease-in-out;
 
-    svg {
-      fill: none;
+    .icon {
+      opacity: 0;
     }
   }
 }
