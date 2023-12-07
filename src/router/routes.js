@@ -3,33 +3,41 @@ const NewsDetail = () => import('@/views/news-detail/news-detail.vue')
 const Complexes = () => import('@/views/complexes/complexes.vue')
 
 const routes = [
-  {
-    path: "/:pathMatch(.*)*",
-    redirect: '/master-system/news/'
-  },
-  {
-    path: '/master-system/news/',
-    component: News,
-    meta: {
-      pageTitle: 'Новости',
-    }
-  },
-  {
-    path: '/master-system/news/:id',
-    name: 'news-detail',
-    component: NewsDetail,
-    meta: {
-      pageTitle: 'Новости',
-    }
-  },
-  {
-    path: '/master-system/complexes',
-    name: 'complexes',
-    component: Complexes,
-    meta: {
-      pageTitle: 'Жилые комплексы',
-    }
-  },
+    {
+        path: "/:pathMatch(.*)*",
+        redirect: '/master-system/news/'
+    },
+    {
+        path: '/master-system/news/',
+        component: News,
+        meta: {
+            pageTitle: 'Новости',
+        }
+    },
+    {
+        path: '/master-system/news/:id',
+        name: 'news-detail',
+        component: NewsDetail,
+        meta: {
+            pageTitle: 'Новости',
+        }
+    },
+    {
+        path: '/master-system/complexes',
+        name: 'complexes',
+        component: Complexes,
+        meta: {
+            pageTitle: 'Жилые комплексы',
+        }
+    },
+    {
+        path: '/master-system/complexes/:id',
+        name: 'complexes-detail',
+        component: Complexes,
+        meta: {
+            pageTitle: 'Жилые комплексы',
+        }
+    },
 ]
 
 export default routes

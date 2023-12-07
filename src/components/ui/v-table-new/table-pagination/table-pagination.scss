@@ -1,0 +1,25 @@
+.news-controls {
+  display: grid;
+  border-top: 1px solid var(--variable-5);
+  grid-template-columns: 1fr auto;
+  background: var(--white);
+  padding: 15px;
+  align-items: center;
+
+  &__page {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: var(--variable-13);
+    gap: 5px;
+
+    :deep(.select-wrapper) {
+      min-width: 65px;
+
+      .select-wrapper__list {
+        top: 43px;
+      }
+    }
+  }
+}

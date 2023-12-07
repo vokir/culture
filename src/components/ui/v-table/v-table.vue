@@ -19,8 +19,8 @@ export default {
     let columns = slots.default(props.rows)
     if (slots.columns) {
       slots.columns(props.row)[0].children
-        .filter(child => child.props.checked)
-        .map(child => columns.push(child))
+          .filter(child => child.props.checked)
+          .map(child => columns.push(child))
     }
 
     return () => h('div', {class: 'table-wrapper'}, [
@@ -28,7 +28,6 @@ export default {
         h('thead', {class: 'table__thead'}, [
           h('tr', {class: 'table__thead-tr'}, [
             Array.from(columns).map((column, index) => {
-              console.log(column)
               return h('th', {
                 class: ['table__thead-th', column.props?.class],
                 style: {width: column.props.width},
@@ -36,12 +35,12 @@ export default {
               }, [
                 h('div', {class: 'table__thead-cell'}, [
                   (column.children && Object.keys(column.children).length > 2) ?
-                    column.children.header({
-                      title: column.props.title,
-                      id: column.props.id
-                    })
-                    :
-                    column.props.title
+                      column.children.header({
+                        title: column.props.title,
+                        id: column.props.id
+                      })
+                      :
+                      column.props.title
                 ])
               ])
             })
