@@ -1,0 +1,14 @@
+.btn-dropdown-item {
+  @include font(12px, 200%, 400);
+  color: var(--variable-8);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:focus-visible,
+  &:hover {
+    opacity: 0.8;
+  }
+}

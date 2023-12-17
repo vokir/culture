@@ -1,0 +1,13 @@
+@import "@/components/complexes/complex-info/complex-info";
+
+.house-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 17px;
+
+  &__name {
+    @include font(20px, 150%, 600);
+    color: var(--variable-13);
+  }
+}

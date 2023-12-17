@@ -16,13 +16,14 @@
   justify-self: flex-end;
 }
 
-:global(.docs-wrapper .table-wrapper) {
+:global(.docs-wrapper .table-container) {
   max-height: 238px;
   overflow: scroll;
   border: 1px solid #e5e8ea;
-  padding: 0 0 16px 22px;
+  padding: 10px 0 16px 22px;
   border-radius: 3px;
   margin-bottom: 11px;
+  background: transparent;
 }
 
 :global(.docs-wrapper .table-wrapper::-webkit-scrollbar) {
@@ -40,8 +41,9 @@
   background-color: #fff;
 }
 
-:global(.docs-wrapper .table__thead-tr) {
+:global(.docs-wrapper .table__thead-tr:first-child) {
   background-color: #fff;
+  border-bottom: 1px solid var(--variable-17);
 }
 
 :global(.modal .modal__content .docs-wrapper .table__tbody-tr--selected) {
@@ -87,35 +89,26 @@
 
 :global(
     .docs-wrapper .table__tbody-tr td:first-child,
-    .docs-wrapper .table__tbody-tr th:first-child
   ) {
   max-width: 200px;
 }
 
 :global(
     .docs-wrapper .table__tbody-tr td:nth-child(2),
-    .docs-wrapper .table__tbody-tr th:nth-child(2)
   ) {
   width: 150px;
 }
 
 :global(
     .docs-wrapper .table__tbody-tr td:nth-child(3),
-    .docs-wrapper .table__tbody-tr th:nth-child(3)
   ) {
   max-width: 200px;
 }
 
 :global(
     .docs-wrapper .table__tbody-tr td:nth-child(4),
-    .docs-wrapper .table__tbody-tr th:nth-child(4)
   ) {
   max-width: 200px;
-}
-
-:global(.modal-add-doc.modal-wrapper--centered .select-wrapper__list) {
-  // overflow: scroll;
-  // max-height: 130px;
 }
 
 .docs-wrapper {

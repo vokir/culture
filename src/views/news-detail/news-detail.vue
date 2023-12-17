@@ -1,27 +1,11 @@
 <template>
   <layout-default>
     <div class="container-content">
-      <div class="container-header">
-        <v-button href="/master-system/news/" transparent variant="transparent">
-          <svg
-            class="btn--transparent__svg"
-            fill="none"
-            height="10"
-            viewBox="0 0 6 10"
-            width="6"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              clip-rule="evenodd"
-              d="M6 1.31434L1.24816 6.31434L-0.00183761 5L4.75 -5.46393e-08L6 1.31434ZM2.48897 5.00919C2.50551 5.00919 6 8.68566 6 8.68566L4.75 10C4.75 10 1.23621 6.31066 1.24816 6.31066L2.48897 5.00919Z"
-              fill="white"
-              fill-rule="evenodd"
-            />
-          </svg>
-          Вернуться к списку новостей
-        </v-button>
-        <div class="container-header__title">Новости</div>
-      </div>
+      <page-header-detail
+        action-text="Вернуться к списку новостей"
+        back-link="/master-system/news/"
+        title="Новости"
+      />
       <div class="news-detail">
         <v-loader v-if="loading" />
         <div v-else class="news-detail__info">
@@ -136,12 +120,14 @@ import useModal from '../../hooks/useModal';
 import computePhone from '../../helpers/phoneFormat';
 import getSingular from '../../helpers/getSingular';
 import NewsForTable from '../../components/news/bind-rows/bind-rows-table.vue';
-import { useNewsStore } from '@/store/newsStore';
+import { useNewsStore } from '@/store/news';
 import LayoutDefault from '@/layout/layout-default/layout-default.vue';
+import PageHeaderDetail from '@/components/general/page-header-detail/page-header-detail.vue';
 
 export default {
   name: 'NewsDetail',
   components: {
+    PageHeaderDetail,
     LayoutDefault,
     NewsEdit,
     VLoader,

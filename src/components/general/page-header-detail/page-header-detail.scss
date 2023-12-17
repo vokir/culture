@@ -1,0 +1,15 @@
+@import "../page-header/page-header";
+
+.container-header {
+  gap: 25px;
+
+  &__title {
+    margin-right: 0;
+  }
+}
+
+.btn--transparent__svg {
+  width: 6px;
+  height: auto;
+  margin-right: 10px;
+}

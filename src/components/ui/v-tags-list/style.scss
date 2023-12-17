@@ -9,6 +9,7 @@
   }
 
   &__list {
+    background: var(--white);
     padding: 10px;
     color: var(--variable-13);
     border: 1px solid var(--variable-5);
@@ -56,5 +57,6 @@
 
   &__remove {
     cursor: pointer;
+    display: flex;
   }
 }

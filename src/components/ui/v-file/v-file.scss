@@ -1,0 +1,40 @@
+.file {
+  &__label {
+    @include font(14px, 150%);
+    color: var(--variable-7);
+    margin-bottom: 10px;
+  }
+
+  &__preview {
+    display: flex;
+    align-items: center;
+
+    &-img {
+      min-width: 50px;
+      width: 50px;
+      height: 50px;
+      overflow: hidden;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .icon {
+      color: var(--gray-light);
+      cursor: pointer;
+      transition: 0.2s ease;
+
+      &:hover {
+        color: var(--red);
+      }
+    }
+  }
+
+  &__name {
+    margin-left: 20px;
+    margin-right: 10px;
+    @include font(12px, 150%);
+    color: var(--variable-6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

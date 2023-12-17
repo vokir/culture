@@ -1,8 +1,8 @@
 <template>
   <v-modal
-    class="modal-images"
     :close-modal-prop="closeModalProp"
     centered
+    class="modal-images"
     @close-modal="onCloseModal"
   >
     <div v-if="title" class="modal-images__title">{{ title }}</div>
@@ -41,7 +41,7 @@ import { ref } from 'vue';
 import VButton from '../v-button/v-button.vue';
 import VLoader from '../v-loader/v-loader.vue';
 import VModal from '../v-modal/v-modal.vue';
-import { useNewsStore } from '../../../store/newsStore';
+import { useNewsStore } from '@/store/news';
 
 export default {
   name: 'VSelectImage',
@@ -108,4 +108,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

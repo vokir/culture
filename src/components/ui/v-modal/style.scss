@@ -48,22 +48,26 @@
       }
     }
   }
+
   &--bordered {
     .modal {
       border: 1px solid var(--variable-5);
       border-radius: 3px;
     }
   }
+
   &--small {
     &.modal-wrapper {
       width: initial;
       height: initial;
     }
+
     .modal {
       box-shadow: none;
       width: auto;
       height: auto;
       padding: 10px 15px 25px 15px;
+
       &__content {
         padding: 20px 15px 0 0;
       }
@@ -104,6 +108,29 @@
     &:hover {
       background: var(--danger);
     }
+  }
+
+  &__title {
+    font-family: 'OpenSans', sans-serif;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 26px;
+    line-height: 39px;
+    color: var(--variable-13);
+    margin-bottom: 28px;
+  }
+
+  &__actions {
+    box-shadow: 0px -4px 1px rgba(140, 140, 140, 0.15);
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    width: 100%;
+    left: 0;
+    border-radius: 15px 0 0 0;
+    gap: 10px;
+    background: var(--variable-17);
+    padding: 15px 40px;
   }
 
   &__content {

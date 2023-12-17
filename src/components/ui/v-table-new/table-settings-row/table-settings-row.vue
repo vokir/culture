@@ -8,7 +8,7 @@
         <ul class="settings__list">
           <li v-close-popper class="settings__item" @click="emit('edit')">Редактировать</li>
           <li v-close-popper class="settings__item" @click="emit('copy')">Копировать</li>
-          <li v-close-popper class="settings__item" @click="emit('edit')">Удалить</li>
+          <li v-close-popper class="settings__item" @click="emit('delete')">Удалить</li>
         </ul>
       </div>
     </template>

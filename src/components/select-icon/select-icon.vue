@@ -43,18 +43,14 @@
 
 <script>
 import { useLazyQuery, useQuery } from '@vue/apollo-composable';
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useToast } from 'vue-toastification';
-import { GET_ICONS } from '../../api/queries/getIcons';
-import { GET_IMAGE_CATEGORIES } from '../../api/queries/getImageCategories';
 import useModal from '../../hooks/useModal';
 import usePaginate from '../../hooks/usePaginate';
 import VImagePlaceholder from '../ui/v-image-placeholder/v-image-placeholder.vue';
 import VPagination from '../ui/v-pagination/v-pagination.vue';
 import VSelectImage from '../ui/v-select-image/v-select-image.vue';
 import VIconFilter from '../news/icon-filter/icon-filter.vue';
-import { useNewsStore } from '../../store/newsStore';
-import { iconFieldsPromise } from '../../config/apolloClient.config';
 
 export default {
   name: 'SelectIcon',
@@ -220,4 +216,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

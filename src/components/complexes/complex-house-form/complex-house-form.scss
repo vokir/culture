@@ -1,0 +1,15 @@
+.complex-form {
+  display: flex;
+  gap: 20px;
+
+  &__card {
+    height: auto;
+
+  }
+
+  &__card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 28px;
+  }
+}
