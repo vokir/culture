@@ -19,13 +19,17 @@
             edit-mode
             title="Редактирование ЖК"
             @closeModal="closeModal"
+            @onSave="onSave"
           />
         </div>
       </template>
     </page-header-detail>
     <complex-info />
     <transition mode="out-in" name="fade">
-      <house-info v-if="houseStore.currentHouse.realId" />
+      <house-info v-if="currentHouse.realId" />
+    </transition>
+    <transition mode="out-in" name="fade">
+      <entryway-info v-if="currentEntry.realId" />
     </transition>
   </layout-default>
 </template>
@@ -43,17 +47,20 @@ import { useComplexStore } from '@/store/complex/index.js';
 import { provide, ref, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import HouseInfo from '@/components/complexes/house-info/house-info.vue';
-import { useHouseStore } from '@/store/house/index.js';
+import EntrywayInfo from '@/components/complexes/entryway-info/entryway-info.vue';
 
 const store = useComplexStore();
-const houseStore = useHouseStore();
 
 const route = useRoute();
 const router = useRouter();
 const currentComplex = ref({});
+const currentHouse = ref({});
+const currentEntry = ref({});
 
 watchEffect(async () => {
   currentComplex.value = await store.getComplexById(route.params.id);
+  currentHouse.value = {};
+  currentEntry.value = {};
 });
 
 const { isOpen, closeModal, openModal } = useModal();
@@ -63,12 +70,19 @@ const onEdit = () => {
   openModal();
 };
 
+const onSave = async () => {
+  await store.updateComplex();
+  currentComplex.value = await store.getComplexById(route.params.id);
+};
+
 const onDelete = () => {
   store.deleteComplex(currentComplex.value.realId);
   router.push({ name: 'complexes' });
 };
 
 provide('complex', currentComplex);
+provide('house', currentHouse);
+provide('entry', currentEntry);
 </script>
 
 <style lang="scss" scoped src="./complexes-detail.scss"></style>

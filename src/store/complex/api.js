@@ -7,10 +7,7 @@ const getList = async (params) => {
 };
 const getById = async (id) => {
   const params = new URLSearchParams();
-  params.append(
-    'include',
-    'houses, documents, icon, accommodationPolicy, complexes, houses.entryways, houses.entryways.floors, houses.entryways.floors.premises'
-  );
+  params.append('include', 'documents, icon, accommodationPolicy');
   params.append('findWhere[id]', id);
 
   return await axiosInstance.get('/private/complex', {

@@ -9,22 +9,15 @@
       </div>
       <input
         ref="input"
-        type="text"
         class="select-wrapper__select-input"
         readonly
+        type="text"
         v-bind="$attrs"
-        @focus="activate"
         @blur="deactivate"
+        @focus="activate"
       />
       <div class="select-wrapper__toggle" @mousedown.prevent="toggleOptions">
-        <svg xmlns="http://www.w3.org/2000/svg" width="9" height="7" viewBox="0 0 9 7" fill="none">
-          <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
-            d="M7.74305 0.5L4.49947 3.88092L1.25695 0.5L0 1.80955L3.24358 5.19047L4.50053 6.5L5.75749 5.19047L9 1.80955L7.74305 0.5Z"
-            fill="#C6CDD3"
-          />
-        </svg>
+        <v-icon height="7" name="arrow-down" width="9" />
       </div>
     </div>
     <ul v-if="isOpen" class="select-wrapper__list" @mousedown.prevent="activate">
@@ -48,9 +41,11 @@
 
 <script>
 import { onMounted, ref, watch } from 'vue';
+import VIcon from '@/components/ui/v-icon/v-icon.vue';
 
 export default {
   name: 'VSelect',
+  components: { VIcon },
   inheritAttrs: false,
   props: {
     options: [Array, Object],
@@ -120,4 +115,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

@@ -3,10 +3,10 @@
     <label v-if="label" :for="name" class="input-wrapper__label">{{ label }}</label>
     <input
       :id="name"
+      :class="['input-wrapper__input', { 'input-wrapper__input--error': error }]"
       :maxlength="maxLength"
       :name="name"
       :value="modelValue"
-      class="input-wrapper__input"
       v-bind="$attrs"
       @blur="$emit('blur')"
       @focus="$emit('focus')"
@@ -29,7 +29,8 @@ export default {
     },
     label: String,
     modelValue: [String, Number],
-    maxLength: String
+    maxLength: String,
+    error: Boolean
   },
   emits: ['update:modelValue', 'focus', 'blur', 'onInput'],
   setup({ maxLength }, { emit }) {

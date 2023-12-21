@@ -77,8 +77,13 @@ const props = defineProps({
 const selectedDocs = ref([...props.modelValue]);
 
 const store = useGlobalStore();
-store.getDocumentTypes();
-store.getDocumentsList();
+
+if (!store.documentTypes.length) {
+  store.getDocumentTypes();
+}
+if (!store.documents.length) {
+  store.getDocumentsList();
+}
 
 const { isOpen, openModal, closeModal } = useModal();
 
@@ -116,8 +121,10 @@ const setSelectedDocs = (row) => {
 
 const removeDocument = (doc) => {
   let idx = selectedDocs.value.findIndex((el) => el.realId === doc.realId);
+
   if (idx !== -1) {
     selectedDocs.value.splice(idx, 1);
+    emit('update:modelValue', selectedDocs.value);
   }
 };
 

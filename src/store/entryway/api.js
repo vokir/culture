@@ -1,18 +1,18 @@
 import axiosInstance from '@/services/api.js';
 
-const getList = async (complexId) => {
+const getList = async (houseId) => {
   const params = new URLSearchParams();
 
-  params.append('findWhere[complex_id]', complexId);
-  params.append('include', 'documents');
+  params.append('findWhere[house_id]', houseId);
+  params.append('include', 'documents, floors, floors.premises');
 
-  return await axiosInstance.get('/private/house', {
+  return await axiosInstance.get('/private/entryway', {
     params
   });
 };
 
 const create = async (data) => {
-  return await axiosInstance.post('/private/house', data, {
+  return await axiosInstance.post('/private/entryway', data, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -20,7 +20,7 @@ const create = async (data) => {
 };
 
 const remove = async (id) => {
-  return await axiosInstance.delete(`/private/house/${id}`, {
+  return await axiosInstance.delete(`/private/entryway/${id}`, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -28,7 +28,7 @@ const remove = async (id) => {
 };
 
 const update = async (id, data) => {
-  return await axiosInstance.put(`/private/house/${id}`, data, {
+  return await axiosInstance.put(`/private/entryway/${id}`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
     },

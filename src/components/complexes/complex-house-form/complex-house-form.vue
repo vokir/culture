@@ -1,17 +1,17 @@
 <template>
-  <v-modal @closeModal="emit('closeModal')">
+  <v-modal @closeModal="onCancel">
     <template #title>{{ title }}</template>
     <div class="complex-form">
       <v-card class="complex-form__card complex-form__card-grid">
         <v-input
           v-model="localData.number"
+          :error="validate.number.$error"
           disabled
           label="Номер дома*"
           name="number"
           readonly
           type="number"
         />
-        <v-input v-model="localData.name" label="Название дома*" name="name" />
         <v-input
           v-model="localData.order"
           label="Порядок вывода в интерфейсе"
@@ -21,7 +21,7 @@
         <v-input v-model="localData.coords" label="Координаты" name="coords" />
       </v-card>
       <v-card class="complex-form__card">
-        <v-add-docs v-model="localData.docs" label="Документы" />
+        <v-add-docs v-model="localData.documents" label="Документы" />
       </v-card>
     </div>
     <template #actions>
@@ -30,6 +30,10 @@
         Сохранить дом и создать ещё
       </v-button>
       <v-button variant="link" @click="onCancel">Отмена</v-button>
+      <v-button v-if="editMode" class="delete-btn" variant="danger" @click="onDelete">
+        <v-icon height="12" name="cross" width="12" />
+        Удалить дом
+      </v-button>
     </template>
   </v-modal>
 </template>
@@ -40,9 +44,12 @@ import VButton from '@/components/ui/v-button/v-button.vue';
 import VCard from '@/components/ui/v-card/v-card.vue';
 import VAddDocs from '@/components/ui/v-add-docs/v-add-docs.vue';
 import VInput from '@/components/ui/v-input/v-input.vue';
-import { ref } from 'vue';
 import { useHouseStore } from '@/store/house/index.js';
 import { useRoute } from 'vue-router';
+import { required } from '@vuelidate/validators';
+import useVuelidate from '@vuelidate/core';
+import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { inject, ref, watchEffect } from 'vue';
 
 const emit = defineEmits(['closeModal']);
 const props = defineProps({
@@ -53,46 +60,86 @@ const props = defineProps({
   editMode: {
     type: Boolean,
     default: false
-  },
-  housesCount: {
-    type: Number,
-    default: 1
-  },
-  initialData: {
-    type: Object,
-    default: () => ({})
   }
 });
 
 const store = useHouseStore();
 const route = useRoute();
+const currentHouse = inject('house');
 
 const localData = ref({
-  number: props.housesCount + 1,
-  name: '',
+  number: store.houses.length + 1,
   order: 1,
   coords: '',
-  docs: []
+  documents: []
 });
 
-const onSave = () => {
+watchEffect(() => {
   if (props.editMode) {
-  } else {
-    store.createHouse(localData.value, route.params.id);
+    localData.value = {
+      name: currentHouse.value.name,
+      complexId: currentHouse.value.complexId,
+      realId: currentHouse.value.realId,
+      number: currentHouse.value.number,
+      order: currentHouse.value.order,
+      coords: [currentHouse.value.lat, currentHouse.value.long].join(', '),
+      documents: currentHouse.value.documents
+    };
   }
+});
+
+const rules = {
+  number: {
+    required
+  }
+};
+
+const validate = useVuelidate(rules, localData.value);
+
+const onSave = async () => {
+  const result = await validate.value.$validate();
+  if (!result) {
+    return;
+  }
+  if (props.editMode) {
+    await store.updateHouse(localData.value);
+  } else {
+    await store.createHouse(localData.value, route.params.id);
+  }
+  await store.getHousesList(route.params.id);
   localData.value = {
-    number: props.housesCount + 1,
+    number: store.houses.length + 1,
     order: 1,
-    name: '',
     coords: '',
-    docs: []
+    documents: []
   };
   emit('closeModal');
 };
-const onCopy = () => {
-  store.createHouse(localData.value, route.params.id);
+
+const onCopy = async () => {
+  const result = await validate.value.$validate();
+  if (!result) {
+    return;
+  }
+  await store.createHouse(localData.value, route.params.id);
+  await store.getHousesList(route.params.id);
 };
-const onCancel = () => {};
+
+const onCancel = () => {
+  localData.value = {
+    number: store.houses.length + 1,
+    order: 1,
+    coords: '',
+    documents: []
+  };
+  emit('closeModal');
+};
+
+const onDelete = async () => {
+  await store.deleteHouse();
+  await store.getHousesList(route.params.id);
+  emit('closeModal');
+};
 </script>
 
 <style lang="scss" scoped src="./complex-house-form.scss"></style>

@@ -51,6 +51,10 @@
       outline: none;
       border-color: var(--input-border-hover);
     }
+
+    &--error {
+      border-color: var(--danger);
+    }
   }
 
   textarea.input-wrapper__input {

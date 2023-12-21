@@ -69,7 +69,7 @@
 
 <script setup>
 import VCheckbox from '@/components/ui/v-checkbox/v-checkbox.vue';
-import { computed, ref, watch, watchEffect } from 'vue';
+import { computed, onBeforeMount, ref, watch, watchEffect } from 'vue';
 import TableSettingsRow from '@/components/ui/v-table-new/table-settings-row/table-settings-row.vue';
 import VButton from '@/components/ui/v-button/v-button.vue';
 import VLoader from '@/components/ui/v-loader/v-loader.vue';
@@ -93,6 +93,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  initialDataSelectLabel: {
+    type: String,
+    default: 'realId'
+  },
   disableSettings: {
     type: Boolean,
     default: false
@@ -108,7 +112,17 @@ const props = defineProps({
 });
 
 const localColumns = ref(props.columns);
-const selected = ref([...props.initialSelect]);
+const selected = ref([]);
+
+onBeforeMount(() => {
+  props.initialSelect.forEach((el) => {
+    props.rows.forEach((row) => {
+      if (el[props.initialDataSelectLabel] === row[props.initialDataSelectLabel]) {
+        selected.value.push(row);
+      }
+    });
+  });
+});
 
 watchEffect(() => {
   localColumns.value = props.columns;
@@ -130,6 +144,7 @@ const selectAll = computed({
     }
   }
 });
+
 watch(props.rows, () => {
   selected.value = [];
 });

@@ -131,6 +131,11 @@
     gap: 10px;
     background: var(--variable-17);
     padding: 15px 40px;
+
+    .btn--danger {
+      margin-left: auto;
+      gap: 15px;
+    }
   }
 
   &__content {

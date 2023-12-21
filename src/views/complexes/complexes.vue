@@ -8,7 +8,7 @@
         @buttonAction="onOpenModal"
       />
       <complexes-list />
-      <complexes-form v-if="isOpen" @closeModal="closeModal" />
+      <complexes-form v-if="isOpen" @closeModal="closeModal" @onSave="onSave" />
     </div>
   </layout-default>
 </template>
@@ -30,6 +30,10 @@ store.getComplexList();
 const onOpenModal = () => {
   store.clearForm();
   openModal();
+};
+const onSave = () => {
+  store.createComplex(store.form);
+  store.getComplexList();
 };
 </script>
 

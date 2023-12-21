@@ -1,0 +1,67 @@
+.house {
+  padding: 30px;
+
+  &__template {
+    display: flex;
+    gap: 30px;
+  }
+
+}
+
+.template-body__entryway {
+  display: flex;
+  gap: 10px;
+
+  &-item {
+    color: var(--variable-8);
+    @include font(12px, 150%);
+  }
+}
+
+.template-floors {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  &__item {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--variable-8);
+    @include font(10px, 150%);
+  }
+}
+
+.template-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: auto;
+}
+
+.template-body__floor {
+  display: flex;
+  gap: 10px;
+}
+
+.template-body__entry {
+  display: flex;
+  gap: 3px;
+}
+
+.template-body__premise {
+  display: flex;
+  width: 40px;
+  height: 30px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: var(--variable-19);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--variable-8);
+  @include font(10px, 150%);
+}

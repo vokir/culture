@@ -80,17 +80,13 @@ export const useComplexStore = defineStore('complex', () => {
   const updateComplex = async () => {
     try {
       const formData = objectToFormData(form.value);
-      formData.delete('documents');
-      form.value.documents.forEach((doc) => {
-        formData.append('documents[]', doc.realId);
-      });
+
       formData.set('active', getBool(form.value.active));
       formData.append('lat', '1235');
       formData.append('long', '321');
       formData.append('description', '123');
 
       await update(form.value.id, formData);
-      await getComplexList();
     } catch (e) {
       console.error(e);
     }

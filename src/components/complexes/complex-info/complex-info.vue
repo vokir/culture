@@ -7,7 +7,7 @@
             <info-block :info="complexInfo" />
           </v-tab>
           <v-tab title="Документы">
-            <document-block :documents="complex.documents" />
+            <document-block :documents="currentComplex.documents" />
           </v-tab>
           <v-tab title="История изменений">
             <changes-block />
@@ -38,7 +38,7 @@ import ComplexHouses from '@/components/complexes/complex-houses/complex-houses.
 import { computed, inject } from 'vue';
 import createInfo from '@/helpers/createInfo.js';
 
-const complex = inject('complex');
+const currentComplex = inject('complex');
 
 const complexInfo = computed(() => {
   const fields = {
@@ -48,7 +48,7 @@ const complexInfo = computed(() => {
     address: 'Адрес',
     phone: 'Телефон'
   };
-  return createInfo(complex.value, fields);
+  return createInfo(currentComplex.value, fields);
 });
 </script>
 

@@ -4,9 +4,15 @@
     <div class="complex-form">
       <v-card class="complex-form__card">
         <div class="input-row">
-          <v-input v-model="store.form.name" label="Название*" name="name" />
+          <v-input
+            v-model="store.form.name"
+            :error="validate.name.$error"
+            label="Название*"
+            name="name"
+          />
           <v-select
             v-model="store.form.active"
+            :error="validate.active.$error"
             :options="['Да', 'Нет']"
             labelSelect="Активность*"
           />
@@ -25,7 +31,12 @@
           />
         </div>
         <div class="input-row">
-          <v-input v-model="store.form.address" label="Адрес*" name="address" />
+          <v-input
+            v-model="store.form.address"
+            :error="validate.address.$error"
+            label="Адрес*"
+            name="address"
+          />
           <v-input
             v-model="store.form.phone"
             v-mask="'+7 (###) ###-##-##'"
@@ -50,7 +61,7 @@
       </div>
     </div>
     <template #actions>
-      <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
+      <v-button type="submit" variant="success" @click="onSave"> Сохранить</v-button>
       <v-button v-if="!editMode" variant="bordered" @click="onCopy">
         Сохранить жк и создать ещё
       </v-button>
@@ -69,8 +80,10 @@ import VButton from '@/components/ui/v-button/v-button.vue';
 import VAddDocs from '@/components/ui/v-add-docs/v-add-docs.vue';
 import VFile from '@/components/ui/v-file/v-file.vue';
 import { useComplexStore } from '@/store/complex/index.js';
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 
-const emit = defineEmits(['closeModal']);
+const emit = defineEmits(['closeModal', 'onSave']);
 const props = defineProps({
   title: {
     type: String,
@@ -83,19 +96,35 @@ const props = defineProps({
 });
 
 const vMask = mask;
+const rules = {
+  name: {
+    required
+  },
+  active: {
+    required
+  },
+  address: {
+    required
+  }
+};
 
 const store = useComplexStore();
+const validate = useVuelidate(rules, store.form);
 
-const onSave = () => {
-  if (props.editMode) {
-    store.updateComplex();
-  } else {
-    store.createComplex(store.form);
+const onSave = async () => {
+  const result = await validate.value.$validate();
+  if (!result) {
+    return;
   }
+  emit('onSave');
   emit('closeModal');
 };
-const onCopy = () => {
-  store.createComplex(store.form);
+const onCopy = async () => {
+  const result = await validate.value.$validate();
+  if (!result) {
+    return;
+  }
+  await store.createComplex(store.form);
 };
 const onCancel = () => {
   emit('closeModal');

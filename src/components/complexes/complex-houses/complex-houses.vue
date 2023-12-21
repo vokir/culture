@@ -4,29 +4,30 @@
       <div class="house-title">Дом</div>
       <div class="house-list">
         <div
-          v-for="house of complex.houses"
+          v-for="house of store.houses"
           :key="house.realId"
           :class="[
             'house-list__item',
-            { 'house-list__item--active': house === store.currentHouse }
+            { 'house-list__item--active': house.realId === currentHouse.realId }
           ]"
           @click="selectHouse(house)"
         >
           {{ house.number }}
         </div>
       </div>
-      <div class="house-action" @click="openModal">
-        <v-icon height="10" name="pen" width="10" />
-      </div>
+      <icon-button name="pen" size="10" @click="openModal" />
     </div>
     <div class="house-view">
-      <div v-for="house of complex.houses" :key="house.realId" class="house-template-container">
-        <div class="house-template-title">Дом №{{ house.number }}</div>
+      <div v-for="house of store.houses" :key="house.realId" class="house-template-container">
+        <div class="house-template-title">{{ house.name }}</div>
         <div
-          :class="['house-template', { 'house-template--active': house === store.currentHouse }]"
+          :class="[
+            'house-template',
+            { 'house-template--active': house.realId === currentHouse.realId }
+          ]"
           @click="selectHouse(house)"
         >
-          <div v-for="i of complex.floorsCount" class="house-template-floor">
+          <div v-for="i of house.floorsCount" class="house-template-floor">
             <div v-for="i of 4" class="house-template-premise"></div>
           </div>
         </div>
@@ -34,33 +35,39 @@
     </div>
     <complex-house-form
       v-if="isOpen"
-      :edit-mode="!!Object.keys(store.currentHouse).length"
-      :houses-count="complex.houses.length"
-      :initial-data="store.currentHouse"
+      :title="`Новый дом / ${complex.name}`"
       @closeModal="closeModal"
     />
   </div>
 </template>
 
 <script setup>
-import { inject } from 'vue';
-import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { inject, watchEffect } from 'vue';
 import ComplexHouseForm from '@/components/complexes/complex-house-form/complex-house-form.vue';
 import useModal from '@/hooks/useModal.js';
 import { useHouseStore } from '@/store/house/index.js';
+import { useRoute } from 'vue-router';
+import IconButton from '@/components/ui/icon-button/icon-button.vue';
+
+const store = useHouseStore();
+const route = useRoute();
+const complex = inject('complex');
+const currentHouse = inject('house');
+const currentEntry = inject('entry');
 
 const { isOpen, closeModal, openModal } = useModal();
 
-const store = useHouseStore();
-
-const complex = inject('complex');
+watchEffect(async () => {
+  await store.getHousesList(route.params.id);
+});
 
 const selectHouse = (house) => {
-  if (store.currentHouse === house) {
-    store.currentHouse = {};
+  if (currentHouse.value === house) {
+    currentHouse.value = {};
   } else {
-    store.currentHouse = house;
+    currentHouse.value = house;
   }
+  currentEntry.value = {};
 };
 </script>
 
