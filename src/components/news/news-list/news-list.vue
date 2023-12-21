@@ -6,7 +6,7 @@
     @copy="onCopy"
     @delete="onDelete"
     @edit="onEdit"
-    @onArrayDelete="onArrayDelete"
+    @on-array-delete="onArrayDelete"
   >
     <template #tableHeader="col">{{ col.title }}</template>
     <template #tableRow="{ row, col, selected }">
@@ -30,7 +30,7 @@
       <span v-else>{{ row[col.id] }}</span>
     </template>
   </v-table-new>
-  <news-form v-if="isOpen" edit-mode title="Редактирование Новости" @closeModal="closeModal" />
+  <news-form v-if="isOpen" edit-mode title="Редактирование Новости" @close-modal="closeModal" />
   <table-pagination
     :current_page="store.pagination.current_page"
     :per_page="store.pagination.per_page"

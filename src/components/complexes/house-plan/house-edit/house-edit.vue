@@ -19,8 +19,8 @@
         <entryway-form
           v-if="isOpenEntry"
           :title="`Новый подъезд / ${currentHouse.name} / ${currentComplex.name}`"
-          @closeModal="closeEntryModal"
-          @onSave="onSave"
+          @close-modal="closeEntryModal"
+          @on-save="onSave"
         />
       </div>
       <div class="house__header-item">

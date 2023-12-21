@@ -1,6 +1,6 @@
 <template>
   <div class="house">
-    <house-edit @updateEntry="entryWayStore.getEntrywayList(currentHouse.value.realId)" />
+    <house-edit @update-entry="entryWayStore.getEntrywayList(currentHouse.value.realId)" />
     <!--    <div class="house__template">-->
     <!--      <div class="template-floors">-->
     <!--        <div v-for="(floor, idx) of entryWayStore.floors" class="template-floors__item">-->

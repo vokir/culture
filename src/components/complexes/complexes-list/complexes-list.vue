@@ -7,7 +7,7 @@
     @copy="onCopy"
     @delete="onDelete"
     @edit="onEdit"
-    @onArrayDelete="onArrayDelete"
+    @on-array-delete="onArrayDelete"
   >
     <template #tableHeader="col">{{ col.title }}</template>
     <template #tableRow="{ row, col, selected }">
@@ -42,7 +42,7 @@
       <span v-else>{{ row[col.id] }}</span>
     </template>
   </v-table-new>
-  <complexes-form v-if="isOpen" edit-mode title="Редактирование ЖК" @closeModal="closeModal" />
+  <complexes-form v-if="isOpen" edit-mode title="Редактирование ЖК" @close-modal="closeModal" />
   <table-pagination
     :current_page="store.pagination.current_page"
     :per_page="store.pagination.per_page"

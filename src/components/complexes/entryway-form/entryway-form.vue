@@ -1,5 +1,5 @@
 <template>
-  <v-modal @closeModal="emit('closeModal')">
+  <v-modal @close-modal="emit('closeModal')">
     <template #title>{{ title }}</template>
     <div class="complex-form">
       <v-card class="complex-form__card">
