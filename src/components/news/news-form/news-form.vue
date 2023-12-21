@@ -1,13 +1,13 @@
 <template>
   <v-modal :close-modal-prop="closeModalProp">
+    <template #title>{{ title }}</template>
     <section class="news-form">
-      <div class="news-form__title">{{ title }}</div>
       <form class="news-form__form" @submit.prevent>
         <v-card class="news-form__card-first">
           <v-input v-model="form.date" label="Дата*" name="date" type="datetime-local" />
           <v-select
             v-model="form.type"
-            :options="types"
+            :options="store.newsTypes"
             label="UF_TITLE"
             label-select="Тип новости"
             name="type"
@@ -108,13 +108,6 @@
             label="Кнопка"
           />
         </v-card>
-        <div class="news-form__actions">
-          <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
-          <v-button v-if="!edit" variant="bordered" @click="onCopy"
-            >Сохранить новость и создать ещё
-          </v-button>
-          <v-button variant="link" @click="onCancel">Отмена</v-button>
-        </div>
       </form>
       <news-preview v-model="form" />
     </section>
@@ -129,17 +122,18 @@
       @on-cancel="closeModal"
       @on-save="setBind"
     />
+    <template #actions>
+      <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
+      <v-button v-if="!editMode" variant="bordered" @click="onCopy">
+        Сохранить новость и создать ещё
+      </v-button>
+      <v-button variant="link" @click="onCancel">Отмена</v-button>
+    </template>
   </v-modal>
 </template>
 
-<script>
-import { useQuery } from '@vue/apollo-composable';
-import { computed, ref } from 'vue';
-import { mask } from 'vue-the-mask';
-import { GET_COMPLEXES } from '../../../api/queries/getComplexes';
-import { GET_CONTACTS } from '../../../api/queries/getContacts';
-import { GET_NEWS_DEGREES } from '../../../api/queries/getNewsDegrees';
-import { GET_NEWS_TYPES } from '../../../api/queries/getNewsTypes';
+<script setup>
+import { ref } from 'vue';
 import useModal from '../../../hooks/useModal';
 import NewsPreview from '../news-preview/news-preview.vue';
 import SelectBind from '../../select-bind/select-bind.vue';
@@ -152,191 +146,138 @@ import VModal from '../../ui/v-modal/v-modal.vue';
 import VSelect from '../../ui/v-select/v-select.vue';
 import VTextarea from '../../ui/v-textarea/v-textarea.vue';
 import VMultiSelect from '../../ui/v-multi-select/v-multi-select.vue';
+import { mask } from 'vue-the-mask';
+import { useNewsStore } from '@/store/news/index.js';
 
-export default {
-  name: 'NewsForm',
-  directives: { mask },
-  components: {
-    SelectBind,
-    VAddDocs,
-    VButton,
-    VModal,
-    VInputTags,
-    VTextarea,
-    VSelect,
-    VInput,
-    VCard,
-    NewsPreview,
-    VMultiSelect
+const emit = defineEmits(['onSave', 'onCopy', 'onCancel', 'onAddLinks', 'onRemoveLinks']);
+const props = defineProps({
+  title: {
+    type: String,
+    required: false,
+    default: 'Добавить новость'
   },
-  props: {
-    title: {
-      type: String,
-      required: false,
-      default: 'Добавить новость'
-    },
-    formData: {
-      type: Object,
-      required: false,
-      default: () => ({
-        title: '',
-        icon: {
-          id: null,
-          src: null,
-          name: null
-        },
-        desc: '',
-        imgLandscape: null,
-        imgLibrary: null,
-        fullDesc: '',
-        phone: '',
-        date: '',
-        type: {},
-        complex: {},
-        priority: {},
-        docs: [],
-        links: [],
-        button: [],
-        houses: [],
-        approaches: [],
-        floors: [],
-        premises: [],
-        contacts: [],
-        image: {
-          id: null,
-          src: null,
-          name: null
-        }
-      })
-    },
-    closeModalProp: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
-    edit: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
+  formData: {
+    type: Object,
+    required: false,
+    default: () => ({
+      title: '',
+      icon: {
+        id: null,
+        src: null,
+        name: null
+      },
+      desc: '',
+      imgLandscape: null,
+      imgLibrary: null,
+      fullDesc: '',
+      phone: '',
+      date: '',
+      type: {},
+      complex: {},
+      priority: {},
+      docs: [],
+      links: [],
+      button: [],
+      houses: [],
+      approaches: [],
+      floors: [],
+      premises: [],
+      contacts: [],
+      image: {
+        id: null,
+        src: null,
+        name: null
+      }
+    })
   },
-  emits: ['onSave', 'onCopy', 'onCancel', 'onAddLinks', 'onRemoveLinks'],
-  setup({ formData }, { emit }) {
-    const currentTab = ref('Превью');
-    const { isOpen, openModal, closeModal } = useModal();
-
-    const { result: complexesData } = useQuery(GET_COMPLEXES);
-    const complexes = computed(() => {
-      return complexesData.value?.getComplexes ?? [];
-    });
-
-    const { result: typesData } = useQuery(GET_NEWS_TYPES);
-    const types = computed(() => {
-      return typesData.value?.getNewsTypes ?? [];
-    });
-
-    const { result: contactsData } = useQuery(GET_CONTACTS);
-    const contacts = computed(() => {
-      return contactsData.value?.getContacts ?? [];
-    });
-    const { result: priorityData } = useQuery(GET_NEWS_DEGREES);
-    const priority = computed(() => {
-      return priorityData.value?.getNewsDegrees ?? [];
-    });
-
-    const removedLinks = ref([]);
-    const addedLinks = ref([]);
-
-    const form = ref(formData);
-
-    const setBind = (value) => {
-      form.value.houses = value.houses;
-      form.value.approaches = value.approaches;
-      form.value.floors = value.floors;
-      form.value.premises = value.premises;
-    };
-
-    const onSave = () => {
-      // emit('onAddLinks', addedLinks.value)
-      // emit('onRemoveLinks', removedLinks.value)
-      emit('onSave', form.value, addedLinks.value, removedLinks.value);
-    };
-
-    const onCopy = () => {
-      emit('onCopy', form.value);
-      clearForm();
-    };
-
-    const onCancel = () => {
-      emit('onCancel');
-      clearForm();
-    };
-
-    const clearForm = () => {
-      form.value = {
-        title: '',
-        icon: {
-          id: null,
-          src: null,
-          name: null
-        },
-        desc: '',
-        imgLandscape: null,
-        imgLibrary: null,
-        fullDesc: '',
-        phone: '',
-        date: '',
-        type: {},
-        complex: {},
-        priority: {},
-        docs: [],
-        links: [],
-        button: [],
-        houses: [],
-        approaches: [],
-        floors: [],
-        premises: [],
-        contacts: [],
-        image: {
-          id: null,
-          src: null,
-          name: null
-        }
-      };
-    };
-
-    const removeLinks = (links) => {
-      removedLinks.value = links;
-    };
-
-    const addLinks = (links) => {
-      addedLinks.value = links;
-    };
-
-    const toggleOption = (target, contacts) => {
-      form.value.contacts = contacts.filter((contact) => contact.ID !== target.ID);
-    };
-
-    return {
-      form,
-      types,
-      contacts,
-      complexes,
-      currentTab,
-      isOpen,
-      priority,
-      openModal,
-      closeModal,
-      onSave,
-      onCopy,
-      onCancel,
-      setBind,
-      removeLinks,
-      addLinks,
-      toggleOption
-    };
+  closeModalProp: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  editMode: {
+    type: Boolean,
+    required: false,
+    default: false
   }
+});
+const vMask = mask;
+
+const { isOpen, openModal, closeModal } = useModal();
+
+const removedLinks = ref([]);
+const addedLinks = ref([]);
+
+const store = useNewsStore();
+store.getNewsType();
+
+const form = ref(props.formData);
+
+const setBind = (value) => {
+  form.value.houses = value.houses;
+  form.value.approaches = value.approaches;
+  form.value.floors = value.floors;
+  form.value.premises = value.premises;
+};
+
+const onSave = () => {
+  emit('onSave', form.value, addedLinks.value, removedLinks.value);
+};
+
+const onCopy = () => {
+  emit('onCopy', form.value);
+  clearForm();
+};
+
+const onCancel = () => {
+  emit('onCancel');
+  clearForm();
+};
+
+const clearForm = () => {
+  form.value = {
+    title: '',
+    icon: {
+      id: null,
+      src: null,
+      name: null
+    },
+    desc: '',
+    imgLandscape: null,
+    imgLibrary: null,
+    fullDesc: '',
+    phone: '',
+    date: '',
+    type: {},
+    complex: {},
+    priority: {},
+    docs: [],
+    links: [],
+    button: [],
+    houses: [],
+    approaches: [],
+    floors: [],
+    premises: [],
+    contacts: [],
+    image: {
+      id: null,
+      src: null,
+      name: null
+    }
+  };
+};
+
+const removeLinks = (links) => {
+  removedLinks.value = links;
+};
+
+const addLinks = (links) => {
+  addedLinks.value = links;
+};
+
+const toggleOption = (target, contacts) => {
+  form.value.contacts = contacts.filter((contact) => contact.ID !== target.ID);
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

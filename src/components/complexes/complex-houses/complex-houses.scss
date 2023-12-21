@@ -1,0 +1,103 @@
+.house {
+  padding: 30px 20px 15px 30px;
+}
+
+.house-header {
+  display: flex;
+  margin-bottom: 30px;
+  align-items: center;
+}
+
+.house-title {
+  min-width: 50px;
+  @include font(12px, 150%);
+  color: var(--variable-7);
+}
+
+:deep(.icon-button) {
+  margin-left: auto;
+}
+
+.house-list {
+  display: flex;
+  gap: 5px;
+  overflow: auto;
+  margin-right: 10px;
+
+
+  &__item {
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--variable-5);
+    @include font(12px, 150%);
+    color: var(--variable-13);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &--active {
+      background-color: var(--variable-16);
+    }
+
+    &:hover {
+      background-color: var(--variable-16);
+    }
+  }
+}
+
+
+.house-view {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  overflow: auto;
+}
+
+.house-template-container {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+}
+
+.house-template-title {
+  @include font(12px, 150%);
+  color: var(--variable-8);
+}
+
+.house-template {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: var(--variable-19);
+  width: 104px;
+  height: 100%;
+  gap: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &--active {
+    background: var(--variable-16);
+
+    .house-template-premise {
+      background: #D8FFB1;
+    }
+  }
+}
+
+.house-template-floor {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.house-template-premise {
+  display: flex;
+  width: 13px;
+  height: 10px;
+  background: var(--variable-17);
+  transition: background-color 0.2s ease;
+}

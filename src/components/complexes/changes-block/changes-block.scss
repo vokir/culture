@@ -1,0 +1,30 @@
+.changes {
+  display: flex;
+  flex-direction: column;
+
+  &-cell {
+    @include font(12px, 150%);
+    color: var(--variable-13);
+
+    &:last-child {
+      color: var(--variable-7);
+    }
+  }
+
+  &-row {
+    margin-bottom: 15px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 65px 100px 210px;
+
+    &--header {
+      margin-bottom: 20px;
+
+      .changes-cell {
+        @include font(12px, 150%, 700);
+        color: var(--variable-13);
+      }
+    }
+  }
+
+}

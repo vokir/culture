@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@vue/apollo-composable": "^4.0.0-beta.12",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
     "@vueuse/core": "^10.7.0",
     "apollo-boost": "^0.4.9",
     "axios": "^0.27.2",
@@ -21,6 +23,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-vue": "^9.19.2",
     "floating-vue": "^2.0.0-beta.24",
+    "mime-types": "^2.1.35",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.7",
     "prettier": "^3.1.0",

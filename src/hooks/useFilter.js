@@ -1,5 +1,5 @@
 import { computed, onMounted, ref, watch } from 'vue';
-import { useNewsStore } from '../store/newsStore';
+import { useNewsStore } from '../store/news';
 
 const useFilter = (entity = '', props, emit) => {
   const search = ref('');

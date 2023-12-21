@@ -1,8 +1,8 @@
 <template>
   <v-modal
     :close-modal-prop="closeModalProp"
-    class="modal-select-bind"
     centered
+    class="modal-select-bind"
     @close-modal="onCancel"
   >
     <div class="modal-title">{{ complexName }}</div>
@@ -98,9 +98,9 @@
           <div v-for="cell in row" class="selected__value">
             <span
               v-for="(value, i) in cell"
-              class="for__value"
               :class="[{ 'selected__value--active': value.isSelected }]"
               :data-id="value.id"
+              class="for__value"
             >
               <template v-if="true"> {{ value.name }} </template>
               <template v-if="cell[i + 1]">, </template>
@@ -119,10 +119,7 @@
 <script>
 import { useLazyQuery, useQuery } from '@vue/apollo-composable';
 import { computed, ref, watch } from 'vue';
-import { GET_APPROACHES_BY_HOUSE_ID } from '../../api/queries/getApproachesByHouseID';
-import { GET_FLOORS_BY_APPROACH_ID } from '../../api/queries/getFloorsByApproachID';
-import { GET_HOUSES_BY_COMPLEX_ID } from '../../api/queries/getHousesByComplexID';
-import { GET_PREMISES_BY_FLOOR_ID } from '../../api/queries/getPremisesByFloorID';
+
 import bindRowsLogic from '../news/bind-rows/bindRowsLogic';
 import VButton from '../ui/v-button/v-button.vue';
 import VCheckbox from '../ui/v-checkbox/v-checkbox.vue';
@@ -268,4 +265,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

@@ -11,7 +11,11 @@ const useModal = (initialValue = false) => {
     isOpen.value = false;
   };
 
-  return { isOpen, openModal, closeModal };
+  const toggle = () => {
+    isOpen.value = !isOpen.value;
+  };
+
+  return { isOpen, openModal, closeModal, toggle };
 };
 
 export default useModal;

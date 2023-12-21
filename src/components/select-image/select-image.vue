@@ -35,16 +35,12 @@ import { useQuery } from '@vue/apollo-composable';
 import axios from 'axios';
 import { computed, ref } from 'vue';
 import { useToast } from 'vue-toastification';
-import { GET_IMAGES } from '../../api/queries/getImages';
-import { GET_IMAGE_CATEGORIES } from '../../api/queries/getImageCategories';
 import usePaginate from '../../hooks/usePaginate';
 import VCropImage from '../ui/v-crop-image/v-crop-image.vue';
 import VLoader from '../ui/v-loader/v-loader.vue';
 import VPagination from '../ui/v-pagination/v-pagination.vue';
 import VSelectImage from '../ui/v-select-image/v-select-image.vue';
 import VImageFilter from '../news/image-filter/image-filter.vue';
-import { useNewsStore } from '../../store/newsStore';
-import { imageFieldsPromise } from '../../config/apolloClient.config';
 
 export default {
   name: 'SelectImage',
@@ -192,4 +188,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

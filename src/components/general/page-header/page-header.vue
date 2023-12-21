@@ -7,11 +7,11 @@
       </div>
     </div>
     <div class="container-header__search">
-      <news-filter
-        :fields="fields"
-        @filter-table="emit('filterTable')"
-        @update-fields="emit('updateFields')"
-      />
+      <!--      <news-filter-->
+      <!--        :fields="fields"-->
+      <!--        @filter-table="emit('filterTable')"-->
+      <!--        @update-fields="emit('updateFields')"-->
+      <!--      />-->
     </div>
     <div class="container-header__action">
       <v-button class="btn--w100" @click="emit('buttonAction')">
@@ -24,7 +24,6 @@
 <script setup>
 import VButton from '@/components/ui/v-button/v-button.vue';
 import VIcon from '@/components/ui/v-icon/v-icon.vue';
-import NewsFilter from '@/components/news/news-filter/news-filter.vue';
 
 const emit = defineEmits(['buttonAction', 'filterTable', 'updateFields']);
 defineProps({
@@ -38,7 +37,7 @@ defineProps({
   },
   fields: {
     type: Array,
-    required: true
+    required: false
   }
 });
 </script>

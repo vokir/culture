@@ -2,8 +2,7 @@
   $index: str-index($string, $search);
 
   @if $index {
-    @return str-slice($string, 1, $index - 1) + $replace
-      (+ str-replace(str-slice($string, $index + str-length($search)), $search, $replace));
+    @return str-slice($string, 1, $index - 1) + $replace (+ str-replace(str-slice($string, $index + str-length($search)), $search, $replace));
   }
 
   @return $string;
@@ -52,4 +51,22 @@
   line-height: $line-height;
   font-weight: $font-weight;
   font-style: $font-style;
+}
+
+@mixin scrollbar($color: var(--variable-19)) {
+  scrollbar-width: thin;
+  scrollbar-color: $color;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    opacity: 0;
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 16px;
+    width: 8px;
+    background: $color;
+  }
 }

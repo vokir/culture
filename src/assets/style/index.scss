@@ -72,6 +72,14 @@ img {
   max-height: 100%;
 }
 
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #C6CDD3;
+  object-fit: cover;
+}
+
 .link {
   color: var(--variable-14);
   text-decoration: none;
@@ -95,6 +103,16 @@ img {
 .slide-up-enter-to,
 .slide-up-leave-from {
   transform: translateX(0);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 @import './imports';

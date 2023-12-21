@@ -1,20 +1,22 @@
 <template>
   <div :class="['table-container', { 'table-container--action': selected.length }]">
-    <div class="table-wrapper">
+    <v-loader v-if="loading" />
+
+    <div v-else class="table-wrapper">
       <table class="table">
         <thead class="table__thead">
           <tr class="table__thead-tr">
-            <th class="table__thead-th table__thead-th-check">
+            <th v-if="!disableSelect" class="table__thead-th table__thead-th-check">
               <div class="table__thead-cell">
                 <v-checkbox v-model="selectAll" />
               </div>
             </th>
-            <th class="table__thead-th table__thead-th-settings">
+            <th v-if="!disableSettings" class="table__thead-th table__thead-th-settings">
               <div class="table__thead-cell">
-                <v-icon height="16" name="settings" width="16" />
+                <table-select-columns v-model="localColumns" />
               </div>
             </th>
-            <th v-for="(col, i) of columns" :key="i" class="table__thead-th">
+            <th v-for="(col, i) of renderedColumns" :key="i" class="table__thead-th">
               <div class="table__thead-cell">
                 <slot name="tableHeader" v-bind="col" />
               </div>
@@ -28,13 +30,13 @@
             :class="['table__tbody-tr', { 'table__tbody-tr--selected': selected.includes(row) }]"
             @click="onRowClick(row)"
           >
-            <td class="table__tbody-td">
-              <div class="table__thead-cell" @click.stop>
+            <td v-if="!disableSelect" class="table__tbody-td">
+              <div class="table__thead-cell" @click="cellClick">
                 <v-checkbox v-model="selected" :value="row" />
               </div>
             </td>
-            <td class="table__tbody-td">
-              <div class="table__thead-cell" @click.stop>
+            <td v-if="!disableSettings" class="table__tbody-td">
+              <div class="table__thead-cell" @click="cellClick">
                 <table-settings-row
                   @copy="emit('copy', row)"
                   @delete="emit('delete', row)"
@@ -42,8 +44,8 @@
                 />
               </div>
             </td>
-            <td v-for="(col, k) of columns" :key="k" class="table__tbody-td">
-              <div class="table__thead-cell" @click.stop>
+            <td v-for="(col, k) of renderedColumns" :key="k" class="table__tbody-td">
+              <div class="table__thead-cell" @click="cellClick">
                 <slot name="tableRow" v-bind="{ row, col, selected }" />
               </div>
             </td>
@@ -51,10 +53,10 @@
         </tbody>
       </table>
     </div>
-    <transition name="slide-up">
+    <transition v-if="!disableSelect" name="slide-up">
       <div v-if="selected.length" class="table-action">
         <div class="table-action__buttons">
-          <v-button variant="danger" @click="emit('deleteArray', selected)"> Удалить</v-button>
+          <v-button variant="danger" @click="deleteArray"> Удалить</v-button>
           <v-button variant="link" @click="selected = []"> Отмена</v-button>
         </div>
         <div class="table-action__selected">
@@ -67,12 +69,13 @@
 
 <script setup>
 import VCheckbox from '@/components/ui/v-checkbox/v-checkbox.vue';
-import { computed, ref } from 'vue';
-import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { computed, onBeforeMount, ref, watch, watchEffect } from 'vue';
 import TableSettingsRow from '@/components/ui/v-table-new/table-settings-row/table-settings-row.vue';
 import VButton from '@/components/ui/v-button/v-button.vue';
+import VLoader from '@/components/ui/v-loader/v-loader.vue';
+import TableSelectColumns from '@/components/ui/v-table-new/table-select-columns/table-select-columns.vue';
 
-const emit = defineEmits(['edit', 'copy', 'delete', 'rowClick', 'deleteArray']);
+const emit = defineEmits(['edit', 'copy', 'delete', 'rowClick', 'onArrayDelete', 'update:columns']);
 const props = defineProps({
   rows: {
     type: Array,
@@ -81,10 +84,51 @@ const props = defineProps({
   columns: {
     type: Array,
     required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  initialSelect: {
+    type: Array,
+    default: () => []
+  },
+  initialDataSelectLabel: {
+    type: String,
+    default: 'realId'
+  },
+  disableSettings: {
+    type: Boolean,
+    default: false
+  },
+  disableSelect: {
+    type: Boolean,
+    default: false
+  },
+  preventCellClick: {
+    type: Boolean,
+    default: false
   }
 });
 
+const localColumns = ref(props.columns);
 const selected = ref([]);
+
+onBeforeMount(() => {
+  props.initialSelect.forEach((el) => {
+    props.rows.forEach((row) => {
+      if (el[props.initialDataSelectLabel] === row[props.initialDataSelectLabel]) {
+        selected.value.push(row);
+      }
+    });
+  });
+});
+
+watchEffect(() => {
+  localColumns.value = props.columns;
+});
+
+const renderedColumns = computed(() => localColumns.value.filter((el) => el.checked));
 
 const selectAll = computed({
   get() {
@@ -100,6 +144,21 @@ const selectAll = computed({
     }
   }
 });
+
+watch(props.rows, () => {
+  selected.value = [];
+});
+
+const cellClick = (e) => {
+  if (props.preventCellClick) {
+    e.stopPropagation();
+  }
+};
+const deleteArray = () => {
+  emit('onArrayDelete', selected.value);
+  selected.value = [];
+};
+
 const onRowClick = (row) => {
   const idx = selected.value.indexOf(row);
   if (idx !== -1) {

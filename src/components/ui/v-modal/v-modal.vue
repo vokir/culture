@@ -21,31 +21,37 @@
         <div class="modal">
           <div class="modal__close" @click="closeModal">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15"
-              height="15"
-              viewBox="0 0 15 15"
               fill="none"
+              height="15"
               stroke="white"
+              viewBox="0 0 15 15"
+              width="15"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 d="M11.875 3.125L3.12504 11.875"
                 stroke="inherit"
-                stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                stroke-width="1.5"
               />
               <path
                 d="M3.125 3.125L11.875 11.875"
                 stroke="inherit"
-                stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                stroke-width="1.5"
               />
             </svg>
           </div>
           <div class="modal__content">
+            <div v-if="$slots.title" class="modal__title">
+              <slot name="title"></slot>
+            </div>
             <slot></slot>
+            <div v-if="$slots.actions" class="modal__actions">
+              <slot name="actions" />
+            </div>
           </div>
         </div>
       </div>
@@ -55,12 +61,14 @@
 
 <script>
 import { getCurrentInstance, onMounted, onUnmounted, watch } from 'vue';
-import { useEventListener } from '../../../hooks/useEventListeners';
-import useModal from '../../../hooks/useModal';
-import { useModalStore } from '../../../store/modalStore';
+import { useEventListener } from '@/hooks/useEventListeners';
+import useModal from '@/hooks/useModal';
+import { useModalStore } from '@/store/modalStore';
+import VButton from '@/components/ui/v-button/v-button.vue';
 
 export default {
   name: 'VModal',
+  components: { VButton },
   inheritAttrs: false,
   props: {
     centered: Boolean,

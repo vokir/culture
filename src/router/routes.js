@@ -1,6 +1,7 @@
 const News = () => import('@/views/news/news.vue');
 const NewsDetail = () => import('@/views/news-detail/news-detail.vue');
 const Complexes = () => import('@/views/complexes/complexes.vue');
+const ComplexesDetail = () => import('@/views/complexes-detail/complexes-detail.vue');
 
 const routes = [
   {
@@ -33,7 +34,7 @@ const routes = [
   {
     path: '/master-system/complexes/:id',
     name: 'complexes-detail',
-    component: Complexes,
+    component: ComplexesDetail,
     meta: {
       pageTitle: 'Жилые комплексы'
     }

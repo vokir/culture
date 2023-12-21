@@ -1,0 +1,21 @@
+.info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &__row {
+    display: flex;
+    gap: 5px;
+    @include font(14px, 150%);
+
+    &-title {
+      color: var(--variable-7);
+      max-width: 150px;
+      width: 100%;
+    }
+
+    &-value {
+      color: var(--variable-13);
+    }
+  }
+}

@@ -1,0 +1,13 @@
+.document-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.document {
+  display: flex;
+  gap: 10px;
+  color: var(--variable-6);
+  text-decoration: none;
+  align-items: center;
+}

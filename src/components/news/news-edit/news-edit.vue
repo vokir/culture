@@ -1,8 +1,8 @@
 <template>
   <news-form
+    :close-modal-prop="closeModalProp"
     edit
     title="Редактировать новость"
-    :close-modal-prop="closeModalProp"
     @on-save="update"
     @on-cancel="onCancel"
   />
@@ -11,7 +11,7 @@
 <script>
 import { ref } from 'vue';
 import { useToast } from 'vue-toastification';
-import { useNewsStore } from '../../../store/newsStore';
+import { useNewsStore } from '@/store/news';
 
 import NewsForm from '../news-form/news-form.vue';
 

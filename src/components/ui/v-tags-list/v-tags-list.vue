@@ -4,35 +4,14 @@
       {{ label }}
     </div>
     <ul class="tags-wrapper__list">
-      <li v-for="(tag, index) of tags" :key="index" class="tags-wrapper__item">
-        {{ tag.name || tag.UF_TITLE }}
-        <div class="tags-wrapper__remove" @click="$emit('removeTag', index)">
-          <svg
-            fill="none"
-            height="9"
-            viewBox="0 0 9 9"
-            width="9"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M7.125 1.875L1.87502 7.12498"
-              stroke="#868D95"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-            />
-            <path
-              d="M1.875 1.875L7.12498 7.12498"
-              stroke="#868D95"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-            />
-          </svg>
+      <li v-for="(tag, index) of tagList" :key="tag.index" class="tags-wrapper__item">
+        {{ tag[tagLabel] }}
+        <div class="tags-wrapper__remove" @click="emit('removeTag', tag)">
+          <v-icon height="12" name="close" width="12" />
         </div>
       </li>
       <li
-        v-if="!maxTags || tags.length < maxTags"
+        v-if="!maxTags || tagList.length < maxTags"
         class="tags-wrapper__add"
         @click="$emit('openModal')"
       >
@@ -47,20 +26,25 @@
         Добавить
       </li>
     </ul>
-    <slot />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'VTagsList',
-  props: {
-    label: String,
-    tags: [Array, Object],
-    maxTags: Number
+<script setup>
+import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { computed } from 'vue';
+
+const emit = defineEmits(['openModal', 'removeTag']);
+const props = defineProps({
+  label: String,
+  tagLabel: String,
+  tags: {
+    type: Array,
+    default: () => []
   },
-  emits: ['openModal', 'removeTag']
-};
+  maxTags: Number
+});
+
+const tagList = computed(() => props.tags);
 </script>
 
 <style lang="scss" scoped src="./style.scss" />

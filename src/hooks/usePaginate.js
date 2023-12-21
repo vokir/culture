@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue';
 
-const usePaginate = (initialCurrentPage = 1, initialPerPage = 20) => {
+const usePaginate = (initialCurrentPage = 1, initialPerPage = 15) => {
   const currentPage = ref(initialCurrentPage ?? initialCurrentPage);
   const perPage = ref(initialPerPage ?? initialPerPage);
 

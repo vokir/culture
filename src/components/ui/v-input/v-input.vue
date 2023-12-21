@@ -1,16 +1,16 @@
 <template>
   <div class="input-wrapper">
-    <label v-if="label" class="input-wrapper__label" :for="name">{{ label }}</label>
+    <label v-if="label" :for="name" class="input-wrapper__label">{{ label }}</label>
     <input
       :id="name"
-      :name="name"
-      class="input-wrapper__input"
-      v-bind="$attrs"
-      :value="modelValue"
+      :class="['input-wrapper__input', { 'input-wrapper__input--error': error }]"
       :maxlength="maxLength"
-      @input="updateValue"
-      @focus="$emit('focus')"
+      :name="name"
+      :value="modelValue"
+      v-bind="$attrs"
       @blur="$emit('blur')"
+      @focus="$emit('focus')"
+      @input="updateValue"
     />
     <span v-if="maxLength" class="input-wrapper__count"
       >{{ modelValue.length }} / {{ maxLength }}</span
@@ -28,8 +28,9 @@ export default {
       required: true
     },
     label: String,
-    modelValue: String,
-    maxLength: String
+    modelValue: [String, Number],
+    maxLength: String,
+    error: Boolean
   },
   emits: ['update:modelValue', 'focus', 'blur', 'onInput'],
   setup({ maxLength }, { emit }) {
@@ -52,4 +53,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />
