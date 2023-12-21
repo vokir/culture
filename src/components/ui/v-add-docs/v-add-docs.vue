@@ -3,8 +3,8 @@
     :label="label"
     :max-tags="maxTags"
     :tags="modelValue"
-    tagLabel="title"
-    @removeTag="removeDocument"
+    tag-label="title"
+    @remove-tag="removeDocument"
     @open-modal="openModal"
   >
   </v-tags-list>
@@ -31,7 +31,7 @@
         :rows="store.documents"
         disable-select
         disable-settings
-        @rowClick="setSelectedDocs"
+        @row-click="setSelectedDocs"
       >
         <template #tableHeader="col">{{ col.title }}</template>
         <template #tableRow="{ row, col, selected }">

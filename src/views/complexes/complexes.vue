@@ -5,10 +5,10 @@
         :fields="[]"
         action-text="ДОБАВИТЬ КОМПЛЕКС"
         title="Жилые комплексы"
-        @buttonAction="onOpenModal"
+        @button-action="onOpenModal"
       />
       <complexes-list />
-      <complexes-form v-if="isOpen" @closeModal="closeModal" @onSave="onSave" />
+      <complexes-form v-if="isOpen" @close-modal="closeModal" @on-save="onSave" />
     </div>
   </layout-default>
 </template>

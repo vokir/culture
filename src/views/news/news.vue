@@ -13,7 +13,7 @@
         :total="store.pagination.total"
         @update="updateTable"
       />
-      <news-form v-if="isOpen" edit-mode title="Редактирование Новости" @closeModal="closeModal" />
+      <news-form v-if="isOpen" edit-mode title="Редактирование Новости" @close-modal="closeModal" />
     </div>
   </layout-default>
 </template>

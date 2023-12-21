@@ -29,7 +29,7 @@
       v-if="isOpen"
       :title="`${currentHouse.name} / ${complex.name}`"
       edit-mode
-      @closeModal="closeModal"
+      @close-modal="closeModal"
     />
   </div>
 </template>

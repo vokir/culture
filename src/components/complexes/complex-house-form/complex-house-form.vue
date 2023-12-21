@@ -1,5 +1,5 @@
 <template>
-  <v-modal @closeModal="onCancel">
+  <v-modal @close-modal="onCancel">
     <template #title>{{ title }}</template>
     <div class="complex-form">
       <v-card class="complex-form__card complex-form__card-grid">

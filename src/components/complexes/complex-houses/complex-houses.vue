@@ -36,7 +36,7 @@
     <complex-house-form
       v-if="isOpen"
       :title="`Новый дом / ${complex.name}`"
-      @closeModal="closeModal"
+      @close-modal="closeModal"
     />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <v-modal @closeModal="emit('closeModal')">
+  <v-modal @close-modal="emit('closeModal')">
     <template #title>{{ title }}</template>
     <div class="complex-form">
       <v-card class="complex-form__card">
@@ -14,14 +14,14 @@
             v-model="store.form.active"
             :error="validate.active.$error"
             :options="['Да', 'Нет']"
-            labelSelect="Активность*"
+            label-select="Активность*"
           />
         </div>
         <div class="input-row">
           <v-select
             v-model="store.form.visibility"
             :options="['Да', 'Нет']"
-            labelSelect="Видимость ЖК для ИС"
+            label-select="Видимость ЖК для ИС"
           />
           <v-input
             v-model="store.form.order"
