@@ -46,6 +46,7 @@ yarn build-storybook
     ├── src # Весь исходный код проекта
     │   ├── assets # Дополнительные статические ресурсы
     │   │   └── fonts
+    │   │   └── icons
     │   │   └── style
     │   ├── components # Все vue компоненты проекта (*)
     │   │   ├── SomeComponent
@@ -54,12 +55,10 @@ yarn build-storybook
     │   │   ├── UI # Простые ui эелементы интерфейса: кнопки, карточки, шильдики и т.д.
     │   │   │   ├── v-button
     │   │   │   │   └── v-button.vue
-    │   │   │   │   └── v-button.stories.js
-    │   │   │   │   └── style.scss
+    │   │   │   │   └── v-button.scss
     │   │   │   ├── v-input
     │   │   │   │   └── v-input.vue
-    │   │   │   │   └── v-input.stories.js
-    │   │   │   │   └── style.scss
+    │   │   │   │   └── v-input.scss
     │   │   │   └── ...
     │   ├── hooks # Папка с хуками приложения
     │   │   ├── useEventListeners.js
@@ -77,8 +76,7 @@ yarn build-storybook
 ## Пример структуры компонентов
 
 ```
-ui-button
-├── style.scss # Стили главного комонента
-├── v-button.vue # Код главного компонента
-└── v-button.stories.js # Документация компонентов через Storybook
+v-button
+├── v-button.scss # Стили главного комонента
+└── v-button.vue # Код главного компонента
 ```
