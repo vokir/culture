@@ -17,8 +17,8 @@
     <entryway-form
       v-if="isOpen"
       :title="`Новый подъезд / ${currentHouse.name} / ${currentComplex.name}`"
+      @onSave="onSave"
       @close-modal="closeModal"
-      @on-save="onSave"
     />
   </div>
 </template>
@@ -42,7 +42,7 @@ const currentPremise = inject('premise');
 
 const onSave = async (data) => {
   await store.createEntryway(data, currentHouse.value.realId);
-  await emit('updateEntry');
+  await store.getEntrywayList(currentHouse.value.realId);
 };
 
 const select = (data) => {

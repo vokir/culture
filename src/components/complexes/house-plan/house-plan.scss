@@ -21,6 +21,7 @@
     color: var(--variable-8);
     @include font(12px, 150%);
     white-space: nowrap;
+    cursor: pointer;
   }
 }
 
@@ -83,6 +84,7 @@
   color: var(--variable-8);
   @include font(10px, 150%);
   transition: background-color 0.2s ease;
+  cursor: pointer;
 
   &--active {
     background: var(--variable-16);
