@@ -60,19 +60,17 @@ export default {
       default: () => []
     }
   },
-  emits: ['update:modelValue', 'toggleOption'],
+  emits: ['update:modelValue', 'toggleOption', 'onSelect'],
   setup(props, { emit }) {
     const selectedValue = ref([]);
     const isOpen = ref(false);
     const input = ref(null);
 
     const activate = () => {
-      input.value.focus();
       isOpen.value = true;
     };
 
     const deactivate = () => {
-      input.value.blur();
       isOpen.value = false;
     };
 
@@ -98,6 +96,7 @@ export default {
       selectedValue.value = selected;
       deactivate();
       emit('update:modelValue', option);
+      emit('onSelect', option);
     };
 
     onMounted(() => {
