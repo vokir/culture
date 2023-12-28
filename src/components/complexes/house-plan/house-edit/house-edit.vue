@@ -26,7 +26,7 @@
       <div class="house__header-item">
         <div class="house__header-title">Этаж</div>
         <v-select />
-        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
+        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" @click="openFloorModal" />
       </div>
       <div class="house__header-item">
         <div class="house__header-title">Помещение</div>
@@ -35,16 +35,24 @@
       </div>
     </div>
     <icon-button :active="editMode" name="pen" size="10" variant="orange" @click="toggleMode" />
+
+    <floor-form
+      v-if="isOpenFloor"
+      :title="`Новый этаж / ${currentHouse.name} / ${currentComplex.name}`"
+      :entryways="entryways"
+      @close-modal="closeFloorModal"
+      @on-save="onSave" />
   </div>
 </template>
 
 <script setup>
 import IconButton from '@/components/ui/icon-button/icon-button.vue';
-import { inject, ref } from 'vue';
+import {computed, inject, ref} from 'vue';
 import VSelect from '@/components/ui/v-select/v-select.vue';
 import { useEntrywayStore } from '@/store/entryway/index.js';
 import EntrywayForm from '@/components/complexes/entryway-form/entryway-form.vue';
 import useModal from '@/hooks/useModal.js';
+import FloorForm from "@/components/complexes/floor-form/floor-form.vue";
 
 const emit = defineEmits(['updateEntry']);
 const store = useEntrywayStore();
@@ -53,8 +61,20 @@ const currentHouse = inject('house');
 const currentEntry = inject('entry');
 
 const { isOpen: isOpenEntry, openModal: openEntryModal, closeModal: closeEntryModal } = useModal();
+const { isOpen: isOpenFloor, openModal: openFloorModal, closeModal: closeFloorModal } = useModal();
 
 const editMode = ref(false);
+
+const entryways = computed(() => {
+  const entrywayCount = JSON.parse(JSON.stringify(currentHouse.value)).entrywaysCount;
+  let entrywaysCountArray = [];
+
+  for (let i = 1; i <= entrywayCount; i++) {
+    entrywaysCountArray.push(i);
+  }
+
+  return entrywaysCountArray;
+});
 
 const toggleMode = () => {
   editMode.value = !editMode.value;
