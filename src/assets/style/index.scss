@@ -115,4 +115,17 @@ img {
   opacity: 0;
 }
 
+.input-row {
+  display: grid;
+  gap: 26px;
+  margin-bottom: 20px;
+  grid-template-columns: 1fr 1fr;
+
+  &__void {
+    background: #F2F4F5;
+    height: 20px;
+    margin: 57px -35px;
+  }
+}
+
 @import './imports';
