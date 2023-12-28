@@ -18,12 +18,7 @@
           />
         </div>
         <div class="input-row">
-          <v-input
-            v-model="localData.number"
-            disabled
-            label="Номер этажа"
-            name="name"
-          />
+          <v-input v-model="localData.number" disabled label="Номер этажа" name="name" />
         </div>
       </v-card>
       <v-card class="floor-form__right">
@@ -45,18 +40,18 @@
 </template>
 
 <script setup>
-import VModal from "@/components/ui/v-modal/v-modal.vue";
-import VCard from "@/components/ui/v-card/v-card.vue";
-import VSelect from "@/components/ui/v-select/v-select.vue";
-import VInput from "@/components/ui/v-input/v-input.vue";
-import VAddDocs from "@/components/ui/v-add-docs/v-add-docs.vue";
-import {useFloorStore} from "@/store/floor/index.js";
-import VButton from "@/components/ui/v-button/v-button.vue";
-import useVuelidate from "@vuelidate/core";
-import {required} from "@vuelidate/validators";
-import {inject, ref, watchEffect} from "vue";
-import {useRoute} from "vue-router";
-import VIcon from "@/components/ui/v-icon/v-icon.vue";
+import VModal from '@/components/ui/v-modal/v-modal.vue';
+import VCard from '@/components/ui/v-card/v-card.vue';
+import VSelect from '@/components/ui/v-select/v-select.vue';
+import VInput from '@/components/ui/v-input/v-input.vue';
+import VAddDocs from '@/components/ui/v-add-docs/v-add-docs.vue';
+import { useFloorStore } from '@/store/floor/index.js';
+import VButton from '@/components/ui/v-button/v-button.vue';
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
+import { inject, ref, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
+import VIcon from '@/components/ui/v-icon/v-icon.vue';
 
 const emit = defineEmits(['closeModal']);
 const props = defineProps({
@@ -88,8 +83,7 @@ const localData = ref({
   documents: []
 });
 
-console.log(store.floors)
-
+console.log(store.floors);
 
 const rules = {
   type: {
@@ -161,6 +155,4 @@ const onDelete = async () => {
 };
 </script>
 
-<style scoped lang="scss" src="./floor-form.scss">
-
-</style>
+<style lang="scss" scoped src="./floor-form.scss"></style>
