@@ -17,7 +17,7 @@ export const useComplexStore = defineStore('complex', () => {
     coords: '',
     icon: null,
     documents: [],
-    rules: []
+    accommodationPolicy: []
   });
   const complexes = ref([]);
   const isLoading = ref(true);
@@ -110,7 +110,7 @@ export const useComplexStore = defineStore('complex', () => {
       phone: '',
       coords: '',
       documents: [],
-      rules: [],
+      accommodationPolicy: [],
       icon: null
     };
   };
@@ -123,6 +123,7 @@ export const useComplexStore = defineStore('complex', () => {
       address: complex.address,
       icon: complex.icon,
       documents: complex.documents,
+      accommodationPolicy: complex.accommodationPolicy,
       phone: '',
       coords: '',
       visibility: 'Все',

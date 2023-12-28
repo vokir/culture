@@ -9,6 +9,12 @@ const objectToFormData = (object) => {
       });
       continue;
     }
+    if (key === 'accommodationPolicy') {
+      object[key].forEach((doc) => {
+        formData.append('accommodationPolicy[]', doc.realId);
+      });
+      continue;
+    }
     if (object[key]) {
       formData.append(key, object[key]);
     }

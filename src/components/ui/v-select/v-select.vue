@@ -70,10 +70,12 @@ export default {
       input.value.focus();
       isOpen.value = true;
     };
+
     const deactivate = () => {
       input.value.blur();
       isOpen.value = false;
     };
+
     const toggleOptions = () => {
       isOpen.value ? deactivate() : activate();
     };

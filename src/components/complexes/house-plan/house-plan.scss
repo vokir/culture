@@ -3,7 +3,7 @@
 
   &__template {
     display: flex;
-    gap: 30px;
+    margin-top: 40px;
   }
 
 }
@@ -11,10 +11,16 @@
 .template-body__entryway {
   display: flex;
   gap: 10px;
+  margin-bottom: 7px;
 
   &-item {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: center;
     color: var(--variable-8);
     @include font(12px, 150%);
+    white-space: nowrap;
   }
 }
 
@@ -22,6 +28,9 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
+  padding-top: 10px;
+
+  border-right: 1px solid var(--variable-19);
 
   &__item {
     width: 30px;
@@ -39,6 +48,9 @@
   flex-direction: column;
   gap: 3px;
   overflow: auto;
+  padding: 10px 30px 0;
+  border-top: 1px solid var(--variable-19);
+
 }
 
 .template-body__floor {
@@ -49,6 +61,12 @@
 .template-body__entry {
   display: flex;
   gap: 3px;
+
+  &--active {
+    .template-body__premise {
+      background: var(--variable-16);
+    }
+  }
 }
 
 .template-body__premise {
@@ -64,4 +82,10 @@
   text-overflow: ellipsis;
   color: var(--variable-8);
   @include font(10px, 150%);
+  transition: background-color 0.2s ease;
+
+  &--active {
+    background: var(--variable-16);
+
+  }
 }

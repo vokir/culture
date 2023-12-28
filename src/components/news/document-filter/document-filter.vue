@@ -1,15 +1,15 @@
-<template lang="">
+<template>
   <v-filter-and-search
+    :changing-settings="changingSettings"
+    :checked-fields="checkedFields"
+    :custom-fields="false"
     :fields="computedFields"
     :fields-with-value="fieldsWithValue"
-    :checked-fields="checkedFields"
+    :filter-placeholder-prop="'Фильтр'"
     :filters="filtersTemp"
-    :changing-settings="changingSettings"
-    :selected-filter="selectedFilter"
     :search="search"
     :search-placeholder-prop="'поиск'"
-    :filter-placeholder-prop="'Фильтр'"
-    :custom-fields="false"
+    :selected-filter="selectedFilter"
     @filter-table="filterTable"
     @set-search="setSearch"
     @reset-fields="resetFields"

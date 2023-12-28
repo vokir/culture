@@ -18,6 +18,7 @@
           name="order"
           type="number"
         />
+        <v-input v-model="localData.name" label="Название дома*" name="name" />
         <v-input v-model="localData.coords" label="Координаты" name="coords" />
       </v-card>
       <v-card class="complex-form__card">
@@ -70,6 +71,7 @@ const currentHouse = inject('house');
 const localData = ref({
   number: store.houses.length + 1,
   order: 1,
+  name: '',
   coords: '',
   documents: []
 });
@@ -91,6 +93,9 @@ watchEffect(() => {
 const rules = {
   number: {
     required
+  },
+  name: {
+    required
   }
 };
 
@@ -102,7 +107,10 @@ const onSave = async () => {
     return;
   }
   if (props.editMode) {
-    await store.updateHouse(localData.value);
+    const res = await store.updateHouse(localData.value);
+    if (res.status === 200) {
+      currentHouse.value = res.data.data;
+    }
   } else {
     await store.createHouse(localData.value, route.params.id);
   }
@@ -110,6 +118,7 @@ const onSave = async () => {
   localData.value = {
     number: store.houses.length + 1,
     order: 1,
+    name: '',
     coords: '',
     documents: []
   };
@@ -129,6 +138,7 @@ const onCancel = () => {
   localData.value = {
     number: store.houses.length + 1,
     order: 1,
+    name: '',
     coords: '',
     documents: []
   };
@@ -136,7 +146,7 @@ const onCancel = () => {
 };
 
 const onDelete = async () => {
-  await store.deleteHouse();
+  await store.deleteHouse(currentHouse.value.realId);
   await store.getHousesList(route.params.id);
   emit('closeModal');
 };

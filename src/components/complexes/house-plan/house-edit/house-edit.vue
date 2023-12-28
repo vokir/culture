@@ -4,7 +4,14 @@
       <div class="house__header-item">
         <div class="house__header-title">Подъезд</div>
         <div class="entryway-list">
-          <div v-for="entry of store.entryways" class="entryway-list__item" @click="select(entry)">
+          <div
+            v-for="entry of store.entryways"
+            :class="[
+              'entryway-list__item',
+              { 'entryway-list__item--active': entry.realId === currentEntry.realId }
+            ]"
+            @click="select(entry)"
+          >
             {{ entry.number }}
           </div>
         </div>
@@ -23,16 +30,26 @@
           @on-save="onSave"
         />
       </div>
-      <div class="house__header-item">
-        <div class="house__header-title">Этаж</div>
-        <v-select />
-        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
-      </div>
-      <div class="house__header-item">
-        <div class="house__header-title">Помещение</div>
-        <v-select />
-        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
-      </div>
+      <transition name="fade">
+        <div v-if="currentEntry.realId" class="house__header-item">
+          <div class="house__header-title">Этаж</div>
+          <v-select
+            v-model="currentFloor"
+            :options="floors"
+            label="number"
+            placeholder=""
+            @update:modelValue="onSelectFloor"
+          />
+          <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
+        </div>
+      </transition>
+      <transition name="fade">
+        <div v-if="currentFloor.realId" class="house__header-item">
+          <div class="house__header-title">Помещение</div>
+          <v-select v-model="currentPremise" :options="premises" label="number" placeholder="" />
+          <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
+        </div>
+      </transition>
     </div>
     <icon-button :active="editMode" name="pen" size="10" variant="orange" @click="toggleMode" />
   </div>
@@ -40,7 +57,7 @@
 
 <script setup>
 import IconButton from '@/components/ui/icon-button/icon-button.vue';
-import { inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import VSelect from '@/components/ui/v-select/v-select.vue';
 import { useEntrywayStore } from '@/store/entryway/index.js';
 import EntrywayForm from '@/components/complexes/entryway-form/entryway-form.vue';
@@ -51,17 +68,45 @@ const store = useEntrywayStore();
 const currentComplex = inject('complex');
 const currentHouse = inject('house');
 const currentEntry = inject('entry');
+const currentFloor = inject('floor');
+const currentPremise = inject('premise');
 
 const { isOpen: isOpenEntry, openModal: openEntryModal, closeModal: closeEntryModal } = useModal();
 
 const editMode = ref(false);
 
+const floors = computed(() => {
+  if (currentEntry.value.realId) {
+    return currentEntry.value.floors;
+  } else {
+    return [];
+  }
+});
+const premises = computed(() => {
+  if (currentFloor.value.realId) {
+    return currentFloor.value.premises;
+  } else {
+    return [];
+  }
+});
+
 const toggleMode = () => {
+  currentEntry.value = {};
   editMode.value = !editMode.value;
 };
 
 const select = (data) => {
-  currentEntry.value = data;
+  if (currentEntry.value === data) {
+    currentEntry.value = {};
+  } else {
+    currentEntry.value = data;
+  }
+  currentFloor.value = {};
+  currentPremise.value = {};
+};
+
+const onSelectFloor = () => {
+  currentPremise.value = {};
 };
 
 const onSave = async (data) => {

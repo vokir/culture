@@ -68,6 +68,10 @@ const props = defineProps({
     type: Number,
     default: 5
   },
+  multiply: {
+    type: Boolean,
+    default: true
+  },
   modelValue: {
     type: Array,
     required: false,
@@ -111,11 +115,15 @@ const columns = ref([
 ]);
 
 const setSelectedDocs = (row) => {
-  let idx = selectedDocs.value.findIndex((el) => el.realId === row.realId);
-  if (idx !== -1) {
-    selectedDocs.value.splice(idx, 1);
+  if (props.multiply) {
+    let idx = selectedDocs.value.findIndex((el) => el.realId === row.realId);
+    if (idx !== -1) {
+      selectedDocs.value.splice(idx, 1);
+    } else {
+      selectedDocs.value.push(row);
+    }
   } else {
-    selectedDocs.value.push(row);
+    selectedDocs.value = [row];
   }
 };
 

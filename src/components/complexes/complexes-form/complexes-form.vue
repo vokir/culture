@@ -53,7 +53,12 @@
           <v-file v-model="store.form.icon" label="Добавить логотип" />
         </v-card>
         <v-card class="card-blue">
-          <v-add-docs v-model="store.form.rules" label="Правила проживания" />
+          <v-add-docs
+            v-model="store.form.accommodationPolicy"
+            :maxTags="1"
+            :multiply="false"
+            label="Правила проживания"
+          />
         </v-card>
         <v-card>
           <v-add-docs v-model="store.form.documents" label="Документы" />
