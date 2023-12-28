@@ -67,6 +67,9 @@ const props = defineProps({
 const store = useHouseStore();
 const route = useRoute();
 const currentHouse = inject('house');
+const currentEntry = inject('entry');
+const currentFloor = inject('floor');
+const currentPremise = inject('premise');
 
 const localData = ref({
   number: store.houses.length + 1,
@@ -148,6 +151,10 @@ const onCancel = () => {
 const onDelete = async () => {
   await store.deleteHouse(currentHouse.value.realId);
   await store.getHousesList(route.params.id);
+  currentHouse.value = {};
+  currentEntry.value = {};
+  currentFloor.value = {};
+  currentPremise.value = {};
   emit('closeModal');
 };
 </script>

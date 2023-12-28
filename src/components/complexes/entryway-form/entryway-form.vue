@@ -35,6 +35,10 @@
         Сохранить подъезд и создать ещё
       </v-button>
       <v-button variant="link" @click="onCancel">Отмена</v-button>
+      <v-button v-if="editMode" class="delete-btn" variant="danger" @click="onDelete">
+        <v-icon height="12" name="cross" width="12" />
+        Удалить подъезд
+      </v-button>
     </template>
   </v-modal>
 </template>
@@ -46,6 +50,8 @@ import VModal from '@/components/ui/v-modal/v-modal.vue';
 import VAddDocs from '@/components/ui/v-add-docs/v-add-docs.vue';
 import VCard from '@/components/ui/v-card/v-card.vue';
 import { inject, ref, watchEffect } from 'vue';
+import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { useEntrywayStore } from '@/store/entryway/index.js';
 
 const emit = defineEmits(['closeModal', 'onSave']);
 const props = defineProps({
@@ -67,6 +73,8 @@ const form = ref({
 });
 
 const currentEntry = inject('entry');
+const currentHouse = inject('house');
+const entryStore = useEntrywayStore();
 
 watchEffect(() => {
   if (props.editMode) {
@@ -94,6 +102,12 @@ const onCancel = () => {
     order: 1,
     documents: []
   };
+  emit('closeModal');
+};
+
+const onDelete = async () => {
+  await entryStore.deleteEntryway(currentEntry.value.realId);
+  await entryStore.getEntrywayList(currentHouse.value.realId);
   emit('closeModal');
 };
 </script>

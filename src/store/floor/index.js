@@ -5,9 +5,10 @@ import objectToFormData from '@/helpers/objectToFormData.js';
 
 export const useFloorStore = defineStore('floor', () => {
   const form = ref({
-    type: 0,
-    entranceNumber: 1,
-    floorNumber: 1,
+    typeId: 0,
+    name: '',
+    entrywayId: 1,
+    number: 1,
     rules: []
   });
 
@@ -27,7 +28,10 @@ export const useFloorStore = defineStore('floor', () => {
 
   const createFloor = async (data, houseId) => {
     try {
-      const formData = objectToFormData(data);
+      const localData = data;
+      localData.entrywayId = data.entrywayId.realId;
+      localData.typeId = null;
+      const formData = objectToFormData(localData);
       formData.append('houseId', houseId);
       await create(formData);
     } catch (e) {

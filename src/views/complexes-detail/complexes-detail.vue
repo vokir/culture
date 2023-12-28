@@ -10,7 +10,7 @@
       <house-info v-if="currentHouse.realId" />
     </transition>
     <transition mode="out-in" name="fade">
-      <entryway-info v-if="currentEntry.realId" />
+      <entryway-info v-if="currentEntry.realId && !currentFloor.realId" />
     </transition>
     <transition>
       <floor-info v-if="currentEntry.realId && currentFloor.realId" />

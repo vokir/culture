@@ -4,7 +4,11 @@
     <div v-if="entryWayStore.floors.length" class="house__template">
       <div class="template-floors">
         <div class="template-floors__item"></div>
-        <div v-for="(floor, idx) of entryWayStore.floors" class="template-floors__item">
+        <div
+          v-for="(floor, idx) of entryWayStore.floors"
+          class="template-floors__item"
+          @click="selectFloor(floor)"
+        >
           {{ idx + 1 }}
         </div>
       </div>
@@ -15,6 +19,7 @@
             :key="entry.realId"
             :style="calcEntryWidth(entry.premisesCount)"
             class="template-body__entryway-item"
+            @click="selectEntryway(entry)"
           >
             {{ entry.name }}
           </div>
@@ -44,6 +49,7 @@
                 { 'template-body__premise--active': premiseIsActive(premise.realId, floor.realId) }
               ]"
               :data-floor="premise.realId"
+              @click="selectPremise(premise)"
             >
               {{ premise.number }}
             </div>
@@ -63,6 +69,25 @@ const currentHouse = inject('house');
 const currentEntry = inject('entry');
 const currentFloor = inject('floor');
 const currentPremise = inject('premise');
+
+const selectFloor = (floors) => {
+  if (currentEntry.value.realId) {
+    currentFloor.value = floors.find((el) => el.entryId === currentEntry.value.realId);
+    currentPremise.value = {};
+  }
+};
+
+const selectPremise = (premise) => {
+  currentPremise.value = premise;
+  currentEntry.value = premise.entry;
+  currentFloor.value = premise.floor;
+};
+
+const selectEntryway = (entry) => {
+  currentEntry.value = entry;
+  currentFloor.value = {};
+  currentPremise.value = {};
+};
 
 const entryIsActive = (entryId) => {
   if (currentFloor.value.realId) {

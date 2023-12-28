@@ -1,18 +1,5 @@
-@import "@/components/complexes/complex-info/complex-info";
+@import "@/components/complexes/house-info/house-info";
 
-.house-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 17px;
-
-  &__name {
-    @include font(20px, 150%, 600);
-    color: var(--variable-13);
-  }
-
-  :deep(.btn) {
-    gap: 5px;
-    padding: 10px;
-  }
+.complex-info {
+  height: 443px;
 }

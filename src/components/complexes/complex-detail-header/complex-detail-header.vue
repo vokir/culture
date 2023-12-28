@@ -12,8 +12,8 @@
       v-if="isOpen"
       edit-mode
       title="Редактирование ЖК"
+      @onSave="onSave"
       @close-modal="closeModal"
-      @on-save="onSave"
     />
   </div>
 </template>
