@@ -52,6 +52,13 @@
       </transition>
     </div>
     <icon-button :active="editMode" name="pen" size="10" variant="orange" @click="toggleMode" />
+
+    <floor-form
+      v-if="isOpenFloor"
+      :title="`Новый этаж / ${currentHouse.name} / ${currentComplex.name}`"
+      :entryways="entryways"
+      @close-modal="closeFloorModal"
+      @on-save="onSave" />
   </div>
 </template>
 
@@ -62,6 +69,7 @@ import VSelect from '@/components/ui/v-select/v-select.vue';
 import { useEntrywayStore } from '@/store/entryway/index.js';
 import EntrywayForm from '@/components/complexes/entryway-form/entryway-form.vue';
 import useModal from '@/hooks/useModal.js';
+import FloorForm from "@/components/complexes/floor-form/floor-form.vue";
 
 const emit = defineEmits(['updateEntry']);
 const store = useEntrywayStore();
@@ -72,6 +80,7 @@ const currentFloor = inject('floor');
 const currentPremise = inject('premise');
 
 const { isOpen: isOpenEntry, openModal: openEntryModal, closeModal: closeEntryModal } = useModal();
+const { isOpen: isOpenFloor, openModal: openFloorModal, closeModal: closeFloorModal } = useModal();
 
 const editMode = ref(false);
 
@@ -81,6 +90,16 @@ const floors = computed(() => {
   } else {
     return [];
   }
+});
+const entryways = computed(() => {
+  const entrywayCount = JSON.parse(JSON.stringify(currentHouse.value)).entrywaysCount;
+  let entrywaysCountArray = [];
+
+  for (let i = 1; i <= entrywayCount; i++) {
+    entrywaysCountArray.push(i);
+  }
+
+  return entrywaysCountArray;
 });
 const premises = computed(() => {
   if (currentFloor.value.realId) {
