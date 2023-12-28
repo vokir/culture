@@ -10,9 +10,9 @@ export const useEntrywayStore = defineStore('entryway', () => {
 
   const currentEntryWay = ref({});
 
-  const getEntrywayList = async (complexId) => {
+  const getEntrywayList = async (houseId) => {
     try {
-      const res = await getList(complexId);
+      const res = await getList(houseId);
       if (res.status === 200) {
         entryways.value = res.data?.data ?? [];
         entryways.value.forEach((entry) => {
