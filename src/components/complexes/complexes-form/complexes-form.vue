@@ -66,7 +66,7 @@
       </div>
     </div>
     <template #actions>
-      <v-button type="submit" variant="success" @click="onSave"> Сохранить</v-button>
+      <v-button type="submit" variant="success" @click="onSave">Сохранить</v-button>
       <v-button v-if="!editMode" variant="bordered" @click="onCopy">
         Сохранить жк и создать ещё
       </v-button>
@@ -122,8 +122,8 @@ const onSave = async () => {
     return;
   }
   emit('onSave');
-  emit('closeModal');
 };
+
 const onCopy = async () => {
   const result = await validate.value.$validate();
   if (!result) {
@@ -131,6 +131,7 @@ const onCopy = async () => {
   }
   await store.createComplex(store.form);
 };
+
 const onCancel = () => {
   emit('closeModal');
 };

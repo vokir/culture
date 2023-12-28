@@ -81,11 +81,11 @@ export default {
     watch(
       () => props.modelValue,
       (val) => {
-        select(val);
+        select(val, true);
       }
     );
 
-    const select = (option) => {
+    const select = (option, preventSelect = false) => {
       let label = props.label;
       let selected;
       if (label && option) {
@@ -96,11 +96,13 @@ export default {
       selectedValue.value = selected;
       deactivate();
       emit('update:modelValue', option);
-      emit('onSelect', option);
+      if (!preventSelect) {
+        emit('onSelect', option);
+      }
     };
 
     onMounted(() => {
-      select(props.modelValue);
+      select(props.modelValue, true);
     });
 
     return {

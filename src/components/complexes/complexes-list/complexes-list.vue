@@ -42,7 +42,13 @@
       <span v-else>{{ row[col.id] }}</span>
     </template>
   </v-table-new>
-  <complexes-form v-if="isOpen" edit-mode title="Редактирование ЖК" @close-modal="closeModal" />
+  <complexes-form
+    v-if="isOpen"
+    edit-mode
+    title="Редактирование ЖК"
+    @onSave="onSave"
+    @close-modal="closeModal"
+  />
   <table-pagination
     :current_page="store.pagination.current_page"
     :per_page="store.pagination.per_page"
@@ -78,6 +84,12 @@ const onArrayDelete = (array) => {
     store.getComplexList();
   });
 };
+
+const onSave = async () => {
+  await store.updateComplex();
+  await store.getComplexList();
+};
+
 const onDelete = ({ id }) => {
   store.deleteComplex(id);
   store.getComplexList();

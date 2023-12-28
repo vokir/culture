@@ -32,7 +32,9 @@ export const useEntrywayStore = defineStore('entryway', () => {
                 floorId: premise.floorId,
                 number: premise.number,
                 name: premise.name,
-                realId: premise.realId
+                realId: premise.realId,
+                entry: entry,
+                floor: floor
               });
             });
           });

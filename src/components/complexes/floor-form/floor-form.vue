@@ -6,19 +6,21 @@
         <div class="input-row">
           <v-select
             v-model="localData.typeId"
-            :error="validate.type.$error"
+            :error="validate.typeId.$error"
             :options="['Жилой', 'Технический']"
             label-select="Тип этажа*"
           />
           <v-select
-            v-model="localData.entranceNumber"
-            :error="validate.entranceNumber.$error"
-            :options="entryways"
+            v-model="localData.entrywayId"
+            :error="validate.entrywayId.$error"
+            :options="enterStore.entryways"
+            label="name"
             label-select="Номер подъезда*"
           />
         </div>
         <div class="input-row">
-          <v-input v-model="localData.number" disabled label="Номер этажа" name="name" />
+          <v-input v-model="localData.number" label="Номер этажа" name="number" />
+          <v-input v-model="localData.name" label="Название этажа" name="name" />
         </div>
       </v-card>
       <v-card class="floor-form__right">
@@ -52,6 +54,7 @@ import { required } from '@vuelidate/validators';
 import { inject, ref, watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import VIcon from '@/components/ui/v-icon/v-icon.vue';
+import { useEntrywayStore } from '@/store/entryway/index.js';
 
 const emit = defineEmits(['closeModal']);
 const props = defineProps({
@@ -62,37 +65,28 @@ const props = defineProps({
   editMode: {
     type: Boolean,
     default: false
-  },
-  entryways: {
-    type: Array,
-    default: () => [
-      {
-        title: 'ID',
-        value: '123123123'
-      }
-    ]
   }
 });
 
 const store = useFloorStore();
+const enterStore = useEntrywayStore();
 
 const localData = ref({
-  number: store.form.floorNumber,
-  typeId: store.form.type,
-  entranceNumber: 1,
-  documents: []
+  number: store.form.number,
+  typeId: store.form.typeId,
+  entrywayId: {},
+  documents: [],
+  name: ''
 });
 
-console.log(store.floors);
-
 const rules = {
-  type: {
+  typeId: {
     required
   },
-  entranceNumber: {
+  entrywayId: {
     required
   },
-  floorNumber: {
+  name: {
     required
   }
 };
@@ -100,6 +94,7 @@ const rules = {
 const validate = useVuelidate(rules, localData.value);
 const route = useRoute();
 const currentFloor = inject('floor');
+const currentEntry = inject('entry');
 
 watchEffect(() => {
   if (props.editMode) {
@@ -111,6 +106,8 @@ watchEffect(() => {
       typeId: currentFloor.value.typeId,
       documents: currentFloor.value.documents
     };
+  } else {
+    localData.value.entrywayId = currentEntry.value;
   }
 });
 
@@ -124,14 +121,17 @@ const onSave = async () => {
   } else {
     await store.createFloor(localData.value, route.params.id);
   }
-  await store.getFloorList(route.params.id);
+  await enterStore.getEntrywayList(route.params.id);
+
   localData.value = {
-    number: store.form.floorNumber,
-    typeId: store.form.type,
+    number: store.form.number,
+    typeId: store.form.typeId,
     documents: []
   };
+
   emit('closeModal');
 };
+
 const onCopy = async () => {
   const result = await validate.value.$validate();
   if (!result) {
@@ -140,14 +140,17 @@ const onCopy = async () => {
   await store.createFloor(localData.value, route.params.id);
   await store.getFloorList(route.params.id);
 };
+
 const onCancel = () => {
   localData.value = {
-    number: store.form.floorNumber,
-    typeId: store.form.type,
+    number: store.form.number,
+    typeId: store.form.typeId,
+    name: '',
     documents: []
   };
   emit('closeModal');
 };
+
 const onDelete = async () => {
   await store.deleteFloor();
   await store.getFloorList(route.params.id);
