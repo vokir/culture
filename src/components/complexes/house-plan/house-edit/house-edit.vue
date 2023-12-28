@@ -32,7 +32,7 @@ const toggleMode = () => {
   editMode.value = !editMode.value;
 };
 
-provide('editMode', editMode.value);
+provide('editMode', editMode);
 </script>
 
 <style lang="scss" scoped src="./house-edit.scss"></style>
