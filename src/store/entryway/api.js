@@ -11,6 +11,16 @@ const getList = async (houseId) => {
   });
 };
 
+const getRequestList = async (entryId) => {
+  const params = new URLSearchParams();
+
+  params.append('findWhere[entryway_id]', entryId);
+
+  return await axiosInstance.get('/public/request', {
+    params
+  });
+};
+
 const create = async (data) => {
   return await axiosInstance.post('/private/entryway', data, {
     headers: {
@@ -38,4 +48,4 @@ const update = async (id, data) => {
   });
 };
 
-export { getList, create, remove, update };
+export { getList, create, remove, update, getRequestList };

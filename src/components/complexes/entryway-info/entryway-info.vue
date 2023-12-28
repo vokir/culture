@@ -22,11 +22,15 @@
         </v-tabs>
       </div>
     </div>
-    <div class="complex-info__right"></div>
+    <div class="complex-info__right">
+      <entryway-requests />
+    </div>
     <entryway-form
       v-if="isOpen"
       :title="`${currentEntry.name} / ${currentHouse.name} /  ${currentComplex.name}`"
       edit-mode
+      @onCopy="entryStore.createEntryway"
+      @onSave="onSave"
       @close-modal="closeModal"
     />
   </div>
@@ -44,12 +48,23 @@ import { computed, inject } from 'vue';
 import createInfo from '@/helpers/createInfo.js';
 import useModal from '@/hooks/useModal.js';
 import EntrywayForm from '@/components/complexes/entryway-form/entryway-form.vue';
+import EntrywayRequests from '@/components/complexes/entryway-requests/entryway-requests.vue';
+import { useEntrywayStore } from '@/store/entryway/index.js';
 
 const { isOpen, closeModal, openModal } = useModal();
 
 const currentComplex = inject('complex');
 const currentHouse = inject('house');
 const currentEntry = inject('entry');
+
+const entryStore = useEntrywayStore();
+
+const onSave = async (data) => {
+  const res = await entryStore.updateEntryway(data, currentHouse.value.realId);
+  if (res.status === 200) {
+    currentEntry.value = res.data.data;
+  }
+};
 
 const entryInfo = computed(() => {
   const fields = {

@@ -10,14 +10,16 @@
           {{ cell.name }}
         </div>
         <div v-else class="search-cell-text">
-          <template v-if="cell.displayValue.length <= 20"
-            ><span :title="cell.displayValue">{{ cell.displayValue }}</span></template
-          >
-          <template v-else
-            ><span :title="cell.displayValue">{{
-              cell.displayValue.slice(0, 20) + ' ...'
-            }}</span></template
-          >
+          <template v-if="cell.displayValue.length <= 20">
+            <span :title="cell.displayValue">
+              {{ cell.displayValue }}
+            </span>
+          </template>
+          <template v-else>
+            <span :title="cell.displayValue">
+              {{ cell.displayValue.slice(0, 20) + ' ...' }}
+            </span>
+          </template>
         </div>
         <button
           class="search-cell-btn"
@@ -29,58 +31,58 @@
         >
           <svg
             class="svg-stroke"
-            width="11"
+            fill="none"
             height="12"
             viewBox="0 0 11 12"
-            fill="none"
+            width="11"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
               d="M8.71094 2.7915L2.2943 9.20814"
               stroke="white"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
             <path
               d="M2.28906 2.7915L8.7057 9.20814"
               stroke="white"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
           </svg>
         </button>
       </div>
       <div v-if="index === 2" class="search-cell">
         <div
-          class="search-cell-text"
           :title="fieldsWithValue.filter((_, i) => i >= 2).map((field) => field.displayValue)"
+          class="search-cell-text"
         >
           и ещё {{ fieldsWithValue.length - 2 }}
         </div>
         <button class="search-cell-btn" @click.stop="$emit('clearLatestFields')">
           <svg
             class="svg-stroke"
-            width="11"
+            fill="none"
             height="12"
             viewBox="0 0 11 12"
-            fill="none"
+            width="11"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
               d="M8.71094 2.7915L2.2943 9.20814"
               stroke="white"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
             <path
               d="M2.28906 2.7915L8.7057 9.20814"
               stroke="white"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
           </svg>
         </button>
@@ -89,15 +91,15 @@
 
     <div class="search-filter-container">
       <v-dropdown
-        class="search-filter"
+        :auto-hide="false"
+        :boundary="searchFilterContainer"
+        :container="searchFilterContainer"
         :delay="{ show: 0, hide: 0 }"
-        :triggers="[]"
+        :distance="12"
         :popper-triggers="[]"
         :shown="isOpened"
-        :auto-hide="false"
-        :container="searchFilterContainer"
-        :distance="12"
-        :boundary="searchFilterContainer"
+        :triggers="[]"
+        class="search-filter"
         placement="bottom-start"
       >
         <template #popper>
@@ -107,13 +109,13 @@
                 <div class="search-left__title">Фильтры</div>
                 <draggable
                   v-model="filtersComputed"
-                  class="search-left__items"
-                  v-bind="dragOptions"
                   :group="'filters'"
-                  item-key="order"
+                  class="search-left__items"
                   handle=".search-left__drag-and-drop"
-                  @start="true"
+                  item-key="order"
+                  v-bind="dragOptions"
                   @end="false"
+                  @start="true"
                 >
                   <template #item="{ element }">
                     <div
@@ -128,15 +130,15 @@
                     >
                       <div v-if="changingSettings" class="search-left__drag-and-drop">
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
                           height="10"
                           viewBox="0 0 12 10"
+                          width="12"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <g fill="#535C69" fill-rule="evenodd">
-                            <rect width="12" height="2" rx="1" />
-                            <rect width="12" height="2" y="4" rx="1" />
-                            <rect width="12" height="2" y="8" rx="1" />
+                            <rect height="2" rx="1" width="12" />
+                            <rect height="2" rx="1" width="12" y="4" />
+                            <rect height="2" rx="1" width="12" y="8" />
                           </g>
                         </svg>
                       </div>
@@ -167,61 +169,66 @@
                         <span
                           v-if="element.pinned || changingSettings"
                           @click.stop="$emit('setPin', element)"
-                          ><svg
+                        >
+                          <svg
                             :class="['svg-fill', { 'svg-pinned': element.pinned }]"
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="12"
                             height="11"
                             viewBox="0 0 12 11"
-                          >
-                            <path
-                              fill="#535C68"
-                              fill-rule="evenodd"
-                              d="M11.466 2.964L8.73.23C8.535.03 8.25-.046 7.98.025c-.267.07-.476.28-.55.547-.07.267.004.553.2.75l.56.558L3.8 5.157l-.55-.55c-.303-.304-.794-.306-1.098-.004-.304.302-.306.793-.004 1.097l1.677 1.676-3.092 3.3c-.076.077-.076.2 0 .277.076.076.2.076.276 0l3.3-3.102 1.674 1.675c.304.304.797.304 1.1 0 .305-.304.305-.797 0-1.1l-.55-.55 3.274-4.39.565.563c.303.28.772.27 1.065-.02.293-.29.305-.76.028-1.064z"
-                            /></svg
-                        ></span>
-                        <span v-if="changingSettings" @click.stop="editFilterName($event, element)"
-                          ><svg
-                            class="svg-fill"
-                            width="11"
-                            height="12"
-                            viewBox="0 0 11 12"
-                            fill="none"
+                            width="12"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
+                              d="M11.466 2.964L8.73.23C8.535.03 8.25-.046 7.98.025c-.267.07-.476.28-.55.547-.07.267.004.553.2.75l.56.558L3.8 5.157l-.55-.55c-.303-.304-.794-.306-1.098-.004-.304.302-.306.793-.004 1.097l1.677 1.676-3.092 3.3c-.076.077-.076.2 0 .277.076.076.2.076.276 0l3.3-3.102 1.674 1.675c.304.304.797.304 1.1 0 .305-.304.305-.797 0-1.1l-.55-.55 3.274-4.39.565.563c.303.28.772.27 1.065-.02.293-.29.305-.76.028-1.064z"
+                              fill="#535C68"
                               fill-rule="evenodd"
+                            />
+                          </svg>
+                        </span>
+                        <span v-if="changingSettings" @click.stop="editFilterName($event, element)">
+                          <svg
+                            class="svg-fill"
+                            fill="none"
+                            height="12"
+                            viewBox="0 0 11 12"
+                            width="11"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
                               clip-rule="evenodd"
                               d="M0.733677 8.65659L0 11.5L2.68831 10.6585C2.52112 10.1998 2.27473 9.78186 1.96234 9.42657C1.61255 9.06908 1.19236 8.80729 0.733677 8.65659ZM6.68119 2.0975L1.42335 7.83162C1.86004 8.06041 2.26483 8.353 2.62672 8.70279C2.92371 9.08008 3.1723 9.50026 3.36369 9.95125L8.61823 4.22043C8.41473 3.72875 8.13754 3.27776 7.79765 2.88617C7.47206 2.54958 7.09367 2.28339 6.67789 2.0997L6.68009 2.0964L6.68119 2.0975ZM9.68739 0.934837C9.4212 0.648846 9.06041 0.491551 8.68642 0.50035C8.31464 0.50915 7.96045 0.681846 7.70525 0.978837L7.38956 1.32313C7.80975 1.51782 8.19474 1.79391 8.52583 2.1371C8.86022 2.51988 9.13081 2.96207 9.331 3.44276L9.64779 3.09737C9.92058 2.82018 10.0768 2.43299 10.0856 2.026C10.0922 1.61902 9.94808 1.22523 9.68519 0.937036H9.68849L9.68739 0.934837Z"
                               fill="#5B6573"
-                            /></svg
-                        ></span>
+                              fill-rule="evenodd"
+                            />
+                          </svg>
+                        </span>
                         <span
                           v-if="changingSettings"
                           @click.stop="$emit('removeFilter', element.ID)"
-                          ><svg
+                        >
+                          <svg
                             class="svg-stroke"
-                            width="12"
+                            fill="none"
                             height="12"
                             viewBox="0 0 14 14"
-                            fill="none"
+                            width="12"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
                               d="M11.0859 2.91699L2.91931 11.0836"
                               stroke="#C6CDD3"
-                              stroke-width="1.5"
                               stroke-linecap="round"
                               stroke-linejoin="round"
+                              stroke-width="1.5"
                             />
                             <path
                               d="M2.91406 2.91699L11.0807 11.0836"
                               stroke="#C6CDD3"
-                              stroke-width="1.5"
                               stroke-linecap="round"
                               stroke-linejoin="round"
-                            /></svg
-                        ></span>
+                              stroke-width="1.5"
+                            />
+                          </svg>
+                        </span>
                       </div>
                     </div>
                   </template>
@@ -241,17 +248,17 @@
                   <button class="search-left__left-btn" @click="addFilter">
                     <svg
                       class="svg-fill"
-                      width="10"
+                      fill="none"
                       height="11"
                       viewBox="0 0 10 11"
-                      fill="none"
+                      width="10"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        fill-rule="evenodd"
                         clip-rule="evenodd"
                         d="M6 4.5V0.5H4V4.5H0V6.5H4V10.5H6V6.5H10V4.5H6Z"
                         fill="#868D95"
+                        fill-rule="evenodd"
                       />
                     </svg>
                     <span class="uppercase">Сохранить фильтр</span>
@@ -261,38 +268,38 @@
                   <button class="search-left__left-btn" @click="$emit('returnFilters')">
                     <svg
                       class="svg-fill"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="11"
                       height="10"
                       viewBox="0 0 11 10"
+                      width="11"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
+                        d="M7.334 6.745h-4.34l-.01 2.53-3.26-3.27 3.28-3.28-.01 2.73h4.34c1.07 0 1.935-.866 1.935-1.935 0-1.07-.868-1.935-1.937-1.935h-1.11V.295h1.11c1.78 0 3.225 1.444 3.225 3.225 0 1.78-1.445 3.225-3.226 3.225h.002z"
                         fill="#868D95"
                         fill-rule="evenodd"
-                        d="M7.334 6.745h-4.34l-.01 2.53-3.26-3.27 3.28-3.28-.01 2.73h4.34c1.07 0 1.935-.866 1.935-1.935 0-1.07-.868-1.935-1.937-1.935h-1.11V.295h1.11c1.78 0 3.225 1.444 3.225 3.225 0 1.78-1.445 3.225-3.226 3.225h.002z"
                       />
                     </svg>
                     <span>Вернуть по умолчанию</span>
                   </button>
                 </template>
                 <button
-                  class="search-left__settings-btn"
                   :disabled="addingFilter || changingSettings"
+                  class="search-left__settings-btn"
                   @click="toggleChangingSettings"
                 >
                   <svg
                     class="svg-fill"
-                    width="11"
+                    fill="none"
                     height="11"
                     viewBox="0 0 11 11"
-                    fill="none"
+                    width="11"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
                       clip-rule="evenodd"
                       d="M10.238 5.754V4.48399H8.885C8.8 3.89199 8.545 3.384 8.208 2.877L8.968 2.11501L8.123 1.269L7.277 2.02901C6.854 1.69101 6.347 1.437 5.754 1.353V0H4.484V1.354C3.892 1.438 3.384 1.69201 2.877 2.03101L2.115 1.271L1.269 2.116L2.029 2.87801C1.691 3.38601 1.437 3.89299 1.353 4.48599H0V5.756H1.354C1.438 6.346 1.692 6.856 2.031 7.278L1.271 8.12399L2.201 9.054L2.963 8.29401C3.386 8.63201 3.978 8.886 4.57 8.97V10.323H5.838V8.96899C6.431 8.88399 6.938 8.629 7.446 8.291L8.208 9.05299L9.138 8.123L8.208 7.276C8.546 6.853 8.715 6.261 8.885 5.668H10.238V5.752V5.754ZM2.792 5.162C2.792 3.892 3.808 2.79201 5.162 2.79201C6.432 2.79201 7.532 3.808 7.532 5.162C7.532 6.432 6.515 7.532 5.162 7.532C3.808 7.446 2.792 6.432 2.792 5.162Z"
                       fill="#868D95"
+                      fill-rule="evenodd"
                     />
                   </svg>
                 </button>
@@ -301,35 +308,35 @@
             <div class="search-right">
               <draggable
                 v-model="checkedFieldsComputed"
-                class="search-right__items"
-                v-bind="dragOptions"
                 :group="'fields'"
-                item-key="order"
+                class="search-right__items"
                 handle=".search-right__drag-and-drop"
-                @start="true"
+                item-key="order"
+                v-bind="dragOptions"
                 @end="false"
+                @start="true"
               >
                 <template #item="{ element }">
                   <div class="search-right__item">
                     <div class="search-right__drag-and-drop">
                       <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="12"
                         height="10"
                         viewBox="0 0 12 10"
+                        width="12"
+                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <g fill="#535C69" fill-rule="evenodd">
-                          <rect width="12" height="2" rx="1" />
-                          <rect width="12" height="2" y="4" rx="1" />
-                          <rect width="12" height="2" y="8" rx="1" />
+                          <rect height="2" rx="1" width="12" />
+                          <rect height="2" rx="1" width="12" y="4" />
+                          <rect height="2" rx="1" width="12" y="8" />
                         </g>
                       </svg>
                     </div>
                     <template v-if="element.type === 'string'">
                       <v-input
                         v-model="element.value"
-                        :name="element.name"
                         :label="element.label"
+                        :name="element.name"
                         @keypress.enter="filterTable"
                       />
                       <div
@@ -338,25 +345,25 @@
                         @click="$emit('resetField', element)"
                       >
                         <svg
-                          width="14"
+                          fill="none"
                           height="14"
                           viewBox="0 0 14 14"
-                          fill="none"
+                          width="14"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             d="M11.0859 2.91699L2.91931 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                           <path
                             d="M2.91406 2.91699L11.0807 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                         </svg>
                       </div>
@@ -364,9 +371,9 @@
                     <template v-if="element.type === 'select'">
                       <v-select
                         v-model="element.value"
+                        :label-select="element.label"
                         :name="element.name"
                         :options="element.computedResult"
-                        :label-select="element.label"
                         label="name"
                       />
                       <div
@@ -375,25 +382,25 @@
                         @click="$emit('resetField', element)"
                       >
                         <svg
-                          width="14"
+                          fill="none"
                           height="14"
                           viewBox="0 0 14 14"
-                          fill="none"
+                          width="14"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             d="M11.0859 2.91699L2.91931 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                           <path
                             d="M2.91406 2.91699L11.0807 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                         </svg>
                       </div>
@@ -401,10 +408,10 @@
                     <template v-if="element.type === 'multi-select'">
                       <v-multi-select
                         v-model="element.value"
-                        variant="checkbox"
+                        :label-select="element.label"
                         :name="element.name"
                         :options="element.computedResult"
-                        :label-select="element.label"
+                        variant="checkbox"
                         @toggle-option="(option) => toggleOption(option, element)"
                       />
                       <div
@@ -413,25 +420,25 @@
                         @click="$emit('resetField', element)"
                       >
                         <svg
-                          width="14"
+                          fill="none"
                           height="14"
                           viewBox="0 0 14 14"
-                          fill="none"
+                          width="14"
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             d="M11.0859 2.91699L2.91931 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                           <path
                             d="M2.91406 2.91699L11.0807 11.0836"
                             stroke="#C6CDD3"
-                            stroke-width="1.5"
                             stroke-linecap="round"
                             stroke-linejoin="round"
+                            stroke-width="1.5"
                           />
                         </svg>
                       </div>
@@ -439,9 +446,9 @@
                     <template v-if="element.type === 'select-options'">
                       <v-select-options
                         v-model="element.value"
-                        :selected-option="element.selectedOption"
                         :label-select="element.label"
                         :options="element.options"
+                        :selected-option="element.selectedOption"
                       />
                     </template>
                     <div
@@ -454,25 +461,25 @@
                       "
                     >
                       <svg
-                        width="14"
+                        fill="none"
                         height="14"
                         viewBox="0 0 14 14"
-                        fill="none"
+                        width="14"
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           d="M11.0859 2.91699L2.91931 11.0836"
                           stroke="#C6CDD3"
-                          stroke-width="1.5"
                           stroke-linecap="round"
                           stroke-linejoin="round"
+                          stroke-width="1.5"
                         />
                         <path
                           d="M2.91406 2.91699L11.0807 11.0836"
                           stroke="#C6CDD3"
-                          stroke-width="1.5"
                           stroke-linecap="round"
                           stroke-linejoin="round"
+                          stroke-width="1.5"
                         />
                       </svg>
                     </div>
@@ -492,10 +499,10 @@
                 <button class="search-right__btn search-right__search-btn" @click="filterTable">
                   <svg
                     class="svg-fill"
-                    width="15"
+                    fill="none"
                     height="16"
                     viewBox="0 0 15 16"
-                    fill="none"
+                    width="15"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
@@ -532,12 +539,12 @@
         <input
           v-model="localSearch"
           :class="['search-input', { 'search-input--transparent': variant === 'transparent' }]"
-          type="text"
           :placeholder="computedfilterPlaceholder + ' + ' + searchPlaceholderProp"
+          type="text"
+          @click="popupListener"
+          @input="(e) => $emit('setSearch', e.target.value)"
           @keyup.enter="filterTable"
           @keyup.esc="clearFilter"
-          @input="(e) => $emit('setSearch', e.target.value)"
-          @click="popupListener"
         />
       </v-dropdown>
     </div>
@@ -552,17 +559,17 @@
       >
         <svg
           class="svg-fill"
-          width="16"
+          fill="none"
           height="16"
           viewBox="0 0 16 16"
-          fill="none"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            fill-rule="evenodd"
             clip-rule="evenodd"
             d="M15.8286 13.9238L11.3486 9.44382C11.9386 8.52682 12.2846 7.42682 12.2846 6.24582C12.2846 2.96582 9.61662 0.298828 6.33762 0.298828C3.05762 0.298828 0.390625 2.96582 0.390625 6.24582C0.390625 9.52582 3.05862 12.1928 6.33762 12.1928C7.62062 12.1928 8.80262 11.7858 9.77962 11.0928L14.2196 15.5328C14.4416 15.7568 14.7896 15.7568 15.0116 15.5328L15.8466 14.6978C16.0506 14.4938 16.0506 14.1478 15.8266 13.9238H15.8286ZM1.32862 6.26582C1.32862 3.49582 3.56862 1.25583 6.33862 1.25583C9.10863 1.25583 11.3486 3.49582 11.3486 6.26582C11.3486 9.03582 9.10863 11.2758 6.33862 11.2758C3.56862 11.2758 1.32862 9.03582 1.32862 6.26582Z"
             fill="#F2F4F5"
+            fill-rule="evenodd"
           />
         </svg>
       </button>
@@ -571,31 +578,31 @@
         :class="[
           'search-btn search-btn--clear',
           { 'search-btn--to-left': fieldsWithValue?.length || search.length },
-          { 'search-btn--visible': fieldsWithValue.length || search.length }
+          { 'search-btn--visible': fieldsWithValue?.length || search.length }
         ]"
         @click.stop="$emit('removeAllFieldsOrFilter')"
       >
         <svg
           class="svg-stroke"
-          width="18"
+          fill="none"
           height="18"
           viewBox="0 0 18 18"
-          fill="none"
+          width="18"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
             d="M14.25 3.75L3.75004 14.25"
             stroke="#F2F4F5"
-            stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
+            stroke-width="1.5"
           />
           <path
             d="M3.75 3.75L14.25 14.25"
             stroke="#F2F4F5"
-            stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
+            stroke-width="1.5"
           />
         </svg>
       </button>
@@ -605,9 +612,9 @@
         <div class="search-modal-fields__mark">
           Новость
           <div class="search-modal-fields__mark-svg">
-            <svg width="22" height="24" xmlns="http://www.w3.org/2000/svg">
+            <svg height="24" width="22" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <filter id="a" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <filter id="a" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
                   <feFlood flood-opacity="0" result="BackgroundImageFix" />
                   <feColorMatrix
                     in="SourceAlpha"
@@ -627,9 +634,9 @@
                 />
                 <path
                   d="M9.999 0h.002q.245 0 .49.012.246.012.49.036.244.024.487.06t.484.084q.24.048.479.108.238.06.473.13.234.072.466.155.23.082.457.176.227.094.45.199.221.105.438.22.216.116.427.243.21.126.414.262.204.137.401.283.198.146.387.302.19.155.372.32t.355.339q.174.173.339.355.165.182.32.372.156.19.302.387t.283.4q.136.205.262.415.127.211.242.428.116.216.221.438t.199.449q.094.226.177.457.082.232.153.466.072.235.131.473.06.239.108.48.048.24.084.483.036.243.06.487t.036.49q.012.245.012.49v.002q0 .245-.012.49-.012.246-.036.49-.024.244-.06.487t-.084.484q-.048.24-.108.479-.06.238-.13.473-.072.234-.154.466-.083.23-.177.457-.094.227-.199.45-.105.221-.22.438-.116.216-.243.427-.126.21-.262.414-.137.204-.283.401-.146.198-.302.387-.155.19-.32.372t-.339.355q-.173.174-.355.339-.182.165-.372.32-.19.156-.387.302t-.4.283q-.205.136-.415.262-.211.127-.428.242-.216.116-.438.221t-.449.199q-.226.094-.457.177-.232.082-.466.153-.235.072-.473.131-.238.06-.48.108-.24.048-.483.084-.243.036-.487.06t-.49.036q-.245.012-.49.012h-.002q-.245 0-.49-.012-.246-.012-.49-.036-.244-.024-.487-.06t-.484-.084q-.24-.048-.479-.108-.238-.06-.473-.13-.234-.072-.466-.154-.23-.083-.457-.177-.227-.094-.45-.199-.221-.105-.438-.22-.216-.116-.427-.243-.21-.126-.414-.262-.204-.137-.401-.283-.198-.146-.387-.302-.19-.155-.372-.32t-.355-.339q-.174-.173-.339-.355-.165-.182-.32-.372-.156-.19-.302-.387t-.283-.4q-.136-.205-.262-.415-.127-.211-.242-.428-.116-.216-.221-.438t-.199-.449q-.094-.226-.176-.457-.083-.232-.154-.466-.072-.235-.131-.473-.06-.238-.108-.48-.048-.24-.084-.483-.036-.243-.06-.487t-.036-.49Q0 10.247 0 10.002v-.002q0-.245.012-.49.012-.246.036-.49.024-.244.06-.487t.084-.484Q.24 7.808.3 7.57q.06-.238.13-.473.072-.234.155-.466.082-.23.176-.457.094-.227.199-.45.105-.221.22-.438.116-.216.243-.427.126-.21.262-.414.137-.204.283-.401.146-.198.302-.387.155-.19.32-.372t.339-.355q.173-.174.355-.339.182-.165.372-.32.19-.156.387-.302t.4-.283q.205-.136.415-.262.211-.127.428-.242.216-.116.438-.221t.449-.199q.226-.094.457-.176.232-.083.466-.154Q7.331.359 7.57.3q.239-.06.48-.108.24-.048.483-.084.243-.036.487-.06t.49-.036Q9.753 0 9.998 0z"
-                  transform="translate(1 1)"
                   fill="#00B0E8"
                   filter="url(#a)"
+                  transform="translate(1 1)"
                 />
                 <path
                   d="M10.005 12.136l5.282-5.214 1.598 1.607-6.855 6.796-.025-.025-.025.025-4.193-4.059L7.385 9.66l2.62 2.477z"
@@ -642,78 +649,79 @@
         <div class="search-modal-fields__search">
           <svg
             class="search-modal-fields-search-svg"
-            width="16"
+            fill="none"
             height="16"
             viewBox="0 0 16 16"
-            fill="none"
+            width="16"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              fill-rule="evenodd"
               clip-rule="evenodd"
               d="M15.8286 13.9238L11.3486 9.44382C11.9386 8.52682 12.2846 7.42682 12.2846 6.24582C12.2846 2.96582 9.61662 0.298828 6.33762 0.298828C3.05762 0.298828 0.390625 2.96582 0.390625 6.24582C0.390625 9.52582 3.05862 12.1928 6.33762 12.1928C7.62062 12.1928 8.80262 11.7858 9.77962 11.0928L14.2196 15.5328C14.4416 15.7568 14.7896 15.7568 15.0116 15.5328L15.8466 14.6978C16.0506 14.4938 16.0506 14.1478 15.8266 13.9238H15.8286ZM1.32862 6.26582C1.32862 3.49582 3.56862 1.25583 6.33862 1.25583C9.10863 1.25583 11.3486 3.49582 11.3486 6.26582C11.3486 9.03582 9.10863 11.2758 6.33862 11.2758C3.56862 11.2758 1.32862 9.03582 1.32862 6.26582Z"
               fill="#525C69"
+              fill-rule="evenodd"
             />
           </svg>
 
           <input v-model="searchAddField" class="search-modal-fields__search-input" type="text" />
           <svg
             class="search-modal-fields__search-clear"
-            width="14"
+            fill="none"
             height="14"
             viewBox="0 0 14 14"
-            fill="none"
+            width="14"
             xmlns="http://www.w3.org/2000/svg"
             @click="searchAddField = ''"
           >
             <path
               d="M11.0859 2.91699L2.91931 11.0836"
               stroke="#525C69"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
             <path
               d="M2.91406 2.91699L11.0807 11.0836"
               stroke="#525C69"
-              stroke-width="1.5"
               stroke-linecap="round"
               stroke-linejoin="round"
+              stroke-width="1.5"
             />
           </svg>
         </div>
       </div>
       <div class="search-modal-fields__main">
-        <label v-for="field in computedFilterItems" class="search-modal-fields__item"
-          ><input
+        <label v-for="field in computedFilterItems" class="search-modal-fields__item">
+          <input
             :id="field.label"
             :checked="field.checked"
             type="checkbox"
             @click="$emit('toggleAddField', field)"
-          />{{ field.label }}</label
-        >
+          />
+          {{ field.label }}
+        </label>
       </div>
       <div class="search-modal-fields__close-btn" @click="popupListenerAddFields">
         <svg
-          width="14"
+          fill="none"
           height="14"
           viewBox="0 0 14 14"
-          fill="none"
+          width="14"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
             d="M11.0859 2.91699L2.91931 11.0836"
             stroke="#C6CDD3"
-            stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
+            stroke-width="1.5"
           />
           <path
             d="M2.91406 2.91699L11.0807 11.0836"
             stroke="#C6CDD3"
-            stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
+            stroke-width="1.5"
           />
         </svg>
       </div>
@@ -737,11 +745,26 @@ export default {
   name: 'VFilterSearch',
   components: { VSelect, VInput, VMultiSelect, VSelectDate, VSelectOptions, draggable, VLoader },
   props: {
-    search: String,
-    fields: Array,
-    fieldsWithValue: Array,
-    checkedFields: Array,
-    filters: Array,
+    search: {
+      type: String,
+      default: ''
+    },
+    fields: {
+      type: Array,
+      default: () => []
+    },
+    fieldsWithValue: {
+      type: Array,
+      default: () => []
+    },
+    checkedFields: {
+      type: Array,
+      default: () => []
+    },
+    filters: {
+      type: Array,
+      default: () => []
+    },
     selectedFilter: Object,
     changingSettings: {
       type: Boolean,
@@ -992,4 +1015,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

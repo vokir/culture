@@ -1,93 +1,38 @@
 <template>
   <div class="house__header">
     <div class="house__header-list">
-      <div class="house__header-item">
-        <div class="house__header-title">Подъезд</div>
-        <div class="entryway-list">
-          <div v-for="entry of store.entryways" class="entryway-list__item" @click="select(entry)">
-            {{ entry.number }}
-          </div>
-        </div>
-        <icon-button
-          v-if="editMode"
-          active
-          name="plus"
-          size="10"
-          variant="orange"
-          @click="openEntryModal"
-        />
-        <entryway-form
-          v-if="isOpenEntry"
-          :title="`Новый подъезд / ${currentHouse.name} / ${currentComplex.name}`"
-          @close-modal="closeEntryModal"
-          @on-save="onSave"
-        />
-      </div>
-      <div class="house__header-item">
-        <div class="house__header-title">Этаж</div>
-        <v-select />
-        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" @click="openFloorModal" />
-      </div>
-      <div class="house__header-item">
-        <div class="house__header-title">Помещение</div>
-        <v-select />
-        <icon-button v-if="editMode" active name="plus" size="10" variant="orange" />
-      </div>
+      <entryway-edit />
+      <transition name="fade">
+        <floor-edit v-if="currentEntry.realId || (!currentEntry.realId && editMode)" />
+      </transition>
+      <transition name="fade">
+        <premise-edit v-if="currentFloor.realId || (!currentFloor.realId && editMode)" />
+      </transition>
     </div>
     <icon-button :active="editMode" name="pen" size="10" variant="orange" @click="toggleMode" />
-
-    <floor-form
-      v-if="isOpenFloor"
-      :title="`Новый этаж / ${currentHouse.name} / ${currentComplex.name}`"
-      :entryways="entryways"
-      @close-modal="closeFloorModal"
-      @on-save="onSave" />
   </div>
 </template>
 
 <script setup>
 import IconButton from '@/components/ui/icon-button/icon-button.vue';
-import {computed, inject, ref} from 'vue';
-import VSelect from '@/components/ui/v-select/v-select.vue';
+import { inject, provide, ref } from 'vue';
 import { useEntrywayStore } from '@/store/entryway/index.js';
-import EntrywayForm from '@/components/complexes/entryway-form/entryway-form.vue';
-import useModal from '@/hooks/useModal.js';
-import FloorForm from "@/components/complexes/floor-form/floor-form.vue";
+import EntrywayEdit from '@/components/complexes/house-plan/entryway-edit/entryway-edit.vue';
+import FloorEdit from '@/components/complexes/house-plan/floor-edit/floor-edit.vue';
+import PremiseEdit from '@/components/complexes/house-plan/premise-edit/premise-edit.vue';
 
 const emit = defineEmits(['updateEntry']);
 const store = useEntrywayStore();
-const currentComplex = inject('complex');
-const currentHouse = inject('house');
 const currentEntry = inject('entry');
-
-const { isOpen: isOpenEntry, openModal: openEntryModal, closeModal: closeEntryModal } = useModal();
-const { isOpen: isOpenFloor, openModal: openFloorModal, closeModal: closeFloorModal } = useModal();
+const currentFloor = inject('floor');
 
 const editMode = ref(false);
-
-const entryways = computed(() => {
-  const entrywayCount = JSON.parse(JSON.stringify(currentHouse.value)).entrywaysCount;
-  let entrywaysCountArray = [];
-
-  for (let i = 1; i <= entrywayCount; i++) {
-    entrywaysCountArray.push(i);
-  }
-
-  return entrywaysCountArray;
-});
 
 const toggleMode = () => {
   editMode.value = !editMode.value;
 };
 
-const select = (data) => {
-  currentEntry.value = data;
-};
-
-const onSave = async (data) => {
-  await store.createEntryway(data, currentHouse.realId);
-  await emit('updateEntry');
-};
+provide('editMode', editMode.value);
 </script>
 
 <style lang="scss" scoped src="./house-edit.scss"></style>

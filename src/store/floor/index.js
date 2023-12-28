@@ -1,7 +1,7 @@
-import {defineStore} from "pinia";
-import {ref} from "vue";
-import {getFloor, remove, create, update} from "@/store/floor/api.js";
-import objectToFormData from "@/helpers/objectToFormData.js";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import { create, getFloor, remove, update } from '@/store/floor/api.js';
+import objectToFormData from '@/helpers/objectToFormData.js';
 
 export const useFloorStore = defineStore('floor', () => {
   const form = ref({
@@ -25,10 +25,10 @@ export const useFloorStore = defineStore('floor', () => {
     }
   };
 
-  const createFloor = async (data, floorId) => {
+  const createFloor = async (data, houseId) => {
     try {
       const formData = objectToFormData(data);
-      formData.append('floorId', floorId);
+      formData.append('houseId', houseId);
       await create(formData);
     } catch (e) {
       console.error(e);
@@ -73,5 +73,5 @@ export const useFloorStore = defineStore('floor', () => {
     updateFloor,
     deleteFloor,
     clearForm
-  }
-})
+  };
+});

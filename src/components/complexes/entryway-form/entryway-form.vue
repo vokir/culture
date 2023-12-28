@@ -45,7 +45,7 @@ import VInput from '@/components/ui/v-input/v-input.vue';
 import VModal from '@/components/ui/v-modal/v-modal.vue';
 import VAddDocs from '@/components/ui/v-add-docs/v-add-docs.vue';
 import VCard from '@/components/ui/v-card/v-card.vue';
-import { reactive } from 'vue';
+import { inject, ref, watchEffect } from 'vue';
 
 const emit = defineEmits(['closeModal', 'onSave']);
 const props = defineProps({
@@ -59,19 +59,41 @@ const props = defineProps({
   }
 });
 
-const form = reactive({
+const form = ref({
   number: 1,
   name: '',
   order: 1,
   documents: []
 });
 
+const currentEntry = inject('entry');
+
+watchEffect(() => {
+  if (props.editMode) {
+    form.value = {
+      realId: currentEntry.value.realId,
+      name: currentEntry.value.name,
+      number: currentEntry.value.number,
+      order: currentEntry.value.order,
+      documents: currentEntry.value.documents
+    };
+  }
+});
+
 const onSave = async () => {
-  emit('onSave', form);
+  emit('onSave', form.value);
   emit('closeModal');
 };
-const onCopy = async () => {};
+const onCopy = async () => {
+  emit('onCopy', form.value);
+};
 const onCancel = () => {
+  form.value = {
+    number: 1,
+    name: '',
+    order: 1,
+    documents: []
+  };
   emit('closeModal');
 };
 </script>

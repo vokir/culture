@@ -1,0 +1,30 @@
+.entryway-list {
+  display: flex;
+  gap: 5px;
+  overflow: auto;
+  max-width: 230px;
+  @include scrollbar();
+
+  &__item {
+    padding: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--variable-5);
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 150%;
+    font-weight: 400;
+    font-style: normal;
+    color: var(--variable-13);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s ease;
+
+    &--active {
+      background-color: var(--variable-16);
+    }
+
+  }
+}
