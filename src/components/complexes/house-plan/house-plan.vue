@@ -5,7 +5,7 @@
       <div class="template-floors">
         <div class="template-floors__item"></div>
         <div
-          v-for="(floor, idx) of entryWayStore.floors"
+          v-for="(floor, idx) of currentHouse.floorsCount"
           class="template-floors__item"
           @click="selectFloor(floor)"
         >

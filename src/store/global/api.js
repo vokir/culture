@@ -18,4 +18,13 @@ const getImages = async (params) => {
   });
 };
 
-export { getDocuments, getImages, getTypes };
+const getPersonalAccountList = async (params) => {
+  return await axiosInstance.get('/private/personal-account', {
+    params: {
+      ...params,
+      include: 'users'
+    }
+  });
+};
+
+export { getDocuments, getImages, getTypes, getPersonalAccountList };

@@ -15,6 +15,12 @@ const objectToFormData = (object) => {
       });
       continue;
     }
+    if (key === 'personalAccounts') {
+      object[key].forEach((acc) => {
+        formData.append('personalAccounts[]', acc.id);
+      });
+      continue;
+    }
     if (object[key]) {
       formData.append(key, object[key]);
     }

@@ -1,14 +1,17 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { getDocuments, getImages, getTypes } from '@/store/global/api.js';
+import { getDocuments, getImages, getPersonalAccountList, getTypes } from '@/store/global/api.js';
+import { mapAccounts } from '@/store/global/map.js';
 
 export const useGlobalStore = defineStore('global', () => {
   const images = ref([]);
   const documents = ref([]);
   const documentTypes = ref([]);
+  const accountList = ref([]);
 
   const isLoadingDocuments = ref(true);
   const isLoadingImages = ref(true);
+  const isLoadingAccounts = ref(true);
 
   const getDocumentsList = async () => {
     try {
@@ -52,11 +55,25 @@ export const useGlobalStore = defineStore('global', () => {
     }
   };
 
+  const getAccountList = async () => {
+    try {
+      const res = await getPersonalAccountList();
+      if (res.status === 200) {
+        accountList.value = res.data.data.map(mapAccounts);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return {
     getDocumentsList,
+    getAccountList,
     getImagesList,
     getDocumentTypes,
     getDocumentType,
+    isLoadingAccounts,
+    accountList,
     documentTypes,
     isLoadingDocuments,
     isLoadingImages,

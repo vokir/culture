@@ -1,38 +1,73 @@
 <template>
   <v-card>
     <div class="input-row">
-      <v-select :options="store.premiseTypes" label="name" label-select="Тип помещения*" />
-      <v-select :options="['1']" label-select="Номер подъезда*" />
+      <v-select
+        v-model="store.currentType"
+        :options="store.premiseTypes"
+        label="name"
+        label-select="Тип помещения*"
+      />
+      <v-select
+        v-model="store.form.entryway"
+        :options="entryStore.entryways"
+        label="number"
+        label-select="Номер подъезда*"
+      />
     </div>
-    <div class="input-row">
-      <v-select :options="['Квартира']" label-select="Номер этажа*" />
-      <v-input disabled label="Номер помещения*" name="name" />
+    <div v-if="store.form.entryway?.floors" class="input-row">
+      <v-select
+        v-model="store.form.floorId"
+        :options="store.form.entryway.floors"
+        label="number"
+        label-select="Номер этажа*"
+      />
+      <v-input v-model="store.form.number" label="Номер помещения*" name="name" type="number" />
     </div>
+
     <div class="input-row">
-      <v-select :options="['Активно']" label-select="Активность*" />
-      <v-input label="График доступа" name="name" />
+      <v-select v-model="store.form.active" :options="['Да', 'Нет']" label-select="Активность*" />
+      <v-input v-model="store.form.description" label="График доступа" name="name" />
     </div>
+
     <div class="input-row">
-      <v-select :options="['Да', 'Нет']" label-select="Присоединено к помещению" />
+      <v-input v-model="store.form.name" label="Название помещения*" name="name" />
+      <v-select
+        v-model="store.form.attachedTo"
+        :options="store.premises"
+        label="name"
+        label-select="Присоединено к помещению"
+      />
     </div>
 
     <div class="input-row__void" />
 
     <div class="input-row">
-      <v-input label="Общая S" name="name" />
-      <v-input label="Жилая S" name="name" />
+      <v-input v-model="store.form.totalArea" label="Общая S" name="name" />
+      <v-input v-model="store.form.totalArea" label="Жилая S" name="name" />
     </div>
     <div class="input-row">
-      <v-select :options="['2']" label-select="Кол-во комнат" />
-      <v-select :options="['2']" label-select="Кол-во окон" />
+      <v-select
+        v-model="store.form.roomCount"
+        :options="['1', '2', '3', '4', '5', '6']"
+        label-select="Кол-во комнат"
+      />
+      <v-select
+        v-model="store.form.windowCount"
+        :options="['1', '2', '3', '4', '5', '6']"
+        label-select="Кол-во окон"
+      />
     </div>
     <div class="input-row">
-      <v-input label="Высота потолков" name="name" />
-      <v-select :options="['Да', 'Нет']" label-select="Интернет" />
+      <v-input v-model="store.form.ceilingHeight" label="Высота потолков" name="name" />
+      <v-select v-model="store.form.hasInternet" :options="['Да', 'Нет']" label-select="Интернет" />
     </div>
     <div class="input-row">
-      <v-select :options="['Да', 'Нет']" label-select="Лоджия/Балкон" />
-      <v-select :options="['Да', 'Нет']" label-select="Лифт" />
+      <v-select
+        v-model="store.form.hasBalcony"
+        :options="['Да', 'Нет']"
+        label-select="Лоджия/Балкон"
+      />
+      <v-select v-model="store.form.hasElevator" :options="['Да', 'Нет']" label-select="Лифт" />
     </div>
   </v-card>
 </template>
@@ -42,8 +77,12 @@ import VSelect from '@/components/ui/v-select/v-select.vue';
 import VCard from '@/components/ui/v-card/v-card.vue';
 import VInput from '@/components/ui/v-input/v-input.vue';
 import { usePremiseStore } from '@/store/premise/index.js';
+import { inject } from 'vue';
+import { useEntrywayStore } from '@/store/entryway/index.js';
 
 const store = usePremiseStore();
+const entryStore = useEntrywayStore();
+const currentHouse = inject('house');
 </script>
 
 <style lang="scss" scoped src="./flat-form.scss"></style>

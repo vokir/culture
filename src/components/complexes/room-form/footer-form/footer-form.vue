@@ -2,30 +2,23 @@
   <v-card>
     <div class="input-row">
       <v-select
-          :options="store.premiseTypes"
-          label="name"
-          label-select="Тип этажа*"
-
+        v-model="store.currentType"
+        :options="store.premiseTypes"
+        label="name"
+        label-select="Тип этажа*"
       />
-      <v-input
-          disabled
-          label="Номер этажа"
-          name="name"
-      />
+      <v-input disabled label="Номер этажа" name="name" />
     </div>
   </v-card>
 </template>
 
 <script setup>
-import VSelect from "@/components/ui/v-select/v-select.vue";
-import VCard from "@/components/ui/v-card/v-card.vue";
-import VInput from "@/components/ui/v-input/v-input.vue";
-import {usePremiseStore} from "@/store/premise/index.js";
+import VSelect from '@/components/ui/v-select/v-select.vue';
+import VCard from '@/components/ui/v-card/v-card.vue';
+import VInput from '@/components/ui/v-input/v-input.vue';
+import { usePremiseStore } from '@/store/premise/index.js';
 
-const store = usePremiseStore()
+const store = usePremiseStore();
 </script>
 
-
-<style scoped lang="scss" src="./footer-form.scss">
-
-</style>
+<style lang="scss" scoped src="./footer-form.scss"></style>

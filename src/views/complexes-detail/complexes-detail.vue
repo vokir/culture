@@ -12,8 +12,11 @@
     <transition mode="out-in" name="fade">
       <entryway-info v-if="currentEntry.realId && !currentFloor.realId" />
     </transition>
-    <transition>
-      <floor-info v-if="currentEntry.realId && currentFloor.realId" />
+    <transition mode="out-in" name="fade">
+      <floor-info v-if="currentEntry.realId && currentFloor.realId && !currentPremise.realId" />
+    </transition>
+    <transition mode="out-in" name="fade">
+      <premise-info v-if="currentFloor.realId && currentPremise.realId" />
     </transition>
   </layout-default>
 </template>
@@ -29,6 +32,7 @@ import HouseInfo from '@/components/complexes/house-info/house-info.vue';
 import EntrywayInfo from '@/components/complexes/entryway-info/entryway-info.vue';
 import ComplexDetailHeader from '@/components/complexes/complex-detail-header/complex-detail-header.vue';
 import FloorInfo from '@/components/complexes/floor-info/floor-info.vue';
+import PremiseInfo from '@/components/complexes/premise-info/premise-info.vue';
 
 const store = useComplexStore();
 

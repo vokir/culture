@@ -8,8 +8,8 @@
         'btn--disabled': disabled
       }
     ]"
-    :to="href"
     :disabled="disabled"
+    :to="href"
   >
     <slot></slot>
   </component>
@@ -58,4 +58,4 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./style.scss" scoped />
+<style lang="scss" scoped src="./style.scss" />

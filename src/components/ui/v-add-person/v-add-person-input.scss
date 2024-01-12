@@ -1,0 +1,103 @@
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.input-label {
+  @include font(14px, 150%, 400);
+  color: var(--gray-light);
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.input {
+  border-radius: 2px;
+  border: 1px solid var(--variable-5);
+  background: var(--white);
+  @include font(14px, 150%, 400);
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--input-border-hover);
+  }
+}
+
+.remove {
+  color: var(--variable-5);
+  transition: 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--danger);
+  }
+}
+
+.check {
+  position: absolute;
+  top: 13px;
+  right: 10px;
+
+  &--remove {
+    right: 34px;
+  }
+}
+
+.input-list {
+  position: absolute;
+  top: 51px;
+  right: 0;
+  background: var(--white);
+  box-shadow: 0 4px 40px 0 rgba(0, 0, 0, 0.15);
+  padding: 20px 60px 20px 30px;
+  width: 451px;
+  height: 265px;
+  overflow: auto;
+  @include scrollbar();
+  z-index: 1;
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+
+    border-bottom: 1px solid var(--variable-19);
+    padding: 10px 0;
+
+    &-number {
+      @include font(14px, 150%, 400);
+      color: var(--variable-13);
+    }
+
+    &-name {
+      @include font(12px, 150%, 400);
+      color: var(--variable-13);
+    }
+
+    &-info {
+      @include font(12px, 150%, 400);
+      color: var(--variable-7);
+    }
+  }
+}
+
+.person {
+  display: flex;
+  flex-direction: column;
+  @include font(12px, 150%, 400);
+  color: var(--variable-7);
+
+  &-name {
+    color: var(--variable-13);
+  }
+}

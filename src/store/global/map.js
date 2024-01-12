@@ -6,4 +6,12 @@ const mapColumns = (item) => ({
   default: true
 });
 
-export { mapColumns };
+const mapAccounts = (item) => ({
+  id: item.realId,
+  number: item.number.toString(),
+  userName: item.users[0]?.name,
+  email: item.users[0]?.email,
+  phone: item.users[0]?.phone
+});
+
+export { mapColumns, mapAccounts };

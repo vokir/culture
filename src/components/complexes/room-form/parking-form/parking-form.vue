@@ -1,7 +1,12 @@
 <template>
   <v-card>
     <div class="input-row">
-      <v-select :options="store.premiseTypes" label="name" label-select="Секция*" />
+      <v-select
+        v-model="store.currentType"
+        :options="store.premiseTypes"
+        label="name"
+        label-select="Секция*"
+      />
       <v-input label="Номер помещения*" name="name" />
     </div>
     <div class="input-row">
